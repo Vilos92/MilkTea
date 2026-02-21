@@ -1,8 +1,8 @@
-import { useRef, useState } from 'preact/hooks';
 // @ts-ignore
 import butterchurn from 'butterchurn';
 // @ts-ignore
 import butterchurnPresets from 'butterchurn-presets';
+import {useRef, useState} from 'preact/hooks';
 
 const WINDOWED_WIDTH = 720;
 const WINDOWED_HEIGHT = 720;
@@ -12,7 +12,7 @@ export function App() {
   const visualizerRef = useRef<any>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
-  
+
   // Navigation Refs
   const allPresetsRef = useRef<any>(null);
   const presetKeysRef = useRef<string[]>([]);
@@ -46,11 +46,11 @@ export function App() {
   // --- Preset Navigation Logic ---
   const changePreset = (delta: number) => {
     if (!allPresetsRef.current || !visualizerRef.current) return;
-    
+
     const keys = presetKeysRef.current;
     presetIndexRef.current = (presetIndexRef.current + delta + keys.length) % keys.length;
     const newPreset = allPresetsRef.current[keys[presetIndexRef.current]];
-    
+
     currentPresetRef.current = newPreset;
     visualizerRef.current.loadPreset(newPreset, 2.7); // 2.7s blend for smooth transitions
   };
@@ -61,7 +61,7 @@ export function App() {
     const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
     const ctx = new AudioContextClass();
     audioContextRef.current = ctx;
-    
+
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     gainNodeRef.current = gain;
@@ -84,7 +84,7 @@ export function App() {
 
     const createVisualizer = (width: number, height: number) => {
       if (!canvasRef.current || !audioContextRef.current || !gainNodeRef.current) return null;
-      
+
       visualizerRef.current = null;
       canvasRef.current.width = width;
       canvasRef.current.height = height;
@@ -92,7 +92,7 @@ export function App() {
       const visualizer = VisualizerFactory.createVisualizer(audioContextRef.current, canvasRef.current, {
         width,
         height,
-        pixelRatio: window.devicePixelRatio || 1,
+        pixelRatio: window.devicePixelRatio || 1
       });
 
       visualizer.loadPreset(currentPresetRef.current, 0);
@@ -106,7 +106,7 @@ export function App() {
       if (!canvasRef.current) return;
       const isFull = !!(document.fullscreenElement || (document as any).webkitFullscreenElement);
       setIsCanvasFullscreen(isFull);
-      
+
       const w = isFull ? window.innerWidth : WINDOWED_WIDTH;
       const h = isFull ? window.innerHeight : WINDOWED_HEIGHT;
 
@@ -134,14 +134,32 @@ export function App() {
   };
 
   return (
-    <div style={{ background: '#000', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
+    <div
+      style={{
+        background: '#000',
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: 'white'
+      }}
+    >
       {!started ? (
-        <button onClick={start} style={btnStyle}>START OSCILLATOR VISUALS</button>
+        <button onClick={start} style={btnStyle}>
+          START OSCILLATOR VISUALS
+        </button>
       ) : (
-        <div style={{ position: 'fixed', top: '20px', zIndex: 100, display: 'flex', gap: '10px' }}>
-          <button onClick={() => changePreset(-1)} style={btnStyle}>← PREV</button>
-          <button onClick={toggleFullscreen} style={{...btnStyle, background: '#444'}}>🖥️ FULLSCREEN</button>
-          <button onClick={() => changePreset(1)} style={btnStyle}>NEXT →</button>
+        <div style={{position: 'fixed', top: '20px', zIndex: 100, display: 'flex', gap: '10px'}}>
+          <button onClick={() => changePreset(-1)} style={btnStyle}>
+            ← PREV
+          </button>
+          <button onClick={toggleFullscreen} style={{...btnStyle, background: '#444'}}>
+            🖥️ FULLSCREEN
+          </button>
+          <button onClick={() => changePreset(1)} style={btnStyle}>
+            NEXT →
+          </button>
         </div>
       )}
 
@@ -160,12 +178,12 @@ export function App() {
                 top: 0,
                 left: 0,
                 width: '100vw',
-                height: '100vh',
+                height: '100vh'
               }
             : {
                 maxWidth: '90vw',
-                maxHeight: '80vh',
-              }),
+                maxHeight: '80vh'
+              })
         }}
       />
     </div>
