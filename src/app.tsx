@@ -5,7 +5,7 @@ import butterchurnPresets from 'butterchurn-presets';
 import {useRef, useState} from 'preact/hooks';
 
 import {btn, btnFullscreen, controls, root} from './app.css.ts';
-import {type CanvasMode, Visualizer} from './components/visualizer.tsx';
+import {type DisplayMode, Visualizer} from './components/visualizer.tsx';
 
 /*
  * Constants.
@@ -144,11 +144,7 @@ export function App() {
     setStarted(true);
   };
 
-  const canvasDisplayMode: CanvasMode = !isCanvasFullscreen
-    ? 'windowed'
-    : started
-      ? 'fullscreenStarted'
-      : 'fullscreen';
+  const displayMode = computeDisplayMode(isCanvasFullscreen, started);
 
   return (
     <div class={root}>
@@ -170,7 +166,21 @@ export function App() {
         </div>
       )}
 
-      <Visualizer ref={canvasRef} displayMode={canvasDisplayMode} width={canvasWidth} height={canvasHeight} />
+      <Visualizer ref={canvasRef} displayMode={displayMode} width={canvasWidth} height={canvasHeight} />
     </div>
   );
+}
+
+/*
+ * Helpers.
+ */
+
+function computeDisplayMode(isCanvasFullscreen: boolean, started: boolean): DisplayMode {
+  if (!isCanvasFullscreen) {
+    return 'windowed';
+  }
+  if (started) {
+    return 'fullscreenStarted';
+  }
+  return 'fullscreen';
 }

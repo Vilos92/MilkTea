@@ -6,11 +6,11 @@ import {canvas, canvasFullscreen, canvasFullscreenStarted, canvasWindowed} from 
  * Types.
  */
 
-export type CanvasMode = 'windowed' | 'fullscreen' | 'fullscreenStarted';
+export type DisplayMode = 'windowed' | 'fullscreen' | 'fullscreenStarted';
 
 type VisualizerProps = {
   ref: RefObject<HTMLCanvasElement>;
-  displayMode: CanvasMode;
+  displayMode: DisplayMode;
   width: number;
   height: number;
 };
@@ -19,7 +19,7 @@ type VisualizerProps = {
  * Styles.
  */
 
-const modeClasses: Record<CanvasMode, string> = {
+const modeClasses: Record<DisplayMode, string> = {
   windowed: [canvas, canvasWindowed].join(' '),
   fullscreen: [canvas, canvasFullscreen].join(' '),
   fullscreenStarted: [canvas, canvasFullscreen, canvasFullscreenStarted].join(' ')
