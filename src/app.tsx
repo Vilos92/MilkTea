@@ -2,7 +2,7 @@
 import butterchurn from 'butterchurn';
 // @ts-ignore
 import butterchurnPresets from 'butterchurn-presets';
-import {useRef, useState} from 'preact/hooks';
+import {useEffect, useRef, useState} from 'preact/hooks';
 
 import {btn, btnFullscreen, controls, root} from './app.css.ts';
 import {type DisplayMode, Visualizer} from './components/visualizer.tsx';
@@ -19,16 +19,64 @@ const WINDOWED_HEIGHT = 720;
  */
 
 export function App() {
+  const {
+    canvasRef,
+    isCanvasFullscreen,
+    canvasWidth,
+    canvasHeight,
+    toggleFullscreen,
+    started,
+    start,
+    changePreset
+  } = useButterchurn();
+
+  const displayMode = computeDisplayMode(isCanvasFullscreen, started);
+
+  return (
+    <div class={root}>
+      {!started ? (
+        <button type="button" onClick={start} class={btn}>
+          START OSCILLATOR VISUALS
+        </button>
+      ) : (
+        <div class={controls}>
+          <button type="button" onClick={() => changePreset(-1)} class={btn}>
+            ← PREV
+          </button>
+          <button type="button" onClick={toggleFullscreen} class={btnFullscreen}>
+            🖥️ FULLSCREEN
+          </button>
+          <button type="button" onClick={() => changePreset(1)} class={btn}>
+            NEXT →
+          </button>
+        </div>
+      )}
+
+      <Visualizer
+        canvasRef={canvasRef}
+        displayMode={displayMode}
+        width={canvasWidth}
+        height={canvasHeight}
+      />
+    </div>
+  );
+}
+
+/*
+ * Hooks.
+ */
+
+function useButterchurn() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const visualizerRef = useRef<any>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
 
-  // Navigation Refs
   const allPresetsRef = useRef<any>(null);
   const presetKeysRef = useRef<string[]>([]);
   const presetIndexRef = useRef(0);
   const currentPresetRef = useRef<any>(null);
+  const createVisualizerRef = useRef<((width: number, height: number) => void) | null>(null);
 
   const [started, setStarted] = useState(false);
   const [isCanvasFullscreen, setIsCanvasFullscreen] = useState(false);
@@ -54,7 +102,6 @@ export function App() {
     }
   };
 
-  // --- Preset Navigation Logic ---
   const changePreset = (delta: number) => {
     if (!allPresetsRef.current || !visualizerRef.current) return;
 
@@ -63,7 +110,7 @@ export function App() {
     const newPreset = allPresetsRef.current[keys[presetIndexRef.current]];
 
     currentPresetRef.current = newPreset;
-    visualizerRef.current.loadPreset(newPreset, 2.7); // 2.7s blend for smooth transitions
+    visualizerRef.current.loadPreset(newPreset, 2.7);
   };
 
   const start = async () => {
@@ -84,7 +131,6 @@ export function App() {
     gain.connect(ctx.destination);
     osc.start();
 
-    // Setup Presets
     const allPresets = butterchurnPresets.getPresets();
     allPresetsRef.current = allPresets;
     presetKeysRef.current = Object.keys(allPresets);
@@ -112,26 +158,12 @@ export function App() {
     };
 
     visualizerRef.current = createVisualizer(WINDOWED_WIDTH, WINDOWED_HEIGHT);
-
-    const handleResize = () => {
-      if (!canvasRef.current) return;
-      const isFull = !!(document.fullscreenElement || (document as any).webkitFullscreenElement);
-      setIsCanvasFullscreen(isFull);
-
-      const w = isFull ? window.innerWidth : WINDOWED_WIDTH;
-      const h = isFull ? window.innerHeight : WINDOWED_HEIGHT;
-
-      setCanvasWidth(w);
-      setCanvasHeight(h);
-
+    createVisualizerRef.current = (width: number, height: number) => {
       requestAnimationFrame(() => {
         if (!canvasRef.current) return;
-        visualizerRef.current = createVisualizer(w, h);
+        visualizerRef.current = createVisualizer(width, height);
       });
     };
-
-    document.addEventListener('fullscreenchange', handleResize);
-    document.addEventListener('webkitfullscreenchange', handleResize);
 
     const render = () => {
       if (visualizerRef.current) {
@@ -144,31 +176,40 @@ export function App() {
     setStarted(true);
   };
 
-  const displayMode = computeDisplayMode(isCanvasFullscreen, started);
+  useEffect(() => {
+    if (!started) return;
 
-  return (
-    <div class={root}>
-      {!started ? (
-        <button type="button" onClick={start} class={btn}>
-          START OSCILLATOR VISUALS
-        </button>
-      ) : (
-        <div class={controls}>
-          <button type="button" onClick={() => changePreset(-1)} class={btn}>
-            ← PREV
-          </button>
-          <button type="button" onClick={toggleFullscreen} class={btnFullscreen}>
-            🖥️ FULLSCREEN
-          </button>
-          <button type="button" onClick={() => changePreset(1)} class={btn}>
-            NEXT →
-          </button>
-        </div>
-      )}
+    const handleResize = () => {
+      if (!canvasRef.current) return;
+      const isFull = !!(document.fullscreenElement || (document as any).webkitFullscreenElement);
+      setIsCanvasFullscreen(isFull);
 
-      <Visualizer ref={canvasRef} displayMode={displayMode} width={canvasWidth} height={canvasHeight} />
-    </div>
-  );
+      const w = isFull ? window.innerWidth : WINDOWED_WIDTH;
+      const h = isFull ? window.innerHeight : WINDOWED_HEIGHT;
+
+      setCanvasWidth(w);
+      setCanvasHeight(h);
+      createVisualizerRef.current?.(w, h);
+    };
+
+    document.addEventListener('fullscreenchange', handleResize);
+    document.addEventListener('webkitfullscreenchange', handleResize);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleResize);
+      document.removeEventListener('webkitfullscreenchange', handleResize);
+    };
+  }, [started]);
+
+  return {
+    canvasRef,
+    isCanvasFullscreen,
+    canvasWidth,
+    canvasHeight,
+    toggleFullscreen,
+    started,
+    start,
+    changePreset
+  };
 }
 
 /*

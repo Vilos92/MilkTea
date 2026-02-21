@@ -9,7 +9,7 @@ import {canvas, canvasFullscreen, canvasFullscreenStarted, canvasWindowed} from 
 export type DisplayMode = 'windowed' | 'fullscreen' | 'fullscreenStarted';
 
 type VisualizerProps = {
-  ref: RefObject<HTMLCanvasElement>;
+  canvasRef: RefObject<HTMLCanvasElement>;
   displayMode: DisplayMode;
   width: number;
   height: number;
@@ -29,6 +29,6 @@ const modeClasses: Record<DisplayMode, string> = {
  * Component.
  */
 
-export const Visualizer = ({ref, displayMode, width, height}: VisualizerProps) => {
-  return <canvas ref={ref} class={modeClasses[displayMode]} width={width} height={height} />;
+export const Visualizer = ({canvasRef, displayMode, width, height}: VisualizerProps) => {
+  return <canvas ref={canvasRef} class={modeClasses[displayMode]} width={width} height={height} />;
 };
