@@ -4,8 +4,19 @@ import butterchurn from 'butterchurn';
 import butterchurnPresets from 'butterchurn-presets';
 import {useRef, useState} from 'preact/hooks';
 
+import {btn, btnFullscreen, controls, root} from './app.css.ts';
+import {type CanvasMode, Visualizer} from './components/visualizer.tsx';
+
+/*
+ * Constants.
+ */
+
 const WINDOWED_WIDTH = 720;
 const WINDOWED_HEIGHT = 720;
+
+/*
+ * App.
+ */
 
 export function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -133,69 +144,33 @@ export function App() {
     setStarted(true);
   };
 
+  const canvasDisplayMode: CanvasMode = !isCanvasFullscreen
+    ? 'windowed'
+    : started
+      ? 'fullscreenStarted'
+      : 'fullscreen';
+
   return (
-    <div
-      style={{
-        background: '#000',
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: 'white'
-      }}
-    >
+    <div class={root}>
       {!started ? (
-        <button onClick={start} style={btnStyle}>
+        <button type="button" onClick={start} class={btn}>
           START OSCILLATOR VISUALS
         </button>
       ) : (
-        <div style={{position: 'fixed', top: '20px', zIndex: 100, display: 'flex', gap: '10px'}}>
-          <button onClick={() => changePreset(-1)} style={btnStyle}>
+        <div class={controls}>
+          <button type="button" onClick={() => changePreset(-1)} class={btn}>
             ← PREV
           </button>
-          <button onClick={toggleFullscreen} style={{...btnStyle, background: '#444'}}>
+          <button type="button" onClick={toggleFullscreen} class={btnFullscreen}>
             🖥️ FULLSCREEN
           </button>
-          <button onClick={() => changePreset(1)} style={btnStyle}>
+          <button type="button" onClick={() => changePreset(1)} class={btn}>
             NEXT →
           </button>
         </div>
       )}
 
-      <canvas
-        ref={canvasRef}
-        width={canvasWidth}
-        height={canvasHeight}
-        style={{
-          border: isCanvasFullscreen ? 'none' : '1px solid #333',
-          background: '#000',
-          cursor: started && isCanvasFullscreen ? 'none' : 'default',
-          display: 'block',
-          ...(isCanvasFullscreen
-            ? {
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                width: '100vw',
-                height: '100vh'
-              }
-            : {
-                maxWidth: '90vw',
-                maxHeight: '80vh'
-              })
-        }}
-      />
+      <Visualizer ref={canvasRef} displayMode={canvasDisplayMode} width={canvasWidth} height={canvasHeight} />
     </div>
   );
 }
-
-const btnStyle = {
-  padding: '12px 24px',
-  fontSize: '14px',
-  background: '#222',
-  color: '#fff',
-  border: '1px solid #444',
-  borderRadius: '4px',
-  cursor: 'pointer'
-};
