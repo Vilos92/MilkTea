@@ -1,13 +1,20 @@
 import {style} from '@vanilla-extract/css';
 
 export const root = style({
-  background: '#000',
+  width: '100%',
   minHeight: '100vh',
+  boxSizing: 'border-box',
+  background: '#000',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  color: 'white'
+  color: '#fff'
+});
+
+export const startScreen = style({
+  position: 'relative',
+  zIndex: 100
 });
 
 export const btn = style({
