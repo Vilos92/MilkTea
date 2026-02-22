@@ -47,11 +47,9 @@ export const controlBtn = style({
   borderRadius: '50%',
   background: 'rgba(255, 255, 255, 0.12)',
   color: '#fff',
-  cursor: 'pointer',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  transition: 'background 0.2s ease',
   ':active': {
     background: 'rgba(255, 255, 255, 0.25)'
   },

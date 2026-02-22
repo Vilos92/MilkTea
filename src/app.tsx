@@ -5,6 +5,8 @@ import {
   btn,
   btnSolid,
   container,
+  containerSplash,
+  containerStarted,
   overlay,
   overlayHideCursor,
   overlaySplash,
@@ -43,7 +45,10 @@ export function App() {
   }, [started, start]);
 
   return (
-    <div ref={containerRef} class={container}>
+    <div
+      ref={containerRef}
+      class={[container, started ? containerStarted : containerSplash].join(' ')}
+    >
       {renderOverlay(
         reducedMotion,
         overlayRef,
