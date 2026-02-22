@@ -9,7 +9,7 @@ export const controls = style({
   alignItems: 'center',
   justifyContent: 'center',
   transition: 'opacity 0.35s ease',
-  // When a control has keyboard focus, keep the bar visible and interactive (overrides fade behavior).
+  // When a control has keyboard focus, keep the bar visible and interactive (overrides fade behavior)
   selectors: {
     '&:has(:focus-visible)': {
       opacity: '1 !important',
@@ -25,7 +25,7 @@ export const controlsPill = style({
   gap: '12px',
   padding: '12px 16px',
   borderRadius: '9999px',
-  background: 'rgba(0, 0, 0, 0.5)',
+  background: '#0a0a0a',
   transition: 'background 0.2s ease',
   '@media': {
     '(pointer: fine)': {
@@ -36,7 +36,7 @@ export const controlsPill = style({
 });
 
 export const controlsPillHovered = style({
-  background: 'rgba(0, 0, 0, 0.92)'
+  background: '#1a1a1a'
 });
 
 export const controlBtn = style({
@@ -63,7 +63,7 @@ export const controlBtn = style({
       minWidth: '44px',
       minHeight: '44px'
     },
-    // Only use :hover on devices that support it (avoids stuck hover after tap on touch).
+    // Only use :hover on devices that support it (avoids stuck hover after tap on touch)
     '(hover: hover)': {
       ':hover': {
         background: 'rgba(255, 255, 255, 0.25)'

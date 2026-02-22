@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'preact/hooks';
+import {useCallback, useEffect, useRef, useState} from 'preact/hooks';
 
 import {
   type Visualizer,
@@ -6,6 +6,7 @@ import {
   createVisualizer,
   getPresets
 } from '../lib/butterchurn.ts';
+import {useReducedMotion} from './useReducedMotion.ts';
 
 /*
  * Types.
@@ -18,6 +19,8 @@ type Size = {width: number; height: number};
  */
 
 export function useButterchurn() {
+  const reducedMotion = useReducedMotion();
+
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const visualizerRef = useRef<Visualizer | null>(null);
@@ -33,11 +36,11 @@ export function useButterchurn() {
   const [started, setStarted] = useState(false);
   const [isCanvasFullscreen, setIsCanvasFullscreen] = useState(false);
 
-  const handleToggleFullscreen = () => {
-    if (containerRef.current) toggleFullscreen(containerRef.current);
-  };
+  const toggleFullscreen = useCallback(() => {
+    if (containerRef.current) toggleContainerFullscreen(containerRef.current);
+  }, []);
 
-  const changePreset = (delta: number) => {
+  const changePreset = useCallback((delta: number) => {
     if (!allPresetsRef.current || !visualizerRef.current) return;
 
     const keys = presetKeysRef.current;
@@ -46,9 +49,17 @@ export function useButterchurn() {
 
     currentPresetRef.current = newPreset;
     visualizerRef.current.loadPreset(newPreset, 2.7);
-  };
+  }, []);
 
-  const start = () => {
+  const start = useCallback(() => {
+    if (audioContextRef.current) {
+      if (audioContextRef.current.state === 'suspended') {
+        audioContextRef.current.resume();
+      }
+      setStarted(true);
+      return;
+    }
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -76,13 +87,13 @@ export function useButterchurn() {
 
     createVisualizerRef.current = (size: Size) => {
       requestAnimationFrame(() => {
-        const canvas = canvasRef.current;
-        if (!canvas || !audioContextRef.current || !gainNodeRef.current) return;
+        const c = canvasRef.current;
+        if (!c || !audioContextRef.current || !gainNodeRef.current) return;
         visualizerRef.current = null;
-        canvas.width = size.width;
-        canvas.height = size.height;
+        c.width = size.width;
+        c.height = size.height;
         visualizerRef.current = createVisualizer(
-          canvas,
+          c,
           {
             audioContext: audioContextRef.current,
             gainNode: gainNodeRef.current
@@ -103,12 +114,67 @@ export function useButterchurn() {
     render();
 
     setStarted(true);
-  };
+  }, []);
 
-  // Sync visualizer canvas to the current viewport size.
   useEffect(() => {
-    if (!started) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
+    const {width, height} = viewportSize();
+    canvas.width = width;
+    canvas.height = height;
+
+    const {presets, keys} = getPresets();
+    allPresetsRef.current = presets;
+    presetKeysRef.current = keys;
+    presetIndexRef.current = Math.floor(Math.random() * keys.length);
+    currentPresetRef.current = presets[keys[presetIndexRef.current]];
+
+    if (reducedMotion) return;
+
+    const {audioContext, gainNode} = createOscillatorVisualizerContext();
+    audioContextRef.current = audioContext;
+    gainNodeRef.current = gainNode;
+
+    visualizerRef.current = createVisualizer(
+      canvas,
+      {audioContext, gainNode},
+      currentPresetRef.current,
+      width,
+      height
+    );
+
+    createVisualizerRef.current = (size: Size) => {
+      requestAnimationFrame(() => {
+        const c = canvasRef.current;
+        if (!c || !audioContextRef.current || !gainNodeRef.current) return;
+        visualizerRef.current = null;
+        c.width = size.width;
+        c.height = size.height;
+        visualizerRef.current = createVisualizer(
+          c,
+          {
+            audioContext: audioContextRef.current,
+            gainNode: gainNodeRef.current
+          },
+          currentPresetRef.current,
+          size.width,
+          size.height
+        );
+      });
+    };
+
+    const render = () => {
+      if (visualizerRef.current) {
+        visualizerRef.current.render();
+        requestAnimationFrame(render);
+      }
+    };
+    render();
+  }, [reducedMotion]);
+
+  // Sync visualizer canvas to the current viewport size. No-op until visualizer exists (createVisualizerRef.current?.).
+  useEffect(() => {
     const syncToViewport = () => {
       setIsCanvasFullscreen(Boolean(document.fullscreenElement));
       createVisualizerRef.current?.(viewportSize());
@@ -121,13 +187,13 @@ export function useButterchurn() {
       window.removeEventListener('resize', syncToViewport);
       document.removeEventListener('fullscreenchange', syncToViewport);
     };
-  }, [started]);
+  }, []);
 
   return {
     containerRef,
     canvasRef,
     isCanvasFullscreen,
-    toggleFullscreen: handleToggleFullscreen,
+    toggleFullscreen,
     started,
     start,
     changePreset
@@ -138,7 +204,7 @@ export function useButterchurn() {
  * Helpers.
  */
 
-function toggleFullscreen(container: HTMLDivElement): void {
+function toggleContainerFullscreen(container: HTMLDivElement): void {
   const fullscreenElement = document.fullscreenElement;
 
   if (fullscreenElement && document.exitFullscreen) {
