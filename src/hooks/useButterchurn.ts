@@ -22,6 +22,7 @@ type Size = {width: number; height: number};
 export function useButterchurn() {
   const reducedMotion = useReducedMotion();
 
+  // Refs.
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const visualizerRef = useRef<Visualizer | null>(null);
@@ -29,28 +30,35 @@ export function useButterchurn() {
   const gainNodeRef = useRef<GainNode | null>(null);
 
   const allPresetsRef = useRef<Record<string, unknown>>(null);
-  const presetKeysRef = useRef<string[]>([]);
-  const presetIndexRef = useRef(0);
   const currentPresetRef = useRef<unknown>(null);
   const createVisualizerRef = useRef<((size: Size) => void) | null>(null);
 
+  // States.
   const [started, setStarted] = useState(false);
   const [isCanvasFullscreen, setIsCanvasFullscreen] = useState(false);
+
+  const [presetIndex, setPresetIndex] = useState(0);
+  const [presetKeys, setPresetKeys] = useState<string[]>([]);
 
   const toggleFullscreen = useCallback(() => {
     if (containerRef.current) toggleContainerFullscreen(containerRef.current);
   }, []);
 
-  const changePreset = useCallback((delta: number) => {
-    if (!allPresetsRef.current || !visualizerRef.current) return;
+  const changePreset = useCallback(
+    (delta: number) => {
+      if (!allPresetsRef.current || !visualizerRef.current) return;
 
-    const keys = presetKeysRef.current;
-    presetIndexRef.current = (presetIndexRef.current + delta + keys.length) % keys.length;
-    const newPreset = allPresetsRef.current[keys[presetIndexRef.current]];
-
-    currentPresetRef.current = newPreset;
-    visualizerRef.current.loadPreset(newPreset, 2.7);
-  }, []);
+      setPresetIndex(prev => {
+        const keys = presetKeys;
+        const newIndex = (prev + delta + keys.length) % keys.length;
+        const newPreset = allPresetsRef.current![keys[newIndex]];
+        currentPresetRef.current = newPreset;
+        visualizerRef.current!.loadPreset(newPreset, 2.7);
+        return newIndex;
+      });
+    },
+    [presetKeys]
+  );
 
   const setupVisualizer = useCallback(
     (canvas: HTMLCanvasElement, context: VisualizerContext, width: number, height: number) => {
@@ -87,6 +95,7 @@ export function useButterchurn() {
     []
   );
 
+  // This starts the visualizer (if not already started) and makes the entire visualizer visible.
   const start = useCallback(() => {
     if (audioContextRef.current) {
       if (audioContextRef.current.state === 'suspended') {
@@ -105,9 +114,10 @@ export function useButterchurn() {
 
     const {presets, keys} = getPresets();
     allPresetsRef.current = presets;
-    presetKeysRef.current = keys;
-    presetIndexRef.current = Math.floor(Math.random() * keys.length);
-    currentPresetRef.current = presets[keys[presetIndexRef.current]];
+    setPresetKeys(keys);
+    const initialIndex = Math.floor(Math.random() * keys.length);
+    setPresetIndex(initialIndex);
+    currentPresetRef.current = presets[keys[initialIndex]];
 
     const {width, height} = viewportSize();
     canvas.width = width;
@@ -117,6 +127,8 @@ export function useButterchurn() {
     setStarted(true);
   }, [setupVisualizer]);
 
+  // This starts the visualizer immediately before the user interacts with the page. The visualizer
+  // is hidden except for the area beneath the button to start the visualizer.
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -127,9 +139,10 @@ export function useButterchurn() {
 
     const {presets, keys} = getPresets();
     allPresetsRef.current = presets;
-    presetKeysRef.current = keys;
-    presetIndexRef.current = Math.floor(Math.random() * keys.length);
-    currentPresetRef.current = presets[keys[presetIndexRef.current]];
+    setPresetKeys(keys);
+    const initialIndex = Math.floor(Math.random() * keys.length);
+    setPresetIndex(initialIndex);
+    currentPresetRef.current = presets[keys[initialIndex]];
 
     if (reducedMotion) return;
 
@@ -140,7 +153,7 @@ export function useButterchurn() {
     setupVisualizer(canvas, context, width, height);
   }, [reducedMotion, setupVisualizer]);
 
-  // Sync visualizer canvas to the current viewport size. No-op until visualizer exists (createVisualizerRef.current?.).
+  // Sync visualizer canvas to the current viewport size.
   useEffect(() => {
     const syncToViewport = () => {
       setIsCanvasFullscreen(Boolean(document.fullscreenElement));
@@ -163,7 +176,9 @@ export function useButterchurn() {
     toggleFullscreen,
     started,
     start,
-    changePreset
+    changePreset,
+    presetIndex,
+    presetKeys
   };
 }
 
