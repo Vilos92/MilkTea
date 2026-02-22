@@ -1,12 +1,16 @@
-import {useCallback, useEffect, useRef, useState} from 'preact/hooks';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'preact/hooks';
 
 import {
   type Visualizer,
   type VisualizerContext,
   createOscillatorVisualizerContext,
-  createVisualizer,
-  getPresets
-} from '../lib/butterchurn.ts';
+  createVisualizer
+} from '../lib/butterchurn/butterchurn.ts';
+import {
+  getPreset,
+  getPresetKeys,
+  prefetchNeighborPresets
+} from '../lib/butterchurn/butterchurnPresets.ts';
 import {useReducedMotion} from './useReducedMotion.ts';
 
 /*
@@ -29,7 +33,6 @@ export function useButterchurn() {
   const audioContextRef = useRef<AudioContext | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
 
-  const allPresetsRef = useRef<Record<string, unknown>>(null);
   const currentPresetRef = useRef<unknown>(null);
   const createVisualizerRef = useRef<((size: Size) => void) | null>(null);
 
@@ -40,24 +43,32 @@ export function useButterchurn() {
   const [presetIndex, setPresetIndex] = useState(0);
   const [presetKeys, setPresetKeys] = useState<string[]>([]);
 
+  /** Preset name → index (for lookup). List of [name, index] for UI. */
+  const presetNameToIndex = useMemo(() => new Map(presetKeys.map((name, i) => [name, i])), [presetKeys]);
+  const presetEntries = useMemo<ReadonlyArray<readonly [string, number]>>(
+    () => presetKeys.map((name, i) => [name, i] as const),
+    [presetKeys]
+  );
+
   const toggleFullscreen = useCallback(() => {
     if (containerRef.current) toggleContainerFullscreen(containerRef.current);
   }, []);
 
   const changePreset = useCallback(
     (delta: number) => {
-      if (!allPresetsRef.current || !visualizerRef.current) return;
+      const keys = presetKeys;
+      if (!keys.length || !visualizerRef.current) return;
 
-      setPresetIndex(prev => {
-        const keys = presetKeys;
-        const newIndex = (prev + delta + keys.length) % keys.length;
-        const newPreset = allPresetsRef.current![keys[newIndex]];
-        currentPresetRef.current = newPreset;
-        visualizerRef.current!.loadPreset(newPreset, 2.7);
-        return newIndex;
+      const n = keys.length;
+      const newIndex = (presetIndex + delta + n) % n;
+      getPreset(newIndex).then(preset => {
+        currentPresetRef.current = preset;
+        visualizerRef.current?.loadPreset(preset, 2.7);
+        setPresetIndex(newIndex);
+        prefetchNeighborPresets(newIndex, n);
       });
     },
-    [presetKeys]
+    [presetKeys, presetIndex]
   );
 
   const setupVisualizer = useCallback(
@@ -96,10 +107,10 @@ export function useButterchurn() {
   );
 
   // This starts the visualizer (if not already started) and makes the entire visualizer visible.
-  const start = useCallback(() => {
+  const start = useCallback(async () => {
     if (audioContextRef.current) {
       if (audioContextRef.current.state === 'suspended') {
-        audioContextRef.current.resume();
+        await audioContextRef.current.resume();
       }
       setStarted(true);
       return;
@@ -108,16 +119,19 @@ export function useButterchurn() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    const keys = await getPresetKeys();
+    setPresetKeys(keys);
+    if (!keys.length) return;
+
+    const initialIndex = Math.floor(Math.random() * keys.length);
+    const preset = await getPreset(initialIndex);
+    currentPresetRef.current = preset;
+    setPresetIndex(initialIndex);
+    prefetchNeighborPresets(initialIndex, keys.length);
+
     const context = createOscillatorVisualizerContext();
     audioContextRef.current = context.audioContext;
     gainNodeRef.current = context.gainNode;
-
-    const {presets, keys} = getPresets();
-    allPresetsRef.current = presets;
-    setPresetKeys(keys);
-    const initialIndex = Math.floor(Math.random() * keys.length);
-    setPresetIndex(initialIndex);
-    currentPresetRef.current = presets[keys[initialIndex]];
 
     const {width, height} = viewportSize();
     canvas.width = width;
@@ -137,20 +151,25 @@ export function useButterchurn() {
     canvas.width = width;
     canvas.height = height;
 
-    const {presets, keys} = getPresets();
-    allPresetsRef.current = presets;
-    setPresetKeys(keys);
-    const initialIndex = Math.floor(Math.random() * keys.length);
-    setPresetIndex(initialIndex);
-    currentPresetRef.current = presets[keys[initialIndex]];
+    (async () => {
+      const keys = await getPresetKeys();
+      setPresetKeys(keys);
+      if (!keys.length) return;
 
-    if (reducedMotion) return;
+      const initialIndex = Math.floor(Math.random() * keys.length);
+      const preset = await getPreset(initialIndex);
+      currentPresetRef.current = preset;
+      setPresetIndex(initialIndex);
+      prefetchNeighborPresets(initialIndex, keys.length);
 
-    const context = createOscillatorVisualizerContext();
-    audioContextRef.current = context.audioContext;
-    gainNodeRef.current = context.gainNode;
+      if (reducedMotion) return;
 
-    setupVisualizer(canvas, context, width, height);
+      const context = createOscillatorVisualizerContext();
+      audioContextRef.current = context.audioContext;
+      gainNodeRef.current = context.gainNode;
+
+      setupVisualizer(canvas, context, width, height);
+    })();
   }, [reducedMotion, setupVisualizer]);
 
   // Sync visualizer canvas to the current viewport size.
@@ -178,7 +197,10 @@ export function useButterchurn() {
     start,
     changePreset,
     presetIndex,
-    presetKeys
+    presetKeys,
+    presetNameToIndex,
+    presetEntries,
+    getPresetByIndex: getPreset
   };
 }
 

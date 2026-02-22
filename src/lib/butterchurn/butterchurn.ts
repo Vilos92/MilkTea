@@ -1,7 +1,5 @@
 // @ts-expect-error - no types
 import butterchurn from 'butterchurn';
-// @ts-expect-error - no types
-import butterchurnPresets from 'butterchurn-presets';
 
 /*
  * Types.
@@ -19,15 +17,7 @@ export type VisualizerContext = {
  */
 
 /**
- * Presets: get all butterchurn presets and their keys.
- */
-export function getPresets(): {presets: Record<string, unknown>; keys: string[]} {
-  const presets = butterchurnPresets.getPresets();
-  return {presets, keys: Object.keys(presets)};
-}
-
-/*
- * Creates a butternchurn Visualizer instance.
+ * Creates a butterchurn Visualizer instance.
  * NOTE: The Visualizer is not responsible for setting the outer canvas dimensions.
  */
 export function createVisualizer(
