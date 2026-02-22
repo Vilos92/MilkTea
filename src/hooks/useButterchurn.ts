@@ -2,6 +2,7 @@ import {useCallback, useEffect, useRef, useState} from 'preact/hooks';
 
 import {
   type Visualizer,
+  type VisualizerContext,
   createOscillatorVisualizerContext,
   createVisualizer,
   getPresets
@@ -51,6 +52,41 @@ export function useButterchurn() {
     visualizerRef.current.loadPreset(newPreset, 2.7);
   }, []);
 
+  const setupVisualizer = useCallback(
+    (canvas: HTMLCanvasElement, context: VisualizerContext, width: number, height: number) => {
+      visualizerRef.current = createVisualizer(canvas, context, currentPresetRef.current, width, height);
+
+      createVisualizerRef.current = (size: Size) => {
+        requestAnimationFrame(() => {
+          const c = canvasRef.current;
+          if (!c || !audioContextRef.current || !gainNodeRef.current) return;
+          visualizerRef.current = null;
+          c.width = size.width;
+          c.height = size.height;
+          visualizerRef.current = createVisualizer(
+            c,
+            {
+              audioContext: audioContextRef.current,
+              gainNode: gainNodeRef.current
+            },
+            currentPresetRef.current,
+            size.width,
+            size.height
+          );
+        });
+      };
+
+      const render = () => {
+        if (visualizerRef.current) {
+          visualizerRef.current.render();
+          requestAnimationFrame(render);
+        }
+      };
+      render();
+    },
+    []
+  );
+
   const start = useCallback(() => {
     if (audioContextRef.current) {
       if (audioContextRef.current.state === 'suspended') {
@@ -63,9 +99,9 @@ export function useButterchurn() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const {audioContext, gainNode} = createOscillatorVisualizerContext();
-    audioContextRef.current = audioContext;
-    gainNodeRef.current = gainNode;
+    const context = createOscillatorVisualizerContext();
+    audioContextRef.current = context.audioContext;
+    gainNodeRef.current = context.gainNode;
 
     const {presets, keys} = getPresets();
     allPresetsRef.current = presets;
@@ -77,44 +113,9 @@ export function useButterchurn() {
     canvas.width = width;
     canvas.height = height;
 
-    visualizerRef.current = createVisualizer(
-      canvas,
-      {audioContext, gainNode},
-      currentPresetRef.current,
-      width,
-      height
-    );
-
-    createVisualizerRef.current = (size: Size) => {
-      requestAnimationFrame(() => {
-        const c = canvasRef.current;
-        if (!c || !audioContextRef.current || !gainNodeRef.current) return;
-        visualizerRef.current = null;
-        c.width = size.width;
-        c.height = size.height;
-        visualizerRef.current = createVisualizer(
-          c,
-          {
-            audioContext: audioContextRef.current,
-            gainNode: gainNodeRef.current
-          },
-          currentPresetRef.current,
-          size.width,
-          size.height
-        );
-      });
-    };
-
-    const render = () => {
-      if (visualizerRef.current) {
-        visualizerRef.current.render();
-        requestAnimationFrame(render);
-      }
-    };
-    render();
-
+    setupVisualizer(canvas, context, width, height);
     setStarted(true);
-  }, []);
+  }, [setupVisualizer]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -132,46 +133,12 @@ export function useButterchurn() {
 
     if (reducedMotion) return;
 
-    const {audioContext, gainNode} = createOscillatorVisualizerContext();
-    audioContextRef.current = audioContext;
-    gainNodeRef.current = gainNode;
+    const context = createOscillatorVisualizerContext();
+    audioContextRef.current = context.audioContext;
+    gainNodeRef.current = context.gainNode;
 
-    visualizerRef.current = createVisualizer(
-      canvas,
-      {audioContext, gainNode},
-      currentPresetRef.current,
-      width,
-      height
-    );
-
-    createVisualizerRef.current = (size: Size) => {
-      requestAnimationFrame(() => {
-        const c = canvasRef.current;
-        if (!c || !audioContextRef.current || !gainNodeRef.current) return;
-        visualizerRef.current = null;
-        c.width = size.width;
-        c.height = size.height;
-        visualizerRef.current = createVisualizer(
-          c,
-          {
-            audioContext: audioContextRef.current,
-            gainNode: gainNodeRef.current
-          },
-          currentPresetRef.current,
-          size.width,
-          size.height
-        );
-      });
-    };
-
-    const render = () => {
-      if (visualizerRef.current) {
-        visualizerRef.current.render();
-        requestAnimationFrame(render);
-      }
-    };
-    render();
-  }, [reducedMotion]);
+    setupVisualizer(canvas, context, width, height);
+  }, [reducedMotion, setupVisualizer]);
 
   // Sync visualizer canvas to the current viewport size. No-op until visualizer exists (createVisualizerRef.current?.).
   useEffect(() => {

@@ -9,7 +9,7 @@ import butterchurnPresets from 'butterchurn-presets';
 
 export type Visualizer = ReturnType<typeof butterchurn.default.createVisualizer>;
 
-type VisualizerContext = {
+export type VisualizerContext = {
   audioContext: AudioContext;
   gainNode: GainNode;
 };

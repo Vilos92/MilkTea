@@ -97,9 +97,9 @@ function usePresetKeys(changePreset: (delta: number) => void) {
       }
     };
 
-    window.addEventListener('keydown', handleKeydown);
+    window.addEventListener('keydown', handleKeydown, true);
 
-    return () => window.removeEventListener('keydown', handleKeydown);
+    return () => window.removeEventListener('keydown', handleKeydown, true);
   }, []);
 }
 

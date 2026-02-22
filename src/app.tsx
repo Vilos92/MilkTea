@@ -32,9 +32,9 @@ export function App() {
 
   useEffect(() => {
     if (started) return;
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
         start();
       }
     };
