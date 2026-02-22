@@ -1,5 +1,7 @@
+import type {RefObject} from 'preact';
 import {useEffect, useRef, useState} from 'preact/hooks';
 
+import {useSwipe} from '../../hooks/useSwipe.ts';
 import {controlBtn, controls, controlsPill, controlsPillHovered} from './controls.css.ts';
 
 /*
@@ -7,6 +9,7 @@ import {controlBtn, controls, controlsPill, controlsPillHovered} from './control
  */
 
 type ControlsProps = {
+  overlayRef: RefObject<HTMLElement>;
   isFullscreen: boolean;
   toggleFullscreen: () => void;
   setControlsVisibility: (visibility: boolean) => void;
@@ -24,6 +27,7 @@ const CONTROLS_FADE_DELAY_MS = 2500;
  */
 
 export const Controls = ({
+  overlayRef,
   isFullscreen,
   toggleFullscreen,
   setControlsVisibility,
@@ -31,6 +35,13 @@ export const Controls = ({
 }: ControlsProps) => {
   const {controlsVisible, controlsHovered, handleControlsEnter, handleControlsLeave} =
     useControls(setControlsVisibility);
+
+  useSwipe(
+    overlayRef,
+    () => changePreset(1),
+    () => changePreset(-1)
+  );
+  usePresetKeys(changePreset);
 
   return (
     <div
@@ -71,6 +82,27 @@ export const Controls = ({
  * Hooks.
  */
 
+function usePresetKeys(changePreset: (delta: number) => void) {
+  const changePresetRef = useRef(changePreset);
+  changePresetRef.current = changePreset;
+
+  useEffect(() => {
+    const handleKeydown = (event: KeyboardEvent) => {
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        changePresetRef.current(-1);
+      } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        changePresetRef.current(1);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeydown);
+
+    return () => window.removeEventListener('keydown', handleKeydown);
+  }, []);
+}
+
 function useControls(setControlsVisibility: (visibility: boolean) => void) {
   const [controlsVisible, setControlsVisible] = useState(true);
   const [controlsHovered, setControlsHovered] = useState(false);
@@ -97,10 +129,12 @@ function useControls(setControlsVisibility: (visibility: boolean) => void) {
     };
 
     window.addEventListener('mousemove', showControls);
+    window.addEventListener('touchstart', showControls, {passive: true});
     scheduleFadeOut();
 
     return () => {
       window.removeEventListener('mousemove', showControls);
+      window.removeEventListener('touchstart', showControls);
       scheduleFadeOutRef.current = null;
       if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
     };

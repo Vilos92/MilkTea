@@ -1,4 +1,5 @@
-import {useState} from 'preact/hooks';
+import type {RefObject} from 'preact';
+import {useRef, useState} from 'preact/hooks';
 
 import {btn, container, overlay, overlayHideCursor} from './app.css.ts';
 import {Controls} from './components/controls/controls.tsx';
@@ -10,6 +11,8 @@ import {useButterchurn} from './hooks/useButterchurn.ts';
  */
 
 export function App() {
+  const overlayRef = useRef<HTMLDivElement>(null);
+
   const {containerRef, canvasRef, isCanvasFullscreen, toggleFullscreen, started, start, changePreset} =
     useButterchurn();
   const [controlsVisibility, setControlsVisibility] = useState(true);
@@ -17,6 +20,7 @@ export function App() {
   return (
     <div ref={containerRef} class={container}>
       {renderOverlay(
+        overlayRef,
         started,
         start,
         isCanvasFullscreen,
@@ -35,6 +39,7 @@ export function App() {
  */
 
 function renderOverlay(
+  overlayRef: RefObject<HTMLDivElement>,
   started: boolean,
   start: () => void,
   isCanvasFullscreen: boolean,
@@ -55,8 +60,9 @@ function renderOverlay(
 
   const overlayClass = controlsVisible ? overlay : [overlay, overlayHideCursor].join(' ');
   return (
-    <div class={overlayClass}>
+    <div ref={overlayRef} class={overlayClass}>
       <Controls
+        overlayRef={overlayRef}
         isFullscreen={isCanvasFullscreen}
         toggleFullscreen={toggleFullscreen}
         changePreset={changePreset}
