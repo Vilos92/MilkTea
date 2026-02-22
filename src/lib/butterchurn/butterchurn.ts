@@ -45,6 +45,8 @@ export function createVisualizer(
 
 /**
  * Create a visualizer context with an oscillator and gain node.
+ * The oscillator is only used to feed the gain node for the visualizer.
+ * There is no connection to the destination (no audio output).
  */
 export function createOscillatorVisualizerContext(): VisualizerContext {
   const AudioContextClass = window.AudioContext;
@@ -57,7 +59,6 @@ export function createOscillatorVisualizerContext(): VisualizerContext {
   osc.frequency.value = 60;
   gain.gain.value = 0.1;
   osc.connect(gain);
-  gain.connect(ctx.destination);
   osc.start();
 
   return {audioContext: ctx, gainNode: gain};
