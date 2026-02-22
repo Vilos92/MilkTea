@@ -12,7 +12,3 @@ export const canvas = style({
   border: 'none',
   cursor: 'default'
 });
-
-export const canvasHideCursor = style({
-  cursor: 'none'
-});

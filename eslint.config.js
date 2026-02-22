@@ -1,5 +1,6 @@
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import preact from 'eslint-plugin-preact';
+import react from 'eslint-plugin-react';
 import {defineConfig} from 'eslint/config';
 import tseslint from 'typescript-eslint';
 
@@ -10,20 +11,23 @@ export default defineConfig([
     files: ['**/*.{ts,tsx}'],
     plugins: {
       preact,
+      react,
       'jsx-a11y': jsxA11y
     },
     languageOptions: {
       parserOptions: {
-        projectService: true, // 2026's "auto-find tsconfig" feature
+        projectService: true,
         tsconfigRootDir: import.meta.dirname
       }
     },
+    settings: {
+      react: {version: '18.2'}
+    },
     rules: {
-      ...preact.configs.recommended.rules,
       ...jsxA11y.configs.recommended.rules,
 
-      // preact uses 'class' instead of 'className'
-      'preact/no-unknown-property': ['error', {ignore: ['class']}]
+      // Preact uses 'class' instead of 'className'
+      'react/no-unknown-property': ['error', {ignore: ['class']}]
     }
   },
 

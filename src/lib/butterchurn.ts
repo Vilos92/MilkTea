@@ -1,6 +1,6 @@
-// @ts-ignore
+// @ts-expect-error - no types
 import butterchurn from 'butterchurn';
-// @ts-ignore
+// @ts-expect-error - no types
 import butterchurnPresets from 'butterchurn-presets';
 
 /*

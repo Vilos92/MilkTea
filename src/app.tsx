@@ -1,5 +1,8 @@
-import {btn, btnFullscreen, controls, root, startScreen} from './app.css.ts';
-import {Visualizer} from './components/visualizer.tsx';
+import {useState} from 'preact/hooks';
+
+import {btn, container, overlay, overlayHideCursor} from './app.css.ts';
+import {Controls} from './components/controls/controls.tsx';
+import {Visualizer} from './components/visualizer/visualizer.tsx';
 import {useButterchurn} from './hooks/useButterchurn.ts';
 
 /*
@@ -7,32 +10,58 @@ import {useButterchurn} from './hooks/useButterchurn.ts';
  */
 
 export function App() {
-  const {canvasRef, isCanvasFullscreen, toggleFullscreen, started, start, changePreset} =
+  const {containerRef, canvasRef, isCanvasFullscreen, toggleFullscreen, started, start, changePreset} =
     useButterchurn();
+  const [controlsVisibility, setControlsVisibility] = useState(true);
 
   return (
-    <div class={root}>
-      {!started ? (
-        <div class={startScreen}>
-          <button type="button" onClick={start} class={btn}>
-            START OSCILLATOR VISUALS
-          </button>
-        </div>
-      ) : (
-        <div class={controls}>
-          <button type="button" onClick={() => changePreset(-1)} class={btn}>
-            ← PREV
-          </button>
-          <button type="button" onClick={toggleFullscreen} class={btnFullscreen}>
-            🖥️ FULLSCREEN
-          </button>
-          <button type="button" onClick={() => changePreset(1)} class={btn}>
-            NEXT →
-          </button>
-        </div>
+    <div ref={containerRef} class={container}>
+      {renderOverlay(
+        started,
+        start,
+        isCanvasFullscreen,
+        toggleFullscreen,
+        controlsVisibility,
+        setControlsVisibility,
+        changePreset
       )}
+      <Visualizer canvasRef={canvasRef} />
+    </div>
+  );
+}
 
-      <Visualizer canvasRef={canvasRef} hideCursor={started && isCanvasFullscreen} />
+/*
+ * Renderers.
+ */
+
+function renderOverlay(
+  started: boolean,
+  start: () => void,
+  isCanvasFullscreen: boolean,
+  toggleFullscreen: () => void,
+  controlsVisible: boolean,
+  setControlsVisibility: (visibility: boolean) => void,
+  changePreset: (delta: number) => void
+) {
+  if (!started) {
+    return (
+      <div class={overlay}>
+        <button type="button" onClick={start} class={btn} aria-label="Start visuals">
+          TESSELLATE
+        </button>
+      </div>
+    );
+  }
+
+  const overlayClass = controlsVisible ? overlay : [overlay, overlayHideCursor].join(' ');
+  return (
+    <div class={overlayClass}>
+      <Controls
+        isFullscreen={isCanvasFullscreen}
+        toggleFullscreen={toggleFullscreen}
+        changePreset={changePreset}
+        setControlsVisibility={setControlsVisibility}
+      />
     </div>
   );
 }

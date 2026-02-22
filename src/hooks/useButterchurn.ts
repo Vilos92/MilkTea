@@ -18,6 +18,7 @@ type Size = {width: number; height: number};
  */
 
 export function useButterchurn() {
+  const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const visualizerRef = useRef<Visualizer | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -27,13 +28,13 @@ export function useButterchurn() {
   const presetKeysRef = useRef<string[]>([]);
   const presetIndexRef = useRef(0);
   const currentPresetRef = useRef<unknown>(null);
-  const createVisualizerRef = useRef<((width: number, height: number) => void) | null>(null);
+  const createVisualizerRef = useRef<((size: Size) => void) | null>(null);
 
   const [started, setStarted] = useState(false);
   const [isCanvasFullscreen, setIsCanvasFullscreen] = useState(false);
 
   const handleToggleFullscreen = () => {
-    if (canvasRef.current) toggleFullscreen(canvasRef.current);
+    if (containerRef.current) toggleFullscreen(containerRef.current);
   };
 
   const changePreset = (delta: number) => {
@@ -73,13 +74,13 @@ export function useButterchurn() {
       height
     );
 
-    createVisualizerRef.current = (width: number, height: number) => {
+    createVisualizerRef.current = (size: Size) => {
       requestAnimationFrame(() => {
         const canvas = canvasRef.current;
         if (!canvas || !audioContextRef.current || !gainNodeRef.current) return;
         visualizerRef.current = null;
-        canvas.width = width;
-        canvas.height = height;
+        canvas.width = size.width;
+        canvas.height = size.height;
         visualizerRef.current = createVisualizer(
           canvas,
           {
@@ -87,8 +88,8 @@ export function useButterchurn() {
             gainNode: gainNodeRef.current
           },
           currentPresetRef.current,
-          width,
-          height
+          size.width,
+          size.height
         );
       });
     };
@@ -109,9 +110,8 @@ export function useButterchurn() {
     if (!started) return;
 
     const syncToViewport = () => {
-      const {width, height} = viewportSize();
       setIsCanvasFullscreen(Boolean(document.fullscreenElement));
-      createVisualizerRef.current?.(width, height);
+      createVisualizerRef.current?.(viewportSize());
     };
 
     window.addEventListener('resize', syncToViewport);
@@ -124,6 +124,7 @@ export function useButterchurn() {
   }, [started]);
 
   return {
+    containerRef,
     canvasRef,
     isCanvasFullscreen,
     toggleFullscreen: handleToggleFullscreen,
@@ -137,7 +138,7 @@ export function useButterchurn() {
  * Helpers.
  */
 
-function toggleFullscreen(canvas: HTMLCanvasElement): void {
+function toggleFullscreen(container: HTMLDivElement): void {
   const fullscreenElement = document.fullscreenElement;
 
   if (fullscreenElement && document.exitFullscreen) {
@@ -145,8 +146,8 @@ function toggleFullscreen(canvas: HTMLCanvasElement): void {
     return;
   }
 
-  if (canvas.requestFullscreen) {
-    canvas.requestFullscreen().catch(console.error);
+  if (container.requestFullscreen) {
+    container.requestFullscreen().catch(console.error);
   }
 }
 
