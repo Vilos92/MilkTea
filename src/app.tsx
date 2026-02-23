@@ -10,16 +10,19 @@ import {
   overlay,
   overlayHideCursor,
   overlaySplash,
+  splashButtonContent,
   splashCutout,
   splashCutoutColumn,
-  splashDisclaimer
+  splashDisclaimer,
+  splashSubtext,
+  splashTitleLine
 } from './app.css.ts';
 import {Controls} from './components/controls/controls.tsx';
 import {LocaleSwitcher} from './components/locale/localeSwitcher.tsx';
 import {Visualizer} from './components/visualizer/visualizer.tsx';
 import {useButterchurn} from './hooks/useButterchurn.ts';
 import {useReducedMotion} from './hooks/useReducedMotion.ts';
-import {LocaleProvider} from './provider/locale.tsx';
+import {LocaleProvider, useLocaleContext} from './provider/locale.tsx';
 import {TranslateProvider, useTranslate} from './provider/translation.tsx';
 
 /*
@@ -99,6 +102,16 @@ function Overlay(props: OverlayProps) {
     changePreset
   } = props;
   const t = useTranslate();
+  const {locale} = useLocaleContext();
+  const isEnglish = locale === 'en';
+  const splashLabel = isEnglish ? (
+    t('splash.button')
+  ) : (
+    <span class={splashButtonContent}>
+      <span class={splashTitleLine}>{t('splash.button')}</span>
+      <span class={splashSubtext}>MilkTea</span>
+    </span>
+  );
 
   if (!started) {
     if (reducedMotion) {
@@ -106,7 +119,7 @@ function Overlay(props: OverlayProps) {
         <div class={overlaySplash}>
           <div class={splashCutoutColumn}>
             <button type="button" onClick={start} class={btnSolid} aria-label={t('splash.ariaStart')}>
-              {t('splash.button')}
+              {splashLabel}
             </button>
             <p class={splashDisclaimer}>{t('splash.disclaimer1')}</p>
             <p class={splashDisclaimer}>{t('splash.disclaimer2')}</p>
@@ -119,7 +132,7 @@ function Overlay(props: OverlayProps) {
       <div class={overlaySplash}>
         <div class={splashCutout}>
           <button type="button" onClick={start} class={btn} aria-label={t('splash.ariaStart')}>
-            {t('splash.button')}
+            {splashLabel}
           </button>
         </div>
       </div>

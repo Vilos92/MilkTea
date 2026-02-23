@@ -1,10 +1,12 @@
 {
-  "splash.button": "镶嵌",
+  "splash.button": "奶茶",
   "splash.ariaStart": "开始视觉效果",
   "splash.disclaimer1": "由于本展品的交互方式较为特殊，可能无法完全符合常见的无障碍预期。感谢您的理解。",
   "splash.disclaimer2": "点击上方按钮加载视觉演示。",
   "controls.prevPreset": "上一个预设",
   "controls.nextPreset": "下一个预设",
   "controls.enterFullscreen": "进入全屏",
-  "controls.exitFullscreen": "退出全屏"
+  "controls.exitFullscreen": "退出全屏",
+  "locale.label": "语言",
+  "locale.ariaSelectLanguage": "选择语言"
 }

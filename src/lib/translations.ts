@@ -13,7 +13,9 @@ export type TranslationKey =
   | 'controls.prevPreset'
   | 'controls.nextPreset'
   | 'controls.enterFullscreen'
-  | 'controls.exitFullscreen';
+  | 'controls.exitFullscreen'
+  | 'locale.label'
+  | 'locale.ariaSelectLanguage';
 
 export type Translations = Record<TranslationKey, string>;
 
@@ -23,7 +25,7 @@ export type Translations = Record<TranslationKey, string>;
 
 /** Hard-coded English manuscript. No fetch for 'en', as it is the default locale. */
 export const ENGLISH_TRANSLATIONS: Translations = {
-  'splash.button': 'TESSELLATE',
+  'splash.button': 'MilkTea',
   'splash.ariaStart': 'Start visuals',
   'splash.disclaimer1':
     'Given its unconventional interactions, this exhibit may not fully adhere to common accessibility expectations. Thank you for your understanding.',
@@ -31,7 +33,9 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'controls.prevPreset': 'Previous preset',
   'controls.nextPreset': 'Next preset',
   'controls.enterFullscreen': 'Enter fullscreen',
-  'controls.exitFullscreen': 'Exit fullscreen'
+  'controls.exitFullscreen': 'Exit fullscreen',
+  'locale.label': 'Language',
+  'locale.ariaSelectLanguage': 'Select language'
 };
 
 const SUPPORTED_LOCALES = new Set<string>(Object.values(Locale));

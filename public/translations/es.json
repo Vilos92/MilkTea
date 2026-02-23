@@ -1,10 +1,12 @@
 {
-  "splash.button": "TESELAR",
+  "splash.button": "Té con leche",
   "splash.ariaStart": "Iniciar visuales",
   "splash.disclaimer1": "Dado sus interacciones poco convencionales, esta instalación puede no cumplir plenamente con las expectativas habituales de accesibilidad. Gracias por su comprensión.",
   "splash.disclaimer2": "Haga clic en el botón de arriba para cargar la demostración visual.",
   "controls.prevPreset": "Preset anterior",
   "controls.nextPreset": "Preset siguiente",
   "controls.enterFullscreen": "Pantalla completa",
-  "controls.exitFullscreen": "Salir de pantalla completa"
+  "controls.exitFullscreen": "Salir de pantalla completa",
+  "locale.label": "Idioma",
+  "locale.ariaSelectLanguage": "Seleccionar idioma"
 }

@@ -1,26 +1,27 @@
 import type {Locale} from '../../lib/locale.ts';
 import {LOCALE_OPTIONS} from '../../lib/locale.ts';
 import {useLocaleContext} from '../../provider/locale.tsx';
-import {label, labelAlwaysLight, root, select, selectAlwaysLight} from './localeSwitcher.css.ts';
-
-/*
- * Types.
- */
+import {useTranslate} from '../../provider/translation.tsx';
+import {
+  globe,
+  label,
+  labelAlwaysLight,
+  root,
+  row,
+  select,
+  selectAlwaysLight
+} from './localeSwitcher.css.ts';
 
 type LocaleSwitcherProps = {
   alwaysLight: boolean;
 };
 
-/*
- * Component.
- */
-
 export function LocaleSwitcher({alwaysLight}: LocaleSwitcherProps) {
   const {locale, setLocaleOverride} = useLocaleContext();
+  const t = useTranslate();
 
   function handleChange(event: Event) {
-    const next = (event.target as HTMLSelectElement).value as Locale;
-    setLocaleOverride(next);
+    setLocaleOverride((event.target as HTMLSelectElement).value as Locale);
   }
 
   const labelClass = alwaysLight ? [label, labelAlwaysLight].join(' ') : label;
@@ -28,22 +29,23 @@ export function LocaleSwitcher({alwaysLight}: LocaleSwitcherProps) {
 
   return (
     <div class={root}>
-      <label htmlFor="locale-select" class={labelClass}>
-        Language
-      </label>
-      <select
-        id="locale-select"
-        class={selectClass}
-        value={locale}
-        onChange={handleChange}
-        aria-label="Select language"
-      >
-        {LOCALE_OPTIONS.map(opt => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
+      <div class={labelClass}>
+        <span class={row}>
+          <span class={globe} aria-hidden="true">🌐</span>
+          <select
+            class={selectClass}
+            value={locale}
+            onChange={handleChange}
+            aria-label={t('locale.ariaSelectLanguage')}
+          >
+            {LOCALE_OPTIONS.map(opt => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </span>
+      </div>
     </div>
   );
 }

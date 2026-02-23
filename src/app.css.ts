@@ -89,9 +89,10 @@ export const btnSolid = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  minWidth: '200px',
-  minHeight: '72px',
-  padding: '20px 40px',
+  width: '280px',
+  height: '96px',
+  padding: 0,
+  boxSizing: 'border-box',
   fontSize: '18px',
   background: '#0a0a0a',
   color: '#fff',
@@ -146,14 +147,37 @@ export const splashDisclaimer = style({
   textAlign: 'center'
 });
 
+/** Two-line splash label (localized title + “MilkTea” subtext) when locale !== en. */
+export const splashButtonContent = style({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: '4px'
+});
+
+/** Fixed-height slot for the top line so subtext doesn’t cause layout shift. */
+export const splashTitleLine = style({
+  display: 'block',
+  minHeight: '1.2em',
+  lineHeight: 1.2,
+  textAlign: 'center'
+});
+
+export const splashSubtext = style({
+  fontSize: '0.65em',
+  fontWeight: 500,
+  opacity: 0.9
+});
+
 /** Transparent “window” so the canvas shows through. */
 export const btn = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  minWidth: '200px',
-  minHeight: '72px',
-  padding: '20px 40px',
+  width: '280px',
+  height: '96px',
+  padding: 0,
+  boxSizing: 'border-box',
   fontSize: '18px',
   background: 'transparent',
   color: '#fff',
