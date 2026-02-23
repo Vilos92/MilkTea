@@ -1,0 +1,42 @@
+name: Continuous Integration
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  package-json:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-bun-and-dependencies
+      - name: Package JSON
+        run: bun run sort-package-json:check
+
+  prettier:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-bun-and-dependencies
+      - name: Prettier
+        run: bun run prettier:check
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-bun-and-dependencies
+      - name: Lint
+        run: bun run lint
+
+  typecheck:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-bun-and-dependencies
+      - name: Typecheck
+        run: bun run typecheck
