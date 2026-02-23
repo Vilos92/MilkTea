@@ -50,7 +50,7 @@ async function script() {
         }
       }
       if (hasAllPresets) {
-        checkSpinner.succeed(`Presets up to date (v${currentVersion}), skipping export`);
+        checkSpinner.succeed(`Presets up to date (v${currentVersion}), skipping export 🧈`);
         console.info(dim(outDir));
         return;
       }
@@ -67,7 +67,7 @@ async function script() {
   const presets = butterchurnPresets.getPresets();
   const keys = Object.keys(presets);
 
-  checkSpinner.succeed(`Loaded ${keys.length} presets (v${currentVersion})`);
+  checkSpinner.succeed(`Loaded ${keys.length} presets (v${currentVersion}) 🧈`);
 
   mkdirSync(outDir, {recursive: true});
 
@@ -84,7 +84,7 @@ async function script() {
   const manifest: Manifest = {version: currentVersion, keys};
   await Bun.write(manifestPath, JSON.stringify(manifest, null, 2));
 
-  writeSpinner.succeed(`Wrote ${keys.length} presets`);
+  writeSpinner.succeed(`Wrote ${keys.length} presets 🧈`);
   console.info(dim(outDir));
 }
 
