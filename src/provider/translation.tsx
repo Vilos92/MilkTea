@@ -2,6 +2,7 @@ import {createContext} from 'preact';
 import {useCallback, useContext, useEffect, useState} from 'preact/hooks';
 
 import {Locale} from '../lib/locale.ts';
+import {getStorageTranslations, setStorageTranslations} from '../lib/storage.ts';
 import {
   ENGLISH_TRANSLATIONS,
   type TranslationKey,
@@ -26,11 +27,16 @@ const TranslateContext = createContext<Translations>(ENGLISH_TRANSLATIONS);
  */
 export function TranslateProvider({children}: {children: preact.ComponentChildren}) {
   const {locale: desiredLocale} = useLocaleContext();
-  const [translations, setTranslations] = useState<Translations>(ENGLISH_TRANSLATIONS);
+  const [translations, setTranslations] = useState<Translations>(() => {
+    if (typeof localStorage === 'undefined') return ENGLISH_TRANSLATIONS;
+    const storageTranslations = getStorageTranslations();
+    return storageTranslations ?? ENGLISH_TRANSLATIONS;
+  });
 
   useEffect(() => {
     if (desiredLocale === Locale.ENGLISH) {
       setTranslations({...ENGLISH_TRANSLATIONS});
+      setStorageTranslations(undefined);
       return;
     }
 
@@ -43,7 +49,11 @@ export function TranslateProvider({children}: {children: preact.ComponentChildre
     let cancelled = false;
     fetchTranslations(desiredLocale)
       .then(fetchedTranslations => {
-        if (!cancelled) setTranslations({...fetchedTranslations});
+        if (cancelled) {
+          return;
+        }
+        setTranslations({...fetchedTranslations});
+        setStorageTranslations({...fetchedTranslations});
       })
       .catch(err => {
         if (!cancelled) {

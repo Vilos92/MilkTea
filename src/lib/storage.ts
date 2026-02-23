@@ -1,20 +1,30 @@
 import type {Locale} from './locale';
+import type {Translations} from './translations';
 
 /*
  * Types.
  */
 
-type StorageKey = 'locale';
+type StorageKey = 'locale' | 'translations';
 
 type MilkTeaStorageKey = `milktea:${StorageKey}`;
 
 type MilkTeaStorage = {
   locale: Locale;
+  translations: Translations;
 };
 
 /*
  * Storage.
  */
+
+export function setStorageTranslations(value: MilkTeaStorage['translations'] | undefined): void {
+  setStorageItem('translations', value);
+}
+
+export function getStorageTranslations(): MilkTeaStorage['translations'] | undefined {
+  return getStorageItem<MilkTeaStorage['translations']>('translations');
+}
 
 export function setStorageLocale(value: MilkTeaStorage['locale'] | undefined): void {
   setStorageItem('locale', value);
