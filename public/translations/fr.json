@@ -1,0 +1,10 @@
+{
+  "splash.button": "TESSELLER",
+  "splash.ariaStart": "Démarrer les visuels",
+  "splash.disclaimer1": "En raison de ses interactions peu conventionnelles, cette installation peut ne pas respecter pleinement les attentes habituelles d'accessibilité. Merci de votre compréhension.",
+  "splash.disclaimer2": "Cliquez sur le bouton ci-dessus pour charger la démonstration visuelle.",
+  "controls.prevPreset": "Prését précédent",
+  "controls.nextPreset": "Prését suivant",
+  "controls.enterFullscreen": "Plein écran",
+  "controls.exitFullscreen": "Quitter le plein écran"
+}

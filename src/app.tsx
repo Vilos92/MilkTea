@@ -15,9 +15,12 @@ import {
   splashDisclaimer
 } from './app.css.ts';
 import {Controls} from './components/controls/controls.tsx';
+import {LocaleSwitcher} from './components/locale/localeSwitcher.tsx';
 import {Visualizer} from './components/visualizer/visualizer.tsx';
 import {useButterchurn} from './hooks/useButterchurn.ts';
 import {useReducedMotion} from './hooks/useReducedMotion.ts';
+import {LocaleProvider} from './provider/locale.tsx';
+import {TranslateProvider, useTranslate} from './provider/translation.tsx';
 
 /*
  * App.
@@ -45,54 +48,68 @@ export function App() {
   }, [started, start]);
 
   return (
-    <div
-      ref={containerRef}
-      class={[container, started ? containerStarted : containerSplash].join(' ')}
-    >
-      {renderOverlay(
-        reducedMotion,
-        overlayRef,
-        started,
-        start,
-        isCanvasFullscreen,
-        toggleFullscreen,
-        controlsVisibility,
-        setControlsVisibility,
-        changePreset
-      )}
-      <Visualizer canvasRef={canvasRef} />
-    </div>
+    <LocaleProvider>
+      <TranslateProvider>
+        <LocaleSwitcher alwaysLight={started} />
+        <div ref={containerRef} class={[container, started ? containerStarted : containerSplash].join(' ')}>
+          <Overlay
+            reducedMotion={reducedMotion}
+            overlayRef={overlayRef}
+            started={started}
+            start={start}
+            isCanvasFullscreen={isCanvasFullscreen}
+            toggleFullscreen={toggleFullscreen}
+            controlsVisible={controlsVisibility}
+            setControlsVisibility={setControlsVisibility}
+            changePreset={changePreset}
+          />
+          <Visualizer canvasRef={canvasRef} />
+        </div>
+      </TranslateProvider>
+    </LocaleProvider>
   );
 }
 
 /*
- * Renderers.
+ * Overlay (uses translate context for aria-labels and copy).
  */
 
-function renderOverlay(
-  reducedMotion: boolean,
-  overlayRef: RefObject<HTMLDivElement>,
-  started: boolean,
-  start: () => void,
-  isCanvasFullscreen: boolean,
-  toggleFullscreen: () => void,
-  controlsVisible: boolean,
-  setControlsVisibility: (visibility: boolean) => void,
-  changePreset: (delta: number) => void
-) {
+type OverlayProps = {
+  reducedMotion: boolean;
+  overlayRef: RefObject<HTMLDivElement>;
+  started: boolean;
+  start: () => void;
+  isCanvasFullscreen: boolean;
+  toggleFullscreen: () => void;
+  controlsVisible: boolean;
+  setControlsVisibility: (visibility: boolean) => void;
+  changePreset: (delta: number) => void;
+};
+
+function Overlay(props: OverlayProps) {
+  const {
+    reducedMotion,
+    overlayRef,
+    started,
+    start,
+    isCanvasFullscreen,
+    toggleFullscreen,
+    controlsVisible,
+    setControlsVisibility,
+    changePreset
+  } = props;
+  const t = useTranslate();
+
   if (!started) {
     if (reducedMotion) {
       return (
         <div class={overlaySplash}>
           <div class={splashCutoutColumn}>
-            <button type="button" onClick={start} class={btnSolid} aria-label="Start visuals">
-              TESSELLATE
+            <button type="button" onClick={start} class={btnSolid} aria-label={t('splash.ariaStart')}>
+              {t('splash.button')}
             </button>
-            <p class={splashDisclaimer}>
-              Given its unconventional interactions, this exhibit may not fully adhere to common accessibility
-              expectations. Thank you for your understanding.
-            </p>
-            <p class={splashDisclaimer}>Click the button above to load the visual demonstration.</p>
+            <p class={splashDisclaimer}>{t('splash.disclaimer1')}</p>
+            <p class={splashDisclaimer}>{t('splash.disclaimer2')}</p>
           </div>
         </div>
       );
@@ -101,8 +118,8 @@ function renderOverlay(
     return (
       <div class={overlaySplash}>
         <div class={splashCutout}>
-          <button type="button" onClick={start} class={btn} aria-label="Start visuals">
-            TESSELLATE
+          <button type="button" onClick={start} class={btn} aria-label={t('splash.ariaStart')}>
+            {t('splash.button')}
           </button>
         </div>
       </div>

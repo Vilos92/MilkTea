@@ -1,0 +1,10 @@
+{
+  "splash.button": "TESSELARE",
+  "splash.ariaStart": "Avvia visuali",
+  "splash.disclaimer1": "A causa delle sue interazioni non convenzionali, questa installazione potrebbe non rispettare pienamente le aspettative comuni di accessibilità. Grazie per la comprensione.",
+  "splash.disclaimer2": "Clicca il pulsante sopra per caricare la dimostrazione visiva.",
+  "controls.prevPreset": "Preset precedente",
+  "controls.nextPreset": "Preset successivo",
+  "controls.enterFullscreen": "Schermo intero",
+  "controls.exitFullscreen": "Esci da schermo intero"
+}

@@ -1,0 +1,10 @@
+{
+  "splash.button": "テッセレート",
+  "splash.ariaStart": "ビジュアルを開始",
+  "splash.disclaimer1": "通常とは異なる操作のため、この展示は一般的なアクセシビリティの期待に完全には沿わない場合があります。ご了承ください。",
+  "splash.disclaimer2": "上のボタンをクリックしてビジュアルデモを読み込みます。",
+  "controls.prevPreset": "前のプリセット",
+  "controls.nextPreset": "次のプリセット",
+  "controls.enterFullscreen": "全画面表示",
+  "controls.exitFullscreen": "全画面を終了"
+}

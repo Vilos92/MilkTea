@@ -1,0 +1,10 @@
+{
+  "splash.button": "TESSELAR",
+  "splash.ariaStart": "Iniciar visuais",
+  "splash.disclaimer1": "Devido às suas interações pouco convencionais, esta instalação pode não aderir totalmente às expectativas comuns de acessibilidade. Agradecemos a sua compreensão.",
+  "splash.disclaimer2": "Clique no botão acima para carregar a demonstração visual.",
+  "controls.prevPreset": "Preset anterior",
+  "controls.nextPreset": "Preset seguinte",
+  "controls.enterFullscreen": "Ecrã inteiro",
+  "controls.exitFullscreen": "Sair do ecrã inteiro"
+}

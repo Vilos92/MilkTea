@@ -55,9 +55,10 @@ export async function getPresetKeys(): Promise<string[]> {
 }
 
 /**
- * Load a single preset by index: cache hit, in-flight reuse, or fetch then store.
+ * Fetch a single preset by index: cache hit, in-flight reuse, or fetch then store.
+ * Fetches from `public/butterchurn/presets/<index>.json`.
  */
-async function loadPresetByIndex(index: number): Promise<ButterchurnPreset> {
+export async function fetchPresetByIndex(index: number): Promise<ButterchurnPreset> {
   const stored = presetStore.get(index);
   if (stored) return Promise.resolve(stored);
 
@@ -79,18 +80,11 @@ async function loadPresetByIndex(index: number): Promise<ButterchurnPreset> {
 }
 
 /**
- * Load a single preset by index (cached). Fetches from `public/butterchurn/presets/<index>.json`.
- */
-export async function getPreset(index: number): Promise<ButterchurnPreset> {
-  return loadPresetByIndex(index);
-}
-
-/**
  * Prefetch prev/current/next preset (with wrap). Dedupes via shared in-flight promises.
  */
 export function prefetchNeighborPresets(index: number, count: number): void {
   if (count === 0) return;
   const n = count;
   const indices = [(index - 1 + n) % n, index, (index + 1) % n];
-  for (const i of indices) loadPresetByIndex(i);
+  for (const i of indices) fetchPresetByIndex(i);
 }

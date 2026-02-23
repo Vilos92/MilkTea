@@ -1,0 +1,10 @@
+{
+  "splash.button": "TESSELLIEREN",
+  "splash.ariaStart": "Visuals starten",
+  "splash.disclaimer1": "Aufgrund der unkonventionellen Interaktionen entspricht diese Installation möglicherweise nicht vollständig den üblichen Anforderungen an Barrierefreiheit. Vielen Dank für Ihr Verständnis.",
+  "splash.disclaimer2": "Klicken Sie auf die Schaltfläche oben, um die visuelle Demonstration zu laden.",
+  "controls.prevPreset": "Vorheriges Preset",
+  "controls.nextPreset": "Nächstes Preset",
+  "controls.enterFullscreen": "Vollbild",
+  "controls.exitFullscreen": "Vollbild beenden"
+}

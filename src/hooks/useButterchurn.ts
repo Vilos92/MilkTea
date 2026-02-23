@@ -7,7 +7,7 @@ import {
   createVisualizer
 } from '../lib/butterchurn/butterchurn.ts';
 import {
-  getPreset,
+  fetchPresetByIndex,
   getPresetKeys,
   prefetchNeighborPresets
 } from '../lib/butterchurn/butterchurnPresets.ts';
@@ -61,7 +61,7 @@ export function useButterchurn() {
 
       const n = keys.length;
       const newIndex = (presetIndex + delta + n) % n;
-      getPreset(newIndex).then(preset => {
+      fetchPresetByIndex(newIndex).then(preset => {
         currentPresetRef.current = preset;
         visualizerRef.current?.loadPreset(preset, 2.7);
         setPresetIndex(newIndex);
@@ -106,16 +106,8 @@ export function useButterchurn() {
     []
   );
 
-  // This starts the visualizer (if not already started) and makes the entire visualizer visible.
-  const start = useCallback(async () => {
-    if (audioContextRef.current) {
-      if (audioContextRef.current.state === 'suspended') {
-        await audioContextRef.current.resume();
-      }
-      setStarted(true);
-      return;
-    }
-
+  // fetch preset data, create `AudioContext`, setup visualizer.
+  const initVisualizer = useCallback(async (): Promise<void> => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -124,7 +116,7 @@ export function useButterchurn() {
     if (!keys.length) return;
 
     const initialIndex = Math.floor(Math.random() * keys.length);
-    const preset = await getPreset(initialIndex);
+    const preset = await fetchPresetByIndex(initialIndex);
     currentPresetRef.current = preset;
     setPresetIndex(initialIndex);
     prefetchNeighborPresets(initialIndex, keys.length);
@@ -138,39 +130,26 @@ export function useButterchurn() {
     canvas.height = height;
 
     setupVisualizer(canvas, context, width, height);
-    setStarted(true);
   }, [setupVisualizer]);
 
-  // This starts the visualizer immediately before the user interacts with the page. The visualizer
-  // is hidden except for the area beneath the button to start the visualizer.
+  // Starts the visualizer (if needed) and dismisses the splash.
+  const start = useCallback(async () => {
+    if (audioContextRef.current) {
+      if (audioContextRef.current.state === 'suspended') {
+        await audioContextRef.current.resume();
+      }
+      setStarted(true);
+      return;
+    }
+    await initVisualizer();
+    setStarted(true);
+  }, [initVisualizer]);
+
+  // On mount: run init (preview under the button). Splash stays until user triggers the start.
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const {width, height} = viewportSize();
-    canvas.width = width;
-    canvas.height = height;
-
-    (async () => {
-      const keys = await getPresetKeys();
-      setPresetKeys(keys);
-      if (!keys.length) return;
-
-      const initialIndex = Math.floor(Math.random() * keys.length);
-      const preset = await getPreset(initialIndex);
-      currentPresetRef.current = preset;
-      setPresetIndex(initialIndex);
-      prefetchNeighborPresets(initialIndex, keys.length);
-
-      if (reducedMotion) return;
-
-      const context = createOscillatorVisualizerContext();
-      audioContextRef.current = context.audioContext;
-      gainNodeRef.current = context.gainNode;
-
-      setupVisualizer(canvas, context, width, height);
-    })();
-  }, [reducedMotion, setupVisualizer]);
+    if (reducedMotion) return;
+    initVisualizer();
+  }, [reducedMotion, initVisualizer]);
 
   // Sync visualizer canvas to the current viewport size.
   useEffect(() => {
@@ -200,7 +179,7 @@ export function useButterchurn() {
     presetKeys,
     presetNameToIndex,
     presetEntries,
-    getPresetByIndex: getPreset
+    getPresetByIndex: fetchPresetByIndex
   };
 }
 

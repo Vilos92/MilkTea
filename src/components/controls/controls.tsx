@@ -2,6 +2,7 @@ import type {RefObject} from 'preact';
 import {useEffect, useRef, useState} from 'preact/hooks';
 
 import {useSwipe} from '../../hooks/useSwipe.ts';
+import {useTranslate} from '../../provider/translation.tsx';
 import {controlBtn, controls, controlsPill, controlsPillHovered} from './controls.css.ts';
 
 /*
@@ -33,6 +34,7 @@ export const Controls = ({
   setControlsVisibility,
   changePreset
 }: ControlsProps) => {
+  const t = useTranslate();
   const {controlsVisible, controlsHovered, handleControlsEnter, handleControlsLeave} =
     useControls(setControlsVisibility);
 
@@ -58,7 +60,7 @@ export const Controls = ({
           type="button"
           onClick={() => changePreset(-1)}
           class={controlBtn}
-          aria-label="Previous preset"
+          aria-label={t('controls.prevPreset')}
         >
           ‹
         </button>
@@ -66,11 +68,16 @@ export const Controls = ({
           type="button"
           onClick={toggleFullscreen}
           class={controlBtn}
-          aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+          aria-label={isFullscreen ? t('controls.exitFullscreen') : t('controls.enterFullscreen')}
         >
           {isFullscreen ? '✕' : '⛶'}
         </button>
-        <button type="button" onClick={() => changePreset(1)} class={controlBtn} aria-label="Next preset">
+        <button
+          type="button"
+          onClick={() => changePreset(1)}
+          class={controlBtn}
+          aria-label={t('controls.nextPreset')}
+        >
           ›
         </button>
       </div>
