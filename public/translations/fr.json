@@ -8,5 +8,18 @@
   "controls.enterFullscreen": "Plein écran",
   "controls.exitFullscreen": "Quitter le plein écran",
   "locale.label": "Langue",
-  "locale.ariaSelectLanguage": "Choisir la langue"
+  "locale.ariaSelectLanguage": "Choisir la langue",
+  "help.about": "À propos",
+  "help.aboutText": "MilkTea. Un visualiseur MilkDrop pour le navigateur.",
+  "help.hotkeys": "Raccourcis",
+  "help.openLabel": "Aide",
+  "help.close": "Fermer",
+  "help.keyHelpKeys": "?",
+  "help.keyHelpAction": "Aide",
+  "help.keyPrevKeys": "Gauche, A, H",
+  "help.keyPrevAction": "Prését précédent",
+  "help.keyNextKeys": "Droite, D, L",
+  "help.keyNextAction": "Prését suivant",
+  "help.keyFullscreenKeys": "F",
+  "help.keyFullscreenAction": "Plein écran"
 }

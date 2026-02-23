@@ -8,5 +8,18 @@
   "controls.enterFullscreen": "Ecrã inteiro",
   "controls.exitFullscreen": "Sair do ecrã inteiro",
   "locale.label": "Idioma",
-  "locale.ariaSelectLanguage": "Selecionar idioma"
+  "locale.ariaSelectLanguage": "Selecionar idioma",
+  "help.about": "Sobre",
+  "help.aboutText": "MilkTea. Um visualizador de MilkDrop no navegador.",
+  "help.hotkeys": "Atalhos",
+  "help.openLabel": "Ajuda",
+  "help.close": "Fechar",
+  "help.keyHelpKeys": "?",
+  "help.keyHelpAction": "Ajuda",
+  "help.keyPrevKeys": "Esq, A, H",
+  "help.keyPrevAction": "Preset anterior",
+  "help.keyNextKeys": "Dir, D, L",
+  "help.keyNextAction": "Preset seguinte",
+  "help.keyFullscreenKeys": "F",
+  "help.keyFullscreenAction": "Ecrã inteiro"
 }

@@ -8,5 +8,18 @@
   "controls.enterFullscreen": "進入全螢幕",
   "controls.exitFullscreen": "結束全螢幕",
   "locale.label": "語言",
-  "locale.ariaSelectLanguage": "選擇語言"
+  "locale.ariaSelectLanguage": "選擇語言",
+  "help.about": "關於",
+  "help.aboutText": "MilkTea。瀏覽器版 MilkDrop 視覺化工具。",
+  "help.hotkeys": "快捷鍵",
+  "help.openLabel": "說明",
+  "help.close": "關閉",
+  "help.keyHelpKeys": "?",
+  "help.keyHelpAction": "說明",
+  "help.keyPrevKeys": "←, A, H",
+  "help.keyPrevAction": "上一個預設",
+  "help.keyNextKeys": "→, D, L",
+  "help.keyNextAction": "下一個預設",
+  "help.keyFullscreenKeys": "F",
+  "help.keyFullscreenAction": "全螢幕"
 }

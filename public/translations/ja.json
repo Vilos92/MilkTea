@@ -8,5 +8,18 @@
   "controls.enterFullscreen": "全画面表示",
   "controls.exitFullscreen": "全画面を終了",
   "locale.label": "言語",
-  "locale.ariaSelectLanguage": "言語を選択"
+  "locale.ariaSelectLanguage": "言語を選択",
+  "help.about": "概要",
+  "help.aboutText": "MilkTea. ブラウザ用MilkDropビジュアライザー。",
+  "help.hotkeys": "ショートカット",
+  "help.openLabel": "ヘルプ",
+  "help.close": "閉じる",
+  "help.keyHelpKeys": "?",
+  "help.keyHelpAction": "ヘルプ",
+  "help.keyPrevKeys": "←, A, H",
+  "help.keyPrevAction": "前のプリセット",
+  "help.keyNextKeys": "→, D, L",
+  "help.keyNextAction": "次のプリセット",
+  "help.keyFullscreenKeys": "F",
+  "help.keyFullscreenAction": "全画面表示"
 }

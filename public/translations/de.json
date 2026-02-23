@@ -8,5 +8,18 @@
   "controls.enterFullscreen": "Vollbild",
   "controls.exitFullscreen": "Vollbild beenden",
   "locale.label": "Sprache",
-  "locale.ariaSelectLanguage": "Sprache auswählen"
+  "locale.ariaSelectLanguage": "Sprache auswählen",
+  "help.about": "Über",
+  "help.aboutText": "MilkTea. Ein Browser-Visualizer für MilkDrop.",
+  "help.hotkeys": "Tastenkürzel",
+  "help.openLabel": "Hilfe",
+  "help.close": "Schließen",
+  "help.keyHelpKeys": "?",
+  "help.keyHelpAction": "Hilfe",
+  "help.keyPrevKeys": "Links, A, H",
+  "help.keyPrevAction": "Vorheriges Preset",
+  "help.keyNextKeys": "Rechts, D, L",
+  "help.keyNextAction": "Nächstes Preset",
+  "help.keyFullscreenKeys": "F",
+  "help.keyFullscreenAction": "Vollbild"
 }

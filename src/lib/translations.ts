@@ -4,7 +4,7 @@ import {DEFAULT_LOCALE, Locale} from './locale.ts';
  * Types.
  */
 
-/** Manuscript: all translation keys used in the app. */
+/** All translation keys used in the app. */
 export type TranslationKey =
   | 'splash.button'
   | 'splash.ariaStart'
@@ -15,7 +15,20 @@ export type TranslationKey =
   | 'controls.enterFullscreen'
   | 'controls.exitFullscreen'
   | 'locale.label'
-  | 'locale.ariaSelectLanguage';
+  | 'locale.ariaSelectLanguage'
+  | 'help.about'
+  | 'help.aboutText'
+  | 'help.hotkeys'
+  | 'help.openLabel'
+  | 'help.close'
+  | 'help.keyHelpKeys'
+  | 'help.keyHelpAction'
+  | 'help.keyPrevKeys'
+  | 'help.keyPrevAction'
+  | 'help.keyNextKeys'
+  | 'help.keyNextAction'
+  | 'help.keyFullscreenKeys'
+  | 'help.keyFullscreenAction';
 
 export type Translations = Record<TranslationKey, string>;
 
@@ -23,7 +36,7 @@ export type Translations = Record<TranslationKey, string>;
  * Constants.
  */
 
-/** Hard-coded English manuscript. No fetch for 'en', as it is the default locale. */
+/** Default locale manuscript. No fetch for 'en'; inlined so no en.json in public. */
 export const ENGLISH_TRANSLATIONS: Translations = {
   'splash.button': 'MilkTea',
   'splash.ariaStart': 'Start visuals',
@@ -35,7 +48,20 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'controls.enterFullscreen': 'Enter fullscreen',
   'controls.exitFullscreen': 'Exit fullscreen',
   'locale.label': 'Language',
-  'locale.ariaSelectLanguage': 'Select language'
+  'locale.ariaSelectLanguage': 'Select language',
+  'help.about': 'About',
+  'help.aboutText': 'MilkTea. A browser visualizer for MilkDrop.',
+  'help.hotkeys': 'Hotkeys',
+  'help.openLabel': 'Help',
+  'help.close': 'Close',
+  'help.keyHelpKeys': '?',
+  'help.keyHelpAction': 'Help',
+  'help.keyPrevKeys': 'Left, A, H',
+  'help.keyPrevAction': 'Previous preset',
+  'help.keyNextKeys': 'Right, D, L',
+  'help.keyNextAction': 'Next preset',
+  'help.keyFullscreenKeys': 'F',
+  'help.keyFullscreenAction': 'Toggle fullscreen'
 };
 
 const SUPPORTED_LOCALES = new Set<string>(Object.values(Locale));
@@ -88,6 +114,11 @@ export function detectBrowserLocale(): Locale {
 export async function fetchTranslations(locale: Locale): Promise<Translations> {
   const stored = translationStore.get(locale);
   if (stored) return Promise.resolve(stored);
+
+  if (locale === 'en') {
+    translationStore.set('en', ENGLISH_TRANSLATIONS);
+    return Promise.resolve(ENGLISH_TRANSLATIONS);
+  }
 
   const existing = inFlight.get(locale);
   if (existing) return existing;

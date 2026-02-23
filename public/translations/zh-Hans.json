@@ -8,5 +8,18 @@
   "controls.enterFullscreen": "进入全屏",
   "controls.exitFullscreen": "退出全屏",
   "locale.label": "语言",
-  "locale.ariaSelectLanguage": "选择语言"
+  "locale.ariaSelectLanguage": "选择语言",
+  "help.about": "关于",
+  "help.aboutText": "MilkTea。浏览器版 MilkDrop 可视化工具。",
+  "help.hotkeys": "快捷键",
+  "help.openLabel": "帮助",
+  "help.close": "关闭",
+  "help.keyHelpKeys": "?",
+  "help.keyHelpAction": "帮助",
+  "help.keyPrevKeys": "←, A, H",
+  "help.keyPrevAction": "上一个预设",
+  "help.keyNextKeys": "→, D, L",
+  "help.keyNextAction": "下一个预设",
+  "help.keyFullscreenKeys": "F",
+  "help.keyFullscreenAction": "全屏"
 }

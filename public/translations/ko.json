@@ -8,5 +8,18 @@
   "controls.enterFullscreen": "전체 화면",
   "controls.exitFullscreen": "전체 화면 종료",
   "locale.label": "언어",
-  "locale.ariaSelectLanguage": "언어 선택"
+  "locale.ariaSelectLanguage": "언어 선택",
+  "help.about": "정보",
+  "help.aboutText": "MilkTea. 브라우저용 MilkDrop 비주얼라이저.",
+  "help.hotkeys": "단축키",
+  "help.openLabel": "도움말",
+  "help.close": "닫기",
+  "help.keyHelpKeys": "?",
+  "help.keyHelpAction": "도움말",
+  "help.keyPrevKeys": "←, A, H",
+  "help.keyPrevAction": "이전 프리셋",
+  "help.keyNextKeys": "→, D, L",
+  "help.keyNextAction": "다음 프리셋",
+  "help.keyFullscreenKeys": "F",
+  "help.keyFullscreenAction": "전체 화면"
 }

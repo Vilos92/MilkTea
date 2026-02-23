@@ -2,7 +2,8 @@ import {createContext} from 'preact';
 import {useCallback, useContext, useState} from 'preact/hooks';
 
 import {useLocale} from '../hooks/useLocale.ts';
-import {DEFAULT_LOCALE, type Locale} from '../lib/locale.ts';
+import {DEFAULT_LOCALE, type Locale, isLocale} from '../lib/locale.ts';
+import {getStorageLocale, setStorageLocale} from '../lib/storage.ts';
 
 /*
  * Types.
@@ -10,7 +11,7 @@ import {DEFAULT_LOCALE, type Locale} from '../lib/locale.ts';
 
 export type LocaleContextValue = {
   locale: Locale;
-  setLocaleOverride: (locale: Locale | null) => void;
+  setLocaleOverride: (locale: Locale | undefined) => void;
 };
 
 /*
@@ -28,10 +29,26 @@ const LocaleContext = createContext<LocaleContextValue>({
 
 export function LocaleProvider({children}: {children: preact.ComponentChildren}) {
   const {locale: browserLocale} = useLocale();
-  const [overrideLocale, setOverrideLocale] = useState<Locale | null>(null);
+  const [overrideLocale, setOverrideLocale] = useState<Locale | undefined>(() => {
+    if (typeof localStorage === 'undefined') return undefined;
+    const storageLocale = getStorageLocale();
+    return storageLocale && isLocale(storageLocale) ? storageLocale : undefined;
+  });
   const locale = overrideLocale ?? browserLocale;
 
-  const setLocaleOverride = useCallback((l: Locale | null) => setOverrideLocale(l), []);
+  const setLocaleOverride = useCallback(
+    (nextLocale: Locale | undefined) => {
+      if (nextLocale === browserLocale) {
+        setOverrideLocale(undefined);
+        setStorageLocale(undefined);
+        return;
+      }
+
+      setOverrideLocale(nextLocale);
+      setStorageLocale(nextLocale);
+    },
+    [browserLocale]
+  );
 
   const value: LocaleContextValue = {locale, setLocaleOverride};
 

@@ -27,6 +27,10 @@ export const Locale = {
 
 export type Locale = (typeof Locale)[keyof typeof Locale];
 
+export function isLocale(value: string): value is Locale {
+  return Object.values(Locale).includes(value as Locale);
+}
+
 export const DEFAULT_LOCALE: Locale = Locale.ENGLISH;
 
 export const LOCALE_LABELS: Record<Locale, string> = {
