@@ -1,1 +1,25 @@
-{"splash.button":"Молочный чай","splash.ariaStart":"Запустить визуализацию","splash.disclaimer1":"Из-за нестандартного взаимодействия эта экспозиция может не полностью соответствовать обычным ожиданиям доступности. Благодарим за понимание.","splash.disclaimer2":"Нажмите кнопку выше, чтобы загрузить визуальную демонстрацию.","controls.prevPreset":"Предыдущий пресет","controls.nextPreset":"Следующий пресет","controls.enterFullscreen":"Полный экран","controls.exitFullscreen":"Выйти из полного экрана","locale.label":"Язык","locale.ariaSelectLanguage":"Выбрать язык","help.about":"О программе","help.aboutText":"MilkTea. Визуализатор MilkDrop для браузера.","help.hotkeys":"Горячие клавиши","help.openLabel":"Справка","help.close":"Закрыть","help.keyHelpKeys":"?","help.keyHelpAction":"Справка","help.keyPrevKeys":"Влево, A, H","help.keyPrevAction":"Предыдущий пресет","help.keyNextKeys":"Вправо, D, L","help.keyNextAction":"Следующий пресет","help.keyFullscreenKeys":"F","help.keyFullscreenAction":"Полный экран"}
+{
+  "splash.button": "Молочный чай",
+  "splash.ariaStart": "Запустить визуализацию",
+  "splash.disclaimer1": "Из-за нестандартного взаимодействия эта экспозиция может не полностью соответствовать обычным ожиданиям доступности. Благодарим за понимание.",
+  "splash.disclaimer2": "Нажмите кнопку выше, чтобы загрузить визуальную демонстрацию.",
+  "controls.prevPreset": "Предыдущий пресет",
+  "controls.nextPreset": "Следующий пресет",
+  "controls.enterFullscreen": "Полный экран",
+  "controls.exitFullscreen": "Выйти из полного экрана",
+  "locale.label": "Язык",
+  "locale.ariaSelectLanguage": "Выбрать язык",
+  "help.about": "О программе",
+  "help.aboutText": "MilkTea. Визуализатор MilkDrop для браузера.",
+  "help.hotkeys": "Горячие клавиши",
+  "help.openLabel": "Справка",
+  "help.close": "Закрыть",
+  "help.keyHelpKeys": "?",
+  "help.keyHelpAction": "Справка",
+  "help.keyPrevKeys": "Влево, A, H",
+  "help.keyPrevAction": "Предыдущий пресет",
+  "help.keyNextKeys": "Вправо, D, L",
+  "help.keyNextAction": "Следующий пресет",
+  "help.keyFullscreenKeys": "F",
+  "help.keyFullscreenAction": "Полный экран"
+}

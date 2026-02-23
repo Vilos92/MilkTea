@@ -1,1 +1,25 @@
-{"splash.button":"תה עם חלב","splash.ariaStart":"התחל ויזואלים","splash.disclaimer1":"בגלל האינטראקציות הלא שגרתיות, ייתכן שהתערוכה הזו לא תעמוד במלואה בציפיות הנגישות המקובלות. תודה על ההבנה.","splash.disclaimer2":"לחץ על הכפתור למעלה כדי לטעון את ההדגמה הוויזואלית.","controls.prevPreset":"הגדרה קודמת","controls.nextPreset":"הגדרה הבאה","controls.enterFullscreen":"מסך מלא","controls.exitFullscreen":"צא ממסך מלא","locale.label":"שפה","locale.ariaSelectLanguage":"בחר שפה","help.about":"אודות","help.aboutText":"MilkTea. מציג ויזואלי של MilkDrop בדפדפן.","help.hotkeys":"קיצורי מקלדת","help.openLabel":"עזרה","help.close":"סגור","help.keyHelpKeys":"?","help.keyHelpAction":"עזרה","help.keyPrevKeys":"שמאל, A, H","help.keyPrevAction":"הגדרה קודמת","help.keyNextKeys":"ימין, D, L","help.keyNextAction":"הגדרה הבאה","help.keyFullscreenKeys":"F","help.keyFullscreenAction":"מסך מלא"}
+{
+  "splash.button": "תה עם חלב",
+  "splash.ariaStart": "התחל ויזואלים",
+  "splash.disclaimer1": "בגלל האינטראקציות הלא שגרתיות, ייתכן שהתערוכה הזו לא תעמוד במלואה בציפיות הנגישות המקובלות. תודה על ההבנה.",
+  "splash.disclaimer2": "לחץ על הכפתור למעלה כדי לטעון את ההדגמה הוויזואלית.",
+  "controls.prevPreset": "הגדרה קודמת",
+  "controls.nextPreset": "הגדרה הבאה",
+  "controls.enterFullscreen": "מסך מלא",
+  "controls.exitFullscreen": "צא ממסך מלא",
+  "locale.label": "שפה",
+  "locale.ariaSelectLanguage": "בחר שפה",
+  "help.about": "אודות",
+  "help.aboutText": "MilkTea. מציג ויזואלי של MilkDrop בדפדפן.",
+  "help.hotkeys": "קיצורי מקלדת",
+  "help.openLabel": "עזרה",
+  "help.close": "סגור",
+  "help.keyHelpKeys": "?",
+  "help.keyHelpAction": "עזרה",
+  "help.keyPrevKeys": "שמאל, A, H",
+  "help.keyPrevAction": "הגדרה קודמת",
+  "help.keyNextKeys": "ימין, D, L",
+  "help.keyNextAction": "הגדרה הבאה",
+  "help.keyFullscreenKeys": "F",
+  "help.keyFullscreenAction": "מסך מלא"
+}

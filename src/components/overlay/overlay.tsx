@@ -1,5 +1,9 @@
 import type {RefObject} from 'preact';
 
+import {useReducedMotion} from '../../hooks/useReducedMotion.ts';
+import {useLocaleContext} from '../../provider/locale.tsx';
+import {useTranslate} from '../../provider/translation.tsx';
+import {Controls} from '../controls/controls.tsx';
 import {
   btn,
   btnSolid,
@@ -13,10 +17,6 @@ import {
   splashSubtext,
   splashTitleLine
 } from './overlay.css.ts';
-import {useReducedMotion} from '../../hooks/useReducedMotion.ts';
-import {useLocaleContext} from '../../provider/locale.tsx';
-import {useTranslate} from '../../provider/translation.tsx';
-import {Controls} from '../controls/controls.tsx';
 
 /*
  * Types.

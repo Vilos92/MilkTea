@@ -1,1 +1,25 @@
-{"splash.button":"Ceai cu lapte","splash.ariaStart":"Pornește vizualizarea","splash.disclaimer1":"Datorită interacțiunilor neconvenționale, această instalație poate să nu respecte pe deplin așteptările comune de accesibilitate. Mulțumim pentru înțelegere.","splash.disclaimer2":"Faceți clic pe butonul de mai sus pentru a încărca demonstrația vizuală.","controls.prevPreset":"Setare anterioară","controls.nextPreset":"Setare următoare","controls.enterFullscreen":"Ecran complet","controls.exitFullscreen":"Ieși din ecran complet","locale.label":"Limbă","locale.ariaSelectLanguage":"Selectează limba","help.about":"Despre","help.aboutText":"MilkTea. Un vizualizator MilkDrop în browser.","help.hotkeys":"Scurtături","help.openLabel":"Ajutor","help.close":"Închide","help.keyHelpKeys":"?","help.keyHelpAction":"Ajutor","help.keyPrevKeys":"Stânga, A, H","help.keyPrevAction":"Setare anterioară","help.keyNextKeys":"Dreapta, D, L","help.keyNextAction":"Setare următoare","help.keyFullscreenKeys":"F","help.keyFullscreenAction":"Ecran complet"}
+{
+  "splash.button": "Ceai cu lapte",
+  "splash.ariaStart": "Pornește vizualizarea",
+  "splash.disclaimer1": "Datorită interacțiunilor neconvenționale, această instalație poate să nu respecte pe deplin așteptările comune de accesibilitate. Mulțumim pentru înțelegere.",
+  "splash.disclaimer2": "Faceți clic pe butonul de mai sus pentru a încărca demonstrația vizuală.",
+  "controls.prevPreset": "Setare anterioară",
+  "controls.nextPreset": "Setare următoare",
+  "controls.enterFullscreen": "Ecran complet",
+  "controls.exitFullscreen": "Ieși din ecran complet",
+  "locale.label": "Limbă",
+  "locale.ariaSelectLanguage": "Selectează limba",
+  "help.about": "Despre",
+  "help.aboutText": "MilkTea. Un vizualizator MilkDrop în browser.",
+  "help.hotkeys": "Scurtături",
+  "help.openLabel": "Ajutor",
+  "help.close": "Închide",
+  "help.keyHelpKeys": "?",
+  "help.keyHelpAction": "Ajutor",
+  "help.keyPrevKeys": "Stânga, A, H",
+  "help.keyPrevAction": "Setare anterioară",
+  "help.keyNextKeys": "Dreapta, D, L",
+  "help.keyNextAction": "Setare următoare",
+  "help.keyFullscreenKeys": "F",
+  "help.keyFullscreenAction": "Ecran complet"
+}

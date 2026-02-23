@@ -1,1 +1,25 @@
-{"splash.button":"Sütlü çay","splash.ariaStart":"Görselleri başlat","splash.disclaimer1":"Alışılmadık etkileşimleri nedeniyle bu sergi, yaygın erişilebilirlik beklentilerine tam uymayabilir. Anlayışınız için teşekkürler.","splash.disclaimer2":"Görsel gösterimi yüklemek için yukarıdaki düğmeye tıklayın.","controls.prevPreset":"Önceki ön ayar","controls.nextPreset":"Sonraki ön ayar","controls.enterFullscreen":"Tam ekran","controls.exitFullscreen":"Tam ekrandan çık","locale.label":"Dil","locale.ariaSelectLanguage":"Dil seçin","help.about":"Hakkında","help.aboutText":"MilkTea. Tarayıcı için MilkDrop görselleştirici.","help.hotkeys":"Kısayollar","help.openLabel":"Yardım","help.close":"Kapat","help.keyHelpKeys":"?","help.keyHelpAction":"Yardım","help.keyPrevKeys":"Sol, A, H","help.keyPrevAction":"Önceki ön ayar","help.keyNextKeys":"Sağ, D, L","help.keyNextAction":"Sonraki ön ayar","help.keyFullscreenKeys":"F","help.keyFullscreenAction":"Tam ekran"}
+{
+  "splash.button": "Sütlü çay",
+  "splash.ariaStart": "Görselleri başlat",
+  "splash.disclaimer1": "Alışılmadık etkileşimleri nedeniyle bu sergi, yaygın erişilebilirlik beklentilerine tam uymayabilir. Anlayışınız için teşekkürler.",
+  "splash.disclaimer2": "Görsel gösterimi yüklemek için yukarıdaki düğmeye tıklayın.",
+  "controls.prevPreset": "Önceki ön ayar",
+  "controls.nextPreset": "Sonraki ön ayar",
+  "controls.enterFullscreen": "Tam ekran",
+  "controls.exitFullscreen": "Tam ekrandan çık",
+  "locale.label": "Dil",
+  "locale.ariaSelectLanguage": "Dil seçin",
+  "help.about": "Hakkında",
+  "help.aboutText": "MilkTea. Tarayıcı için MilkDrop görselleştirici.",
+  "help.hotkeys": "Kısayollar",
+  "help.openLabel": "Yardım",
+  "help.close": "Kapat",
+  "help.keyHelpKeys": "?",
+  "help.keyHelpAction": "Yardım",
+  "help.keyPrevKeys": "Sol, A, H",
+  "help.keyPrevAction": "Önceki ön ayar",
+  "help.keyNextKeys": "Sağ, D, L",
+  "help.keyNextAction": "Sonraki ön ayar",
+  "help.keyFullscreenKeys": "F",
+  "help.keyFullscreenAction": "Tam ekran"
+}

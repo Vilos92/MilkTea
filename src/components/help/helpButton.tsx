@@ -1,4 +1,5 @@
 import {useEffect} from 'preact/hooks';
+
 import {useTranslate} from '../../provider/translation.tsx';
 import {helpButton, helpButtonAlwaysLight, helpButtonRoot} from './helpButton.css.ts';
 

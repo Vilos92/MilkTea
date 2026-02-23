@@ -1,1 +1,25 @@
-{"splash.button":"Herbata z mlekiem","splash.ariaStart":"Uruchom wizualizację","splash.disclaimer1":"Ze względu na nietypowe interakcje ta instalacja może nie spełniać w pełni powszechnych oczekiwań dotyczących dostępności. Dziękujemy za zrozumienie.","splash.disclaimer2":"Kliknij przycisk powyżej, aby załadować demonstrację wizualną.","controls.prevPreset":"Poprzedni preset","controls.nextPreset":"Następny preset","controls.enterFullscreen":"Pełny ekran","controls.exitFullscreen":"Zamknij pełny ekran","locale.label":"Język","locale.ariaSelectLanguage":"Wybierz język","help.about":"O nas","help.aboutText":"MilkTea. Wizualizator MilkDrop w przeglądarce.","help.hotkeys":"Skróty","help.openLabel":"Pomoc","help.close":"Zamknij","help.keyHelpKeys":"?","help.keyHelpAction":"Pomoc","help.keyPrevKeys":"Lewo, A, H","help.keyPrevAction":"Poprzedni preset","help.keyNextKeys":"Prawo, D, L","help.keyNextAction":"Następny preset","help.keyFullscreenKeys":"F","help.keyFullscreenAction":"Pełny ekran"}
+{
+  "splash.button": "Herbata z mlekiem",
+  "splash.ariaStart": "Uruchom wizualizację",
+  "splash.disclaimer1": "Ze względu na nietypowe interakcje ta instalacja może nie spełniać w pełni powszechnych oczekiwań dotyczących dostępności. Dziękujemy za zrozumienie.",
+  "splash.disclaimer2": "Kliknij przycisk powyżej, aby załadować demonstrację wizualną.",
+  "controls.prevPreset": "Poprzedni preset",
+  "controls.nextPreset": "Następny preset",
+  "controls.enterFullscreen": "Pełny ekran",
+  "controls.exitFullscreen": "Zamknij pełny ekran",
+  "locale.label": "Język",
+  "locale.ariaSelectLanguage": "Wybierz język",
+  "help.about": "O nas",
+  "help.aboutText": "MilkTea. Wizualizator MilkDrop w przeglądarce.",
+  "help.hotkeys": "Skróty",
+  "help.openLabel": "Pomoc",
+  "help.close": "Zamknij",
+  "help.keyHelpKeys": "?",
+  "help.keyHelpAction": "Pomoc",
+  "help.keyPrevKeys": "Lewo, A, H",
+  "help.keyPrevAction": "Poprzedni preset",
+  "help.keyNextKeys": "Prawo, D, L",
+  "help.keyNextAction": "Następny preset",
+  "help.keyFullscreenKeys": "F",
+  "help.keyFullscreenAction": "Pełny ekran"
+}

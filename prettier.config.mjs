@@ -7,7 +7,7 @@ export default {
   semi: true,
   singleQuote: true,
   plugins: ['@trivago/prettier-plugin-sort-imports'],
-  importOrder: ["^@core/(.*)$", "^@server/(.*)$", "^@ui/(.*)$", "^[./]"],
+  importOrder: ['^@core/(.*)$', '^@server/(.*)$', '^@ui/(.*)$', '^[./]'],
   importOrderSeparation: true,
   importOrderSortSpecifiers: true
 };

@@ -1,1 +1,25 @@
-{"splash.button":"شاي بالحليب","splash.ariaStart":"بدء المرئيات","splash.disclaimer1":"نظرًا لتفاعلاتها غير التقليدية، قد لا يتوافق هذا المعرض بالكامل مع توقعات إمكانية الوصول الشائعة. شكرًا لتفهمكم.","splash.disclaimer2":"انقر على الزر أعلاه لتحميل العرض المرئي.","controls.prevPreset":"القالب السابق","controls.nextPreset":"القالب التالي","controls.enterFullscreen":"ملء الشاشة","controls.exitFullscreen":"الخروج من ملء الشاشة","locale.label":"اللغة","locale.ariaSelectLanguage":"اختر اللغة","help.about":"حول","help.aboutText":"MilkTea. أداة تصور MilkDrop في المتصفح.","help.hotkeys":"اختصارات","help.openLabel":"مساعدة","help.close":"إغلاق","help.keyHelpKeys":"?","help.keyHelpAction":"مساعدة","help.keyPrevKeys":"يسار، A، H","help.keyPrevAction":"القالب السابق","help.keyNextKeys":"يمين، D، L","help.keyNextAction":"القالب التالي","help.keyFullscreenKeys":"F","help.keyFullscreenAction":"ملء الشاشة"}
+{
+  "splash.button": "شاي بالحليب",
+  "splash.ariaStart": "بدء المرئيات",
+  "splash.disclaimer1": "نظرًا لتفاعلاتها غير التقليدية، قد لا يتوافق هذا المعرض بالكامل مع توقعات إمكانية الوصول الشائعة. شكرًا لتفهمكم.",
+  "splash.disclaimer2": "انقر على الزر أعلاه لتحميل العرض المرئي.",
+  "controls.prevPreset": "القالب السابق",
+  "controls.nextPreset": "القالب التالي",
+  "controls.enterFullscreen": "ملء الشاشة",
+  "controls.exitFullscreen": "الخروج من ملء الشاشة",
+  "locale.label": "اللغة",
+  "locale.ariaSelectLanguage": "اختر اللغة",
+  "help.about": "حول",
+  "help.aboutText": "MilkTea. أداة تصور MilkDrop في المتصفح.",
+  "help.hotkeys": "اختصارات",
+  "help.openLabel": "مساعدة",
+  "help.close": "إغلاق",
+  "help.keyHelpKeys": "?",
+  "help.keyHelpAction": "مساعدة",
+  "help.keyPrevKeys": "يسار، A، H",
+  "help.keyPrevAction": "القالب السابق",
+  "help.keyNextKeys": "يمين، D، L",
+  "help.keyNextAction": "القالب التالي",
+  "help.keyFullscreenKeys": "F",
+  "help.keyFullscreenAction": "ملء الشاشة"
+}
