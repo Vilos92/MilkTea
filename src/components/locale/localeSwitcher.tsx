@@ -2,7 +2,16 @@ import type {Locale} from '../../lib/locale.ts';
 import {LOCALE_OPTIONS} from '../../lib/locale.ts';
 import {useLocaleContext} from '../../provider/locale.tsx';
 import {useTranslate} from '../../provider/translation.tsx';
-import {globe, label, labelAlwaysLight, root, row, select, selectAlwaysLight} from './localeSwitcher.css.ts';
+import {
+  globe,
+  label,
+  labelAlwaysLight,
+  root,
+  row,
+  select,
+  selectAlwaysLight,
+  srOnly
+} from './localeSwitcher.css.ts';
 
 /*
  * Types.
@@ -36,12 +45,10 @@ export function LocaleSwitcher({class: className, alwaysLight}: LocaleSwitcherPr
           <span class={globe} aria-hidden="true">
             🌐
           </span>
-          <select
-            class={selectClass}
-            value={locale}
-            onChange={handleChange}
-            aria-label={t('locale.ariaSelectLanguage')}
-          >
+          <label htmlFor="locale-select" class={srOnly}>
+            {t('locale.ariaSelectLanguage')}
+          </label>
+          <select id="locale-select" class={selectClass} value={locale} onChange={handleChange}>
             {LOCALE_OPTIONS.map(opt => (
               <option key={opt.value} value={opt.value}>
                 {opt.label}

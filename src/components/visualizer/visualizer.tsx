@@ -7,5 +7,5 @@ type VisualizerProps = {
 };
 
 export const Visualizer = ({canvasRef}: VisualizerProps) => {
-  return <canvas ref={canvasRef} class={canvas} />;
+  return <canvas ref={canvasRef} class={canvas} aria-label="Visualizer" />;
 };
