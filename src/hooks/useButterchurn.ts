@@ -197,7 +197,7 @@ export function useButterchurn() {
     sourceNodeRef.current = osc;
   }, [stopCurrentSource]);
 
-  const connectMicrophone = useCallback(
+  const connectMediaStream = useCallback(
     (stream: MediaStream): void => {
       const ctx = audioContextRef.current;
       const gainNode = gainNodeRef.current;
@@ -247,7 +247,7 @@ export function useButterchurn() {
     changePreset,
     connectAudioBuffer,
     connectOscillator,
-    connectMicrophone,
+    connectMediaStream,
     presetIndex,
     presetKeys,
     presetNameToIndex,

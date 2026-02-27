@@ -52,17 +52,51 @@ export function App() {
     changePreset,
     connectAudioBuffer,
     connectOscillator,
-    connectMicrophone
+    connectMediaStream
   } = useButterchurn();
 
   const overlayRef = useRef<HTMLDivElement>(null);
   const [controlsVisibility, setControlsVisibility] = useState(true);
   const [helpOpen, setHelpOpen] = useState(false);
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const micStreamRef = useRef<MediaStream | null>(null);
   const [audioSource, setAudioSource] = useState<AudioSource>(AudioSource.OSCILLATOR);
   const [pendingAudioSource, setPendingAudioSource] = useState<AudioSource | undefined>(undefined);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const micStreamRef = useRef<MediaStream | null>(null);
+
+  const handleAudioFile = async (file: File) => {
+    if (!file.type.startsWith('audio/')) {
+      console.error('File is not a valid audio file:', file);
+      return;
+    }
+
+    try {
+      setPendingAudioSource(AudioSource.FILE);
+      const arrayBuffer = await file.arrayBuffer();
+      await connectAudioBuffer(arrayBuffer);
+      setAudioSource(AudioSource.FILE);
+    } catch (error) {
+      console.error('Failed to connect audio buffer:', error);
+    } finally {
+      setPendingAudioSource(undefined);
+    }
+  };
+
+  const onAudioFileChange = (event: Event) => {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
+      handleAudioFile(file);
+    }
+    // If we do not reset the value, the `onchange` may not be triggered again.
+    (event.target as HTMLInputElement).value = '';
+  };
+
+  const handleAudioFileDrop = (event: DragEvent) => {
+    const files = event.dataTransfer?.files ?? [];
+    if (!files[0]) return;
+
+    handleAudioFile(files[0]);
+  };
 
   const stopMicHardware = () => {
     micStreamRef.current?.getTracks().forEach(track => track.stop());
@@ -84,7 +118,7 @@ export function App() {
         .getUserMedia({audio: true})
         .then(stream => {
           micStreamRef.current = stream;
-          connectMicrophone(stream);
+          connectMediaStream(stream);
           setAudioSource(AudioSource.MICROPHONE);
         })
         .catch(console.warn);
@@ -93,40 +127,6 @@ export function App() {
 
     connectOscillator();
     setAudioSource(AudioSource.OSCILLATOR);
-  };
-
-  const handleAudioFile = async (file: File) => {
-    if (!file.type.startsWith('audio/')) {
-      console.error('File is not a valid audio file:', file);
-      return;
-    }
-
-    try {
-      setPendingAudioSource(AudioSource.FILE);
-      const arrayBuffer = await file.arrayBuffer();
-      await connectAudioBuffer(arrayBuffer);
-      setAudioSource(AudioSource.FILE);
-    } catch (error) {
-      console.error('Failed to connect audio buffer:', error);
-    } finally {
-      setPendingAudioSource(undefined);
-    }
-  };
-
-  const onFileChange = (event: Event) => {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (file) {
-      handleAudioFile(file);
-    }
-    // If we do not reset the value, the `onchange` may not be triggered again.
-    (event.target as HTMLInputElement).value = '';
-  };
-
-  const handleDrop = (event: DragEvent) => {
-    const files = event.dataTransfer?.files ?? [];
-    if (!files[0]) return;
-
-    handleAudioFile(files[0]);
   };
 
   useEffect(() => {
@@ -144,7 +144,7 @@ export function App() {
   return (
     <LocaleProvider>
       <TranslateProvider>
-        <DragArea handleDrop={handleDrop}>
+        <DragArea handleDrop={handleAudioFileDrop}>
           <div ref={containerRef} class={[container, started ? containerStarted : containerSplash].join(' ')}>
             <Overlay
               overlayRef={overlayRef}
@@ -171,7 +171,7 @@ export function App() {
                 ref={fileInputRef}
                 class={hiddenInput}
                 accept="audio/*"
-                onChange={onFileChange}
+                onChange={onAudioFileChange}
               />
               <button
                 type="button"
