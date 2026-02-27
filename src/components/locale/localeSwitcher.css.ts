@@ -62,13 +62,32 @@ export const select = style({
   color: '#fff',
   border: '1px solid rgba(255,255,255,0.25)',
   borderRadius: '4px',
-  cursor: 'pointer',
   boxSizing: 'border-box',
+  ':focus-visible': {
+    outline: '2px solid rgba(255,255,255,0.6)',
+    outlineOffset: '2px'
+  },
   '@media': {
+    '(hover: hover)': {
+      ':hover': {
+        borderColor: 'rgba(255,255,255,0.5)',
+        background: 'rgba(0,0,0,0.65)'
+      }
+    },
     '(prefers-color-scheme: light)': {
       background: 'rgba(255,255,255,0.9)',
       color: '#213547',
-      border: '1px solid rgba(0,0,0,0.2)'
+      border: '1px solid rgba(0,0,0,0.2)',
+      ':focus-visible': {
+        outline: '2px solid rgba(0,0,0,0.4)',
+        outlineOffset: '2px'
+      }
+    },
+    '(hover: hover) and (prefers-color-scheme: light)': {
+      ':hover': {
+        borderColor: 'rgba(0,0,0,0.35)',
+        background: 'rgba(255,255,255,1)'
+      }
     },
     '(pointer: fine)': {
       height: '28px',
@@ -82,11 +101,31 @@ export const selectAlwaysLight = style({
   background: 'rgba(0,0,0,0.5)',
   color: '#fff',
   border: '1px solid rgba(255,255,255,0.3)',
+  ':focus-visible': {
+    outline: '2px solid rgba(255,255,255,0.6)',
+    outlineOffset: '2px'
+  },
   '@media': {
+    '(hover: hover)': {
+      ':hover': {
+        borderColor: 'rgba(255,255,255,0.5)',
+        background: 'rgba(0,0,0,0.65)'
+      }
+    },
     '(prefers-color-scheme: light)': {
       background: 'rgba(0,0,0,0.5)',
       color: '#fff',
-      border: '1px solid rgba(255,255,255,0.3)'
+      border: '1px solid rgba(255,255,255,0.3)',
+      ':focus-visible': {
+        outline: '2px solid rgba(255,255,255,0.6)',
+        outlineOffset: '2px'
+      }
+    },
+    '(hover: hover) and (prefers-color-scheme: light)': {
+      ':hover': {
+        borderColor: 'rgba(255,255,255,0.5)',
+        background: 'rgba(0,0,0,0.65)'
+      }
     }
   }
 });

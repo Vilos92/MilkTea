@@ -57,7 +57,7 @@ export function createOscillatorVisualizerContext(): VisualizerContext {
 
   osc.type = 'sawtooth';
   osc.frequency.value = 60;
-  gain.gain.value = 0.1;
+  gain.gain.value = 1.0;
   osc.connect(gain);
   osc.start();
 

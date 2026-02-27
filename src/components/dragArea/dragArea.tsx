@@ -9,25 +9,27 @@ import {useDragArea} from './useDragArea';
 
 type DragAreaProps = {
   children: preact.ComponentChildren;
+  handleDrop(event: DragEvent): void;
 };
 
 type DragAreaOverlayProps = {
   children: preact.ComponentChildren;
+  handleDrop(event: DragEvent): void;
 };
 
 /*
  * Components.
  */
 
-export const DragArea = ({children}: DragAreaProps) => {
+export const DragArea = ({children, handleDrop}: DragAreaProps) => {
   return (
     <DragAreaProvider>
-      <DragAreaOverlay>{children}</DragAreaOverlay>
+      <DragAreaOverlay handleDrop={handleDrop}>{children}</DragAreaOverlay>
     </DragAreaProvider>
   );
 };
 
-const DragAreaOverlay = ({children}: DragAreaOverlayProps) => {
+const DragAreaOverlay = ({children, handleDrop}: DragAreaOverlayProps) => {
   const t = useTranslate();
 
   const {isDragging, setIsDragging} = useDragArea();
@@ -50,9 +52,7 @@ const DragAreaOverlay = ({children}: DragAreaOverlayProps) => {
   const onDrop = (event: DragEvent) => {
     event.preventDefault();
     setIsDragging(false);
-
-    const files = event.dataTransfer?.files ?? [];
-    console.log('Uploaded files:', files);
+    handleDrop(event);
   };
 
   return (

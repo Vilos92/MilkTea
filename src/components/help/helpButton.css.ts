@@ -28,11 +28,30 @@ export const helpButton = style({
   color: 'rgba(255,255,255,0.8)',
   border: '1px solid rgba(255,255,255,0.25)',
   borderRadius: '4px',
-  cursor: 'pointer',
+  ':focus-visible': {
+    outline: '2px solid rgba(255,255,255,0.6)',
+    outlineOffset: '2px'
+  },
   '@media': {
+    '(hover: hover)': {
+      ':hover': {
+        borderColor: 'rgba(255,255,255,0.5)',
+        background: 'rgba(255,255,255,0.1)'
+      }
+    },
     '(prefers-color-scheme: light)': {
       color: 'rgba(0,0,0,0.8)',
-      border: '1px solid rgba(0,0,0,0.2)'
+      border: '1px solid rgba(0,0,0,0.2)',
+      ':focus-visible': {
+        outline: '2px solid rgba(0,0,0,0.4)',
+        outlineOffset: '2px'
+      }
+    },
+    '(hover: hover) and (prefers-color-scheme: light)': {
+      ':hover': {
+        borderColor: 'rgba(0,0,0,0.35)',
+        background: 'rgba(0,0,0,0.06)'
+      }
     },
     '(pointer: fine)': {
       width: '28px',
@@ -46,11 +65,31 @@ export const helpButtonAlwaysLight = style({
   background: 'rgba(0,0,0,0.5)',
   color: 'rgba(255,255,255,0.9)',
   border: '1px solid rgba(255,255,255,0.3)',
+  ':focus-visible': {
+    outline: '2px solid rgba(255,255,255,0.6)',
+    outlineOffset: '2px'
+  },
   '@media': {
+    '(hover: hover)': {
+      ':hover': {
+        borderColor: 'rgba(255,255,255,0.5)',
+        background: 'rgba(255,255,255,0.1)'
+      }
+    },
     '(prefers-color-scheme: light)': {
       background: 'rgba(0,0,0,0.5)',
       color: 'rgba(255,255,255,0.9)',
-      border: '1px solid rgba(255,255,255,0.3)'
+      border: '1px solid rgba(255,255,255,0.3)',
+      ':focus-visible': {
+        outline: '2px solid rgba(255,255,255,0.6)',
+        outlineOffset: '2px'
+      }
+    },
+    '(hover: hover) and (prefers-color-scheme: light)': {
+      ':hover': {
+        borderColor: 'rgba(255,255,255,0.5)',
+        background: 'rgba(255,255,255,0.1)'
+      }
     }
   }
 });

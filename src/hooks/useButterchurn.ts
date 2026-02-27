@@ -32,6 +32,7 @@ export function useButterchurn() {
   const visualizerRef = useRef<Visualizer | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
+  const sourceNodeRef = useRef<AudioBufferSourceNode | OscillatorNode | null>(null);
 
   const currentPresetRef = useRef<unknown>(null);
   const createVisualizerRef = useRef<((size: Size) => void) | null>(null);
@@ -145,6 +146,46 @@ export function useButterchurn() {
     setStarted(true);
   }, [initVisualizer]);
 
+  const connectAudioBuffer = useCallback(async (arrayBuffer: ArrayBuffer): Promise<void> => {
+    const ctx = audioContextRef.current;
+    const gainNode = gainNodeRef.current;
+    if (!ctx || !gainNode) return;
+
+    const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+
+    sourceNodeRef.current?.disconnect();
+    sourceNodeRef.current?.stop();
+
+    gainNode.gain.value = 1.0;
+
+    const source = ctx.createBufferSource();
+    source.buffer = audioBuffer;
+    source.connect(gainNode);
+    source.connect(ctx.destination);
+    source.start(0);
+
+    sourceNodeRef.current = source;
+  }, []);
+
+  const connectOscillator = useCallback((): void => {
+    const ctx = audioContextRef.current;
+    const gainNode = gainNodeRef.current;
+    if (!ctx || !gainNode) return;
+
+    sourceNodeRef.current?.disconnect();
+    sourceNodeRef.current?.stop();
+
+    gainNode.gain.value = 0.1;
+
+    const osc = ctx.createOscillator();
+    osc.type = 'sawtooth';
+    osc.frequency.value = 60;
+    osc.connect(gainNode);
+    osc.start();
+
+    sourceNodeRef.current = osc;
+  }, []);
+
   // On mount: run init (preview under the button). Splash stays until user triggers the start.
   useEffect(() => {
     if (reducedMotion) return;
@@ -175,6 +216,8 @@ export function useButterchurn() {
     started,
     start,
     changePreset,
+    connectAudioBuffer,
+    connectOscillator,
     presetIndex,
     presetKeys,
     presetNameToIndex,

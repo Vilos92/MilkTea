@@ -4,6 +4,12 @@ import {
   container,
   containerSplash,
   containerStarted,
+  hiddenInput,
+  sourceButton,
+  sourceButtonActive,
+  sourceButtonAlwaysLight,
+  sourceButtonPending,
+  topCenter,
   topCorner,
   topFaded,
   topLeftCorner,
@@ -21,15 +27,82 @@ import {LocaleProvider} from './provider/locale.tsx';
 import {TranslateProvider} from './provider/translation.tsx';
 
 /*
+ * Enums.
+ */
+
+const AudioSource = {
+  OSCILLATOR: 'oscillator',
+  FILE: 'file'
+} as const;
+type AudioSource = (typeof AudioSource)[keyof typeof AudioSource];
+
+/*
  * App.
  */
 
 export function App() {
+  const {
+    containerRef,
+    canvasRef,
+    isCanvasFullscreen,
+    toggleFullscreen,
+    started,
+    start,
+    changePreset,
+    connectAudioBuffer,
+    connectOscillator
+  } = useButterchurn();
+
   const overlayRef = useRef<HTMLDivElement>(null);
-  const {containerRef, canvasRef, isCanvasFullscreen, toggleFullscreen, started, start, changePreset} =
-    useButterchurn();
   const [controlsVisibility, setControlsVisibility] = useState(true);
   const [helpOpen, setHelpOpen] = useState(false);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [audioSource, setAudioSource] = useState<AudioSource>(AudioSource.OSCILLATOR);
+  const [pendingAudioSource, setPendingAudioSource] = useState<AudioSource | undefined>(undefined);
+
+  const handleSourceChange = (newSource: AudioSource) => {
+    if (newSource === AudioSource.FILE) {
+      fileInputRef.current?.click();
+      return;
+    }
+    connectOscillator();
+    setAudioSource(AudioSource.OSCILLATOR);
+  };
+
+  const handleAudioFile = async (file: File) => {
+    if (!file.type.startsWith('audio/')) {
+      console.error('File is not a valid audio file:', file);
+      return;
+    }
+
+    try {
+      setPendingAudioSource(AudioSource.FILE);
+      const arrayBuffer = await file.arrayBuffer();
+      await connectAudioBuffer(arrayBuffer);
+      setAudioSource(AudioSource.FILE);
+    } catch (error) {
+      console.error('Failed to connect audio buffer:', error);
+    } finally {
+      setPendingAudioSource(undefined);
+    }
+  };
+
+  const onFileChange = (event: Event) => {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
+      handleAudioFile(file);
+    }
+    // If we do not reset the value, the `onchange` may not be triggered again.
+    (event.target as HTMLInputElement).value = '';
+  };
+
+  const handleDrop = (event: DragEvent) => {
+    const files = event.dataTransfer?.files ?? [];
+    if (!files[0]) return;
+
+    handleAudioFile(files[0]);
+  };
 
   useEffect(() => {
     if (started) return;
@@ -46,7 +119,7 @@ export function App() {
   return (
     <LocaleProvider>
       <TranslateProvider>
-        <DragArea>
+        <DragArea handleDrop={handleDrop}>
           <div ref={containerRef} class={[container, started ? containerStarted : containerSplash].join(' ')}>
             <Overlay
               overlayRef={overlayRef}
@@ -67,6 +140,40 @@ export function App() {
               alwaysLight={started}
               setHelpOpen={setHelpOpen}
             />
+            <div class={[topCenter, controlsVisibility || !started ? topVisible : topFaded].join(' ')}>
+              <input
+                type="file"
+                ref={fileInputRef}
+                class={hiddenInput}
+                accept="audio/*"
+                onChange={onFileChange}
+              />
+              <button
+                type="button"
+                class={computeSourceButtonClass(
+                  AudioSource.OSCILLATOR,
+                  audioSource,
+                  pendingAudioSource,
+                  started
+                )}
+                onClick={() => handleSourceChange(AudioSource.OSCILLATOR)}
+                aria-label="Oscillator"
+                aria-pressed={audioSource === AudioSource.OSCILLATOR}
+                title="Oscillator"
+              >
+                〰️
+              </button>
+              <button
+                type="button"
+                class={computeSourceButtonClass(AudioSource.FILE, audioSource, pendingAudioSource, started)}
+                onClick={() => handleSourceChange(AudioSource.FILE)}
+                aria-label="File"
+                aria-pressed={audioSource === AudioSource.FILE}
+                title="Audio file"
+              >
+                📼
+              </button>
+            </div>
             <LocaleSwitcher
               class={[topCorner, topRightCorner, controlsVisibility || !started ? topVisible : topFaded].join(
                 ' '
@@ -80,4 +187,20 @@ export function App() {
       </TranslateProvider>
     </LocaleProvider>
   );
+}
+
+/*
+ * Helpers.
+ */
+
+function computeSourceButtonClass(
+  source: AudioSource,
+  activeSource: AudioSource,
+  pendingSource: AudioSource | undefined,
+  started: boolean
+): string {
+  const base = [sourceButton, started ? sourceButtonAlwaysLight : undefined].filter(Boolean).join(' ');
+  if (pendingSource === source) return [base, sourceButtonPending].join(' ');
+  if (activeSource === source) return [base, sourceButtonActive].join(' ');
+  return base;
 }
