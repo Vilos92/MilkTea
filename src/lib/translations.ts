@@ -28,7 +28,8 @@ export type TranslationKey =
   | 'help.keyNextKeys'
   | 'help.keyNextAction'
   | 'help.keyFullscreenKeys'
-  | 'help.keyFullscreenAction';
+  | 'help.keyFullscreenAction'
+  | 'dragDrop.message';
 
 export type Translations = Record<TranslationKey, string>;
 
@@ -61,7 +62,8 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'help.keyNextKeys': 'Right, D, L',
   'help.keyNextAction': 'Next preset',
   'help.keyFullscreenKeys': 'F',
-  'help.keyFullscreenAction': 'Toggle fullscreen'
+  'help.keyFullscreenAction': 'Toggle fullscreen',
+  'dragDrop.message': 'Drop an audio file to play it.'
 };
 
 const SUPPORTED_LOCALES = new Set<string>(Object.values(Locale));

@@ -21,5 +21,6 @@
   "help.keyNextKeys": "दाएं, D, L",
   "help.keyNextAction": "अगला प्रीसेट",
   "help.keyFullscreenKeys": "F",
-  "help.keyFullscreenAction": "पूर्ण स्क्रीन"
+  "help.keyFullscreenAction": "पूर्ण स्क्रीन",
+  "dragDrop.message": "ऑडियो फ़ाइल छोड़ें और चलाएं।"
 }

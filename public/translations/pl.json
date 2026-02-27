@@ -21,5 +21,6 @@
   "help.keyNextKeys": "Prawo, D, L",
   "help.keyNextAction": "Następny preset",
   "help.keyFullscreenKeys": "F",
-  "help.keyFullscreenAction": "Pełny ekran"
+  "help.keyFullscreenAction": "Pełny ekran",
+  "dragDrop.message": "Upuść plik audio, aby go odtworzyć."
 }

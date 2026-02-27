@@ -21,5 +21,6 @@
   "help.keyNextKeys": "يمين، D، L",
   "help.keyNextAction": "القالب التالي",
   "help.keyFullscreenKeys": "F",
-  "help.keyFullscreenAction": "ملء الشاشة"
+  "help.keyFullscreenAction": "ملء الشاشة",
+  "dragDrop.message": "أسقط ملف صوتي لتشغيله."
 }

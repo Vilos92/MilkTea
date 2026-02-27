@@ -21,5 +21,6 @@
   "help.keyNextKeys": "Вправо, D, L",
   "help.keyNextAction": "Следующий пресет",
   "help.keyFullscreenKeys": "F",
-  "help.keyFullscreenAction": "Полный экран"
+  "help.keyFullscreenAction": "Полный экран",
+  "dragDrop.message": "Перетащите аудиофайл для воспроизведения."
 }

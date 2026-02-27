@@ -21,5 +21,6 @@
   "help.keyNextKeys": "Höger, D, L",
   "help.keyNextAction": "Nästa förinställning",
   "help.keyFullscreenKeys": "F",
-  "help.keyFullscreenAction": "Fullskärm"
+  "help.keyFullscreenAction": "Fullskärm",
+  "dragDrop.message": "Släpp en ljudfil för att spela den."
 }

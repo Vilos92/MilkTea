@@ -4,6 +4,7 @@ import {useReducedMotion} from '../../hooks/useReducedMotion.ts';
 import {useLocaleContext} from '../../provider/locale.tsx';
 import {useTranslate} from '../../provider/translation.tsx';
 import {Controls} from '../controls/controls.tsx';
+import {useDragArea} from '../dragArea/useDragArea.ts';
 import {
   btn,
   btnSolid,
@@ -50,6 +51,8 @@ export function Overlay(props: OverlayProps) {
   } = props;
   const reducedMotion = useReducedMotion();
   const t = useTranslate();
+  const {isDragging} = useDragArea();
+
   const {locale} = useLocaleContext();
   const isEnglish = locale === 'en';
 
@@ -66,11 +69,15 @@ export function Overlay(props: OverlayProps) {
     return (
       <div class={overlaySplash}>
         <div class={splashCutoutColumn}>
-          <button type="button" onClick={start} class={btnSolid} aria-label={t('splash.ariaStart')}>
-            {splashLabel}
-          </button>
-          <p class={splashDisclaimer}>{t('splash.disclaimer1')}</p>
-          <p class={splashDisclaimer}>{t('splash.disclaimer2')}</p>
+          {!isDragging && (
+            <>
+              <button type="button" onClick={start} class={btnSolid} aria-label={t('splash.ariaStart')}>
+                {splashLabel}
+              </button>
+              <p class={splashDisclaimer}>{t('splash.disclaimer1')}</p>
+              <p class={splashDisclaimer}>{t('splash.disclaimer2')}</p>
+            </>
+          )}
         </div>
       </div>
     );
@@ -80,9 +87,11 @@ export function Overlay(props: OverlayProps) {
     return (
       <div class={overlaySplash}>
         <div class={splashCutout}>
-          <button type="button" onClick={start} class={btn} aria-label={t('splash.ariaStart')}>
-            {splashLabel}
-          </button>
+          {!isDragging && (
+            <button type="button" onClick={start} class={btn} aria-label={t('splash.ariaStart')}>
+              {splashLabel}
+            </button>
+          )}
         </div>
       </div>
     );

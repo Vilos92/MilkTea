@@ -21,5 +21,6 @@
   "help.keyNextKeys": "Rechts, D, L",
   "help.keyNextAction": "Nächstes Preset",
   "help.keyFullscreenKeys": "F",
-  "help.keyFullscreenAction": "Vollbild"
+  "help.keyFullscreenAction": "Vollbild",
+  "dragDrop.message": "Audiodatei ablegen, um sie abzuspielen."
 }

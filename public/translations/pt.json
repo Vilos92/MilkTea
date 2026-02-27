@@ -21,5 +21,6 @@
   "help.keyNextKeys": "Dir, D, L",
   "help.keyNextAction": "Preset seguinte",
   "help.keyFullscreenKeys": "F",
-  "help.keyFullscreenAction": "Ecrã inteiro"
+  "help.keyFullscreenAction": "Ecrã inteiro",
+  "dragDrop.message": "Solte um ficheiro de áudio para o reproduzir."
 }

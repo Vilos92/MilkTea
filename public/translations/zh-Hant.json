@@ -21,5 +21,6 @@
   "help.keyNextKeys": "→, D, L",
   "help.keyNextAction": "下一個預設",
   "help.keyFullscreenKeys": "F",
-  "help.keyFullscreenAction": "全螢幕"
+  "help.keyFullscreenAction": "全螢幕",
+  "dragDrop.message": "拖入音訊檔案即可播放。"
 }

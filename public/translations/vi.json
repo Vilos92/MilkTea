@@ -21,5 +21,6 @@
   "help.keyNextKeys": "Phải, D, L",
   "help.keyNextAction": "Cài đặt tiếp theo",
   "help.keyFullscreenKeys": "F",
-  "help.keyFullscreenAction": "Toàn màn hình"
+  "help.keyFullscreenAction": "Toàn màn hình",
+  "dragDrop.message": "Thả tệp âm thanh để phát."
 }

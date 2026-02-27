@@ -21,5 +21,6 @@
   "help.keyNextKeys": "Dreapta, D, L",
   "help.keyNextAction": "Setare următoare",
   "help.keyFullscreenKeys": "F",
-  "help.keyFullscreenAction": "Ecran complet"
+  "help.keyFullscreenAction": "Ecran complet",
+  "dragDrop.message": "Trageți un fișier audio pentru a-l reda."
 }

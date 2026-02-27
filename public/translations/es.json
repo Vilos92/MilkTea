@@ -21,5 +21,6 @@
   "help.keyNextKeys": "Der, D, L",
   "help.keyNextAction": "Preset siguiente",
   "help.keyFullscreenKeys": "F",
-  "help.keyFullscreenAction": "Pantalla completa"
+  "help.keyFullscreenAction": "Pantalla completa",
+  "dragDrop.message": "Suelta un archivo de audio para reproducirlo."
 }

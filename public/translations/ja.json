@@ -21,5 +21,6 @@
   "help.keyNextKeys": "→, D, L",
   "help.keyNextAction": "次のプリセット",
   "help.keyFullscreenKeys": "F",
-  "help.keyFullscreenAction": "全画面表示"
+  "help.keyFullscreenAction": "全画面表示",
+  "dragDrop.message": "音声ファイルをドロップして再生。"
 }

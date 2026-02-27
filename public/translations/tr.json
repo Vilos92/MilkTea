@@ -21,5 +21,6 @@
   "help.keyNextKeys": "Sağ, D, L",
   "help.keyNextAction": "Sonraki ön ayar",
   "help.keyFullscreenKeys": "F",
-  "help.keyFullscreenAction": "Tam ekran"
+  "help.keyFullscreenAction": "Tam ekran",
+  "dragDrop.message": "Oynatmak için bir ses dosyası bırakın."
 }

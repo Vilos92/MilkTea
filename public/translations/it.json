@@ -21,5 +21,6 @@
   "help.keyNextKeys": "Destra, D, L",
   "help.keyNextAction": "Preset successivo",
   "help.keyFullscreenKeys": "F",
-  "help.keyFullscreenAction": "Schermo intero"
+  "help.keyFullscreenAction": "Schermo intero",
+  "dragDrop.message": "Trascina un file audio per riprodurlo."
 }

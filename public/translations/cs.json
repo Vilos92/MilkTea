@@ -21,5 +21,6 @@
   "help.keyNextKeys": "Vpravo, D, L",
   "help.keyNextAction": "Další předvolba",
   "help.keyFullscreenKeys": "F",
-  "help.keyFullscreenAction": "Celá obrazovka"
+  "help.keyFullscreenAction": "Celá obrazovka",
+  "dragDrop.message": "Přetáhněte zvukový soubor pro přehrání."
 }

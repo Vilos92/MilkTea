@@ -21,5 +21,6 @@
   "help.keyNextKeys": "Jobb, D, L",
   "help.keyNextAction": "Következő előbeállítás",
   "help.keyFullscreenKeys": "F",
-  "help.keyFullscreenAction": "Teljes képernyő"
+  "help.keyFullscreenAction": "Teljes képernyő",
+  "dragDrop.message": "Ejtsen ide egy hangfájlt a lejátszáshoz."
 }
