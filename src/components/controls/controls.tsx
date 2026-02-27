@@ -61,6 +61,7 @@ export const Controls = ({
           onClick={() => changePreset(-1)}
           class={controlBtn}
           aria-label={t('controls.prevPreset')}
+          title={t('controls.prevPreset')}
         >
           ‹
         </button>
@@ -69,6 +70,7 @@ export const Controls = ({
           onClick={toggleFullscreen}
           class={controlBtn}
           aria-label={isFullscreen ? t('controls.exitFullscreen') : t('controls.enterFullscreen')}
+          title={isFullscreen ? t('controls.exitFullscreen') : t('controls.enterFullscreen')}
         >
           {isFullscreen ? '✕' : '⛶'}
         </button>
@@ -77,6 +79,7 @@ export const Controls = ({
           onClick={() => changePreset(1)}
           class={controlBtn}
           aria-label={t('controls.nextPreset')}
+          title={t('controls.nextPreset')}
         >
           ›
         </button>
