@@ -4,38 +4,22 @@ import {
   container,
   containerSplash,
   containerStarted,
-  hiddenInput,
-  sourceButton,
-  sourceButtonActive,
-  sourceButtonAlwaysLight,
-  sourceButtonPending,
-  topCenter,
   topCorner,
   topFaded,
   topLeftCorner,
   topRightCorner,
   topVisible
 } from './app.css.ts';
-import {DragArea} from './components/dragArea/dragArea.tsx';
-import {Help} from './components/help/help.tsx';
-import {HelpButton} from './components/help/helpButton.tsx';
-import {LocaleSwitcher} from './components/locale/localeSwitcher.tsx';
-import {Overlay} from './components/overlay/overlay.tsx';
-import {Visualizer} from './components/visualizer/visualizer.tsx';
-import {useButterchurn} from './hooks/useButterchurn.ts';
-import {LocaleProvider} from './provider/locale.tsx';
-import {TranslateProvider} from './provider/translation.tsx';
-
-/*
- * Enums.
- */
-
-const AudioSource = {
-  OSCILLATOR: 'oscillator',
-  FILE: 'file',
-  MICROPHONE: 'microphone'
-} as const;
-type AudioSource = (typeof AudioSource)[keyof typeof AudioSource];
+import {AudioSource, AudioSourceButtons} from './components/audioSourceButtons/audioSourceButtons.tsx';
+import {DragArea} from './components/dragArea/dragArea';
+import {Help} from './components/help/help';
+import {HelpButton} from './components/help/helpButton';
+import {LocaleSwitcher} from './components/locale/localeSwitcher';
+import {Overlay} from './components/overlay/overlay';
+import {Visualizer} from './components/visualizer/visualizer';
+import {useButterchurn} from './hooks/useButterchurn';
+import {LocaleProvider} from './provider/locale';
+import {TranslateProvider} from './provider/translation';
 
 /*
  * App.
@@ -64,22 +48,19 @@ export function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const micStreamRef = useRef<MediaStream | null>(null);
 
-  const handleAudioFile = async (file: File) => {
+  const handleAudioFile = (file: File) => {
     if (!file.type.startsWith('audio/')) {
       console.error('File is not a valid audio file:', file);
       return;
     }
 
-    try {
-      setPendingAudioSource(AudioSource.FILE);
-      const arrayBuffer = await file.arrayBuffer();
-      await connectAudioBuffer(arrayBuffer);
-      setAudioSource(AudioSource.FILE);
-    } catch (error) {
-      console.error('Failed to connect audio buffer:', error);
-    } finally {
-      setPendingAudioSource(undefined);
-    }
+    setPendingAudioSource(AudioSource.FILE);
+    file
+      .arrayBuffer()
+      .then(arrayBuffer => connectAudioBuffer(arrayBuffer))
+      .then(() => setAudioSource(AudioSource.FILE))
+      .catch(error => console.error('Failed to connect audio buffer:', error))
+      .finally(() => setPendingAudioSource(undefined));
   };
 
   const onAudioFileChange = (event: Event) => {
@@ -108,25 +89,26 @@ export function App() {
 
     stopMicHardware();
 
-    if (newSource === AudioSource.FILE) {
-      fileInputRef.current?.click();
-      return;
+    switch (newSource) {
+      case AudioSource.FILE:
+        fileInputRef.current?.click();
+        return;
+      case AudioSource.MICROPHONE:
+        navigator.mediaDevices
+          .getUserMedia({audio: true})
+          .then(stream => {
+            micStreamRef.current = stream;
+            connectMediaStream(stream);
+            setAudioSource(AudioSource.MICROPHONE);
+          })
+          .catch(console.warn);
+        return;
+      case AudioSource.OSCILLATOR:
+      default:
+        connectOscillator();
+        setAudioSource(AudioSource.OSCILLATOR);
+        return;
     }
-
-    if (newSource === AudioSource.MICROPHONE) {
-      navigator.mediaDevices
-        .getUserMedia({audio: true})
-        .then(stream => {
-          micStreamRef.current = stream;
-          connectMediaStream(stream);
-          setAudioSource(AudioSource.MICROPHONE);
-        })
-        .catch(console.warn);
-      return;
-    }
-
-    connectOscillator();
-    setAudioSource(AudioSource.OSCILLATOR);
   };
 
   useEffect(() => {
@@ -165,55 +147,15 @@ export function App() {
               alwaysLight={started}
               setHelpOpen={setHelpOpen}
             />
-            <div class={[topCenter, controlsVisibility || !started ? topVisible : topFaded].join(' ')}>
-              <input
-                type="file"
-                ref={fileInputRef}
-                class={hiddenInput}
-                accept="audio/*"
-                onChange={onAudioFileChange}
-              />
-              <button
-                type="button"
-                class={computeSourceButtonClass(
-                  AudioSource.OSCILLATOR,
-                  audioSource,
-                  pendingAudioSource,
-                  started
-                )}
-                onClick={() => handleSourceChange(AudioSource.OSCILLATOR)}
-                aria-label="Oscillator"
-                aria-pressed={audioSource === AudioSource.OSCILLATOR}
-                title="Oscillator"
-              >
-                〰️
-              </button>
-              <button
-                type="button"
-                class={computeSourceButtonClass(AudioSource.FILE, audioSource, pendingAudioSource, started)}
-                onClick={() => handleSourceChange(AudioSource.FILE)}
-                aria-label="File"
-                aria-pressed={audioSource === AudioSource.FILE}
-                title="Audio file"
-              >
-                📼
-              </button>
-              <button
-                type="button"
-                class={computeSourceButtonClass(
-                  AudioSource.MICROPHONE,
-                  audioSource,
-                  pendingAudioSource,
-                  started
-                )}
-                onClick={() => handleSourceChange(AudioSource.MICROPHONE)}
-                aria-label="Microphone"
-                aria-pressed={audioSource === AudioSource.MICROPHONE}
-                title="Microphone"
-              >
-                🎙️
-              </button>
-            </div>
+            <AudioSourceButtons
+              class={controlsVisibility || !started ? topVisible : topFaded}
+              fileInputRef={fileInputRef}
+              onFileChange={onAudioFileChange}
+              audioSource={audioSource}
+              pendingAudioSource={pendingAudioSource}
+              started={started}
+              onSourceChange={handleSourceChange}
+            />
             <LocaleSwitcher
               class={[topCorner, topRightCorner, controlsVisibility || !started ? topVisible : topFaded].join(
                 ' '
@@ -227,20 +169,4 @@ export function App() {
       </TranslateProvider>
     </LocaleProvider>
   );
-}
-
-/*
- * Helpers.
- */
-
-function computeSourceButtonClass(
-  source: AudioSource,
-  activeSource: AudioSource,
-  pendingSource: AudioSource | undefined,
-  started: boolean
-): string {
-  const base = [sourceButton, started ? sourceButtonAlwaysLight : undefined].filter(Boolean).join(' ');
-  if (pendingSource === source) return [base, sourceButtonPending].join(' ');
-  if (activeSource === source) return [base, sourceButtonActive].join(' ');
-  return base;
 }

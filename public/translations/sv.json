@@ -22,5 +22,8 @@
   "help.keyNextAction": "Nästa förinställning",
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "Fullskärm",
-  "dragDrop.message": "Släpp en ljudfil för att spela den."
+  "dragDrop.message": "Släpp en ljudfil för att spela den.",
+  "source.oscillator": "Oscillator",
+  "source.file": "Ljudfil",
+  "source.microphone": "Mikrofon"
 }

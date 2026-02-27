@@ -22,5 +22,8 @@
   "help.keyNextAction": "अगला प्रीसेट",
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "पूर्ण स्क्रीन",
-  "dragDrop.message": "ऑडियो फ़ाइल छोड़ें और चलाएं।"
+  "dragDrop.message": "ऑडियो फ़ाइल छोड़ें और चलाएं।",
+  "source.oscillator": "ऑसिलेटर",
+  "source.file": "ऑडियो फ़ाइल",
+  "source.microphone": "माइक्रोफ़ोन"
 }

@@ -1,7 +1,7 @@
 import {useState} from 'preact/hooks';
 
-import {type Locale} from '../lib/locale.ts';
-import {detectBrowserLocale} from '../lib/translations.ts';
+import {type Locale} from '../lib/locale';
+import {detectBrowserLocale} from '../lib/translations';
 
 /*
  * Hook.

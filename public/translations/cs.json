@@ -22,5 +22,8 @@
   "help.keyNextAction": "Další předvolba",
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "Celá obrazovka",
-  "dragDrop.message": "Přetáhněte zvukový soubor pro přehrání."
+  "dragDrop.message": "Přetáhněte zvukový soubor pro přehrání.",
+  "source.oscillator": "Oscilátor",
+  "source.file": "Zvukový soubor",
+  "source.microphone": "Mikrofon"
 }

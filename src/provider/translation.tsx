@@ -1,16 +1,16 @@
 import {createContext} from 'preact';
 import {useCallback, useContext, useEffect, useState} from 'preact/hooks';
 
-import {Locale} from '../lib/locale.ts';
-import {getStorageTranslations, setStorageTranslations} from '../lib/storage.ts';
+import {Locale} from '../lib/locale';
+import {getStorageTranslations, setStorageTranslations} from '../lib/storage';
 import {
   ENGLISH_TRANSLATIONS,
   type TranslationKey,
   type Translations,
   fetchTranslations,
   getTranslations
-} from '../lib/translations.ts';
-import {useLocaleContext} from './locale.tsx';
+} from '../lib/translations';
+import {useLocaleContext} from './locale';
 
 /*
  * Context.

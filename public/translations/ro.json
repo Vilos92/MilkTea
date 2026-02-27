@@ -22,5 +22,8 @@
   "help.keyNextAction": "Setare următoare",
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "Ecran complet",
-  "dragDrop.message": "Trageți un fișier audio pentru a-l reda."
+  "dragDrop.message": "Trageți un fișier audio pentru a-l reda.",
+  "source.oscillator": "Oscilator",
+  "source.file": "Fișier audio",
+  "source.microphone": "Microfon"
 }

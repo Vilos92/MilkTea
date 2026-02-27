@@ -5,13 +5,13 @@ import {
   type VisualizerContext,
   createOscillatorVisualizerContext,
   createVisualizer
-} from '../lib/butterchurn/butterchurn.ts';
+} from '../lib/butterchurn/butterchurn';
 import {
   fetchPresetByIndex,
   getPresetKeys,
   prefetchNeighborPresets
-} from '../lib/butterchurn/butterchurnPresets.ts';
-import {useReducedMotion} from './useReducedMotion.ts';
+} from '../lib/butterchurn/butterchurnPresets';
+import {useReducedMotion} from './useReducedMotion';
 
 /*
  * Types.
@@ -245,14 +245,14 @@ export function useButterchurn() {
     started,
     start,
     changePreset,
-    connectAudioBuffer,
-    connectOscillator,
-    connectMediaStream,
     presetIndex,
     presetKeys,
     presetNameToIndex,
     presetEntries,
-    getPresetByIndex: fetchPresetByIndex
+    getPresetByIndex: fetchPresetByIndex,
+    connectAudioBuffer,
+    connectOscillator,
+    connectMediaStream
   };
 }
 

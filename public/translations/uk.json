@@ -22,5 +22,8 @@
   "help.keyNextAction": "Наступний пресет",
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "Повний екран",
-  "dragDrop.message": "Перетягніть аудіофайл для відтворення."
+  "dragDrop.message": "Перетягніть аудіофайл для відтворення.",
+  "source.oscillator": "Осцилятор",
+  "source.file": "Аудіофайл",
+  "source.microphone": "Мікрофон"
 }

@@ -1,10 +1,10 @@
 import type {RefObject} from 'preact';
 
-import {useReducedMotion} from '../../hooks/useReducedMotion.ts';
-import {useLocaleContext} from '../../provider/locale.tsx';
-import {useTranslate} from '../../provider/translation.tsx';
-import {Controls} from '../controls/controls.tsx';
-import {useDragArea} from '../dragArea/useDragArea.ts';
+import {useReducedMotion} from '../../hooks/useReducedMotion';
+import {useLocaleContext} from '../../provider/locale';
+import {useTranslate} from '../../provider/translation';
+import {Controls} from '../controls/controls';
+import {useDragArea} from '../dragArea/useDragArea';
 import {
   btn,
   btnSolid,

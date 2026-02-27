@@ -22,5 +22,8 @@
   "help.keyNextAction": "القالب التالي",
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "ملء الشاشة",
-  "dragDrop.message": "أسقط ملف صوتي لتشغيله."
+  "dragDrop.message": "أسقط ملف صوتي لتشغيله.",
+  "source.oscillator": "مُذبذب",
+  "source.file": "ملف صوتي",
+  "source.microphone": "ميكروفون"
 }

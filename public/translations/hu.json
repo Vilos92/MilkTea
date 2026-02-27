@@ -22,5 +22,8 @@
   "help.keyNextAction": "Következő előbeállítás",
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "Teljes képernyő",
-  "dragDrop.message": "Ejtsen ide egy hangfájlt a lejátszáshoz."
+  "dragDrop.message": "Ejtsen ide egy hangfájlt a lejátszáshoz.",
+  "source.oscillator": "Oszcillátor",
+  "source.file": "Hangfájl",
+  "source.microphone": "Mikrofon"
 }

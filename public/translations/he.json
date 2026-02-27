@@ -22,5 +22,8 @@
   "help.keyNextAction": "הגדרה הבאה",
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "מסך מלא",
-  "dragDrop.message": "גרור קובץ שמע כדי להפעיל אותו."
+  "dragDrop.message": "גרור קובץ שמע כדי להפעיל אותו.",
+  "source.oscillator": "אוסילטור",
+  "source.file": "קובץ שמע",
+  "source.microphone": "מיקרופון"
 }

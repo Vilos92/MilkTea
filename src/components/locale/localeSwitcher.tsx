@@ -1,7 +1,7 @@
-import type {Locale} from '../../lib/locale.ts';
-import {LOCALE_OPTIONS} from '../../lib/locale.ts';
-import {useLocaleContext} from '../../provider/locale.tsx';
-import {useTranslate} from '../../provider/translation.tsx';
+import type {Locale} from '../../lib/locale';
+import {LOCALE_OPTIONS} from '../../lib/locale';
+import {useLocaleContext} from '../../provider/locale';
+import {useTranslate} from '../../provider/translation';
 import {
   globe,
   label,

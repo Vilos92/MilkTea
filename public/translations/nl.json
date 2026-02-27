@@ -22,5 +22,8 @@
   "help.keyNextAction": "Volgende preset",
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "Volledig scherm",
-  "dragDrop.message": "Sleep een audiobestand om het af te spelen."
+  "dragDrop.message": "Sleep een audiobestand om het af te spelen.",
+  "source.oscillator": "Oscillator",
+  "source.file": "Audiobestand",
+  "source.microphone": "Microfoon"
 }

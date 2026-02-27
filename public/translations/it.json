@@ -22,5 +22,8 @@
   "help.keyNextAction": "Preset successivo",
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "Schermo intero",
-  "dragDrop.message": "Trascina un file audio per riprodurlo."
+  "dragDrop.message": "Trascina un file audio per riprodurlo.",
+  "source.oscillator": "Oscillatore",
+  "source.file": "File audio",
+  "source.microphone": "Microfono"
 }

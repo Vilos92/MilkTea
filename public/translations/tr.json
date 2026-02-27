@@ -22,5 +22,8 @@
   "help.keyNextAction": "Sonraki ön ayar",
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "Tam ekran",
-  "dragDrop.message": "Oynatmak için bir ses dosyası bırakın."
+  "dragDrop.message": "Oynatmak için bir ses dosyası bırakın.",
+  "source.oscillator": "Osilatör",
+  "source.file": "Ses dosyası",
+  "source.microphone": "Mikrofon"
 }

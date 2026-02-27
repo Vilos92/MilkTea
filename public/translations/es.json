@@ -22,5 +22,8 @@
   "help.keyNextAction": "Preset siguiente",
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "Pantalla completa",
-  "dragDrop.message": "Suelta un archivo de audio para reproducirlo."
+  "dragDrop.message": "Suelta un archivo de audio para reproducirlo.",
+  "source.oscillator": "Oscilador",
+  "source.file": "Archivo de audio",
+  "source.microphone": "Micrófono"
 }

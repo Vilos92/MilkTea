@@ -1,4 +1,4 @@
-import {DEFAULT_LOCALE, Locale} from './locale.ts';
+import {DEFAULT_LOCALE, Locale} from './locale';
 
 /*
  * Types.
@@ -29,7 +29,10 @@ export type TranslationKey =
   | 'help.keyNextAction'
   | 'help.keyFullscreenKeys'
   | 'help.keyFullscreenAction'
-  | 'dragDrop.message';
+  | 'dragDrop.message'
+  | 'source.oscillator'
+  | 'source.file'
+  | 'source.microphone';
 
 export type Translations = Record<TranslationKey, string>;
 
@@ -63,7 +66,10 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'help.keyNextAction': 'Next preset',
   'help.keyFullscreenKeys': 'F',
   'help.keyFullscreenAction': 'Toggle fullscreen',
-  'dragDrop.message': 'Drop an audio file to play it.'
+  'dragDrop.message': 'Drop an audio file to play it.',
+  'source.oscillator': 'Oscillator',
+  'source.file': 'Audio file',
+  'source.microphone': 'Microphone'
 };
 
 const SUPPORTED_LOCALES = new Set<string>(Object.values(Locale));
