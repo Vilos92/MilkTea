@@ -32,7 +32,8 @@ import {TranslateProvider} from './provider/translation.tsx';
 
 const AudioSource = {
   OSCILLATOR: 'oscillator',
-  FILE: 'file'
+  FILE: 'file',
+  MICROPHONE: 'microphone'
 } as const;
 type AudioSource = (typeof AudioSource)[keyof typeof AudioSource];
 
@@ -50,7 +51,8 @@ export function App() {
     start,
     changePreset,
     connectAudioBuffer,
-    connectOscillator
+    connectOscillator,
+    connectMicrophone
   } = useButterchurn();
 
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -58,14 +60,37 @@ export function App() {
   const [helpOpen, setHelpOpen] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const micStreamRef = useRef<MediaStream | null>(null);
   const [audioSource, setAudioSource] = useState<AudioSource>(AudioSource.OSCILLATOR);
   const [pendingAudioSource, setPendingAudioSource] = useState<AudioSource | undefined>(undefined);
 
+  const stopMicHardware = () => {
+    micStreamRef.current?.getTracks().forEach(track => track.stop());
+    micStreamRef.current = null;
+  };
+
   const handleSourceChange = (newSource: AudioSource) => {
+    if (newSource === audioSource) return;
+
+    stopMicHardware();
+
     if (newSource === AudioSource.FILE) {
       fileInputRef.current?.click();
       return;
     }
+
+    if (newSource === AudioSource.MICROPHONE) {
+      navigator.mediaDevices
+        .getUserMedia({audio: true})
+        .then(stream => {
+          micStreamRef.current = stream;
+          connectMicrophone(stream);
+          setAudioSource(AudioSource.MICROPHONE);
+        })
+        .catch(console.warn);
+      return;
+    }
+
     connectOscillator();
     setAudioSource(AudioSource.OSCILLATOR);
   };
@@ -172,6 +197,21 @@ export function App() {
                 title="Audio file"
               >
                 📼
+              </button>
+              <button
+                type="button"
+                class={computeSourceButtonClass(
+                  AudioSource.MICROPHONE,
+                  audioSource,
+                  pendingAudioSource,
+                  started
+                )}
+                onClick={() => handleSourceChange(AudioSource.MICROPHONE)}
+                aria-label="Microphone"
+                aria-pressed={audioSource === AudioSource.MICROPHONE}
+                title="Microphone"
+              >
+                🎙️
               </button>
             </div>
             <LocaleSwitcher

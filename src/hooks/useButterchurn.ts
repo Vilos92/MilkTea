@@ -32,7 +32,9 @@ export function useButterchurn() {
   const visualizerRef = useRef<Visualizer | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
-  const sourceNodeRef = useRef<AudioBufferSourceNode | OscillatorNode | null>(null);
+  const sourceNodeRef = useRef<AudioBufferSourceNode | OscillatorNode | MediaStreamAudioSourceNode | null>(
+    null
+  );
 
   const currentPresetRef = useRef<unknown>(null);
   const createVisualizerRef = useRef<((size: Size) => void) | null>(null);
@@ -107,6 +109,14 @@ export function useButterchurn() {
     []
   );
 
+  const stopCurrentSource = useCallback(() => {
+    const node = sourceNodeRef.current;
+    if (!node) return;
+    node.disconnect();
+    if ('stop' in node) node.stop();
+    sourceNodeRef.current = null;
+  }, []);
+
   // fetch preset data, create `AudioContext`, setup visualizer.
   const initVisualizer = useCallback(async (): Promise<void> => {
     const canvas = canvasRef.current;
@@ -146,36 +156,37 @@ export function useButterchurn() {
     setStarted(true);
   }, [initVisualizer]);
 
-  const connectAudioBuffer = useCallback(async (arrayBuffer: ArrayBuffer): Promise<void> => {
-    const ctx = audioContextRef.current;
-    const gainNode = gainNodeRef.current;
-    if (!ctx || !gainNode) return;
+  const connectAudioBuffer = useCallback(
+    async (arrayBuffer: ArrayBuffer): Promise<void> => {
+      const ctx = audioContextRef.current;
+      const gainNode = gainNodeRef.current;
+      if (!ctx || !gainNode) return;
 
-    const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+      const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
 
-    sourceNodeRef.current?.disconnect();
-    sourceNodeRef.current?.stop();
+      stopCurrentSource();
 
-    gainNode.gain.value = 1.0;
+      gainNode.gain.setTargetAtTime(1.0, ctx.currentTime, 0.01);
 
-    const source = ctx.createBufferSource();
-    source.buffer = audioBuffer;
-    source.connect(gainNode);
-    source.connect(ctx.destination);
-    source.start(0);
+      const source = ctx.createBufferSource();
+      source.buffer = audioBuffer;
+      source.connect(gainNode);
+      source.connect(ctx.destination);
+      source.start(0);
 
-    sourceNodeRef.current = source;
-  }, []);
+      sourceNodeRef.current = source;
+    },
+    [stopCurrentSource]
+  );
 
   const connectOscillator = useCallback((): void => {
     const ctx = audioContextRef.current;
     const gainNode = gainNodeRef.current;
     if (!ctx || !gainNode) return;
 
-    sourceNodeRef.current?.disconnect();
-    sourceNodeRef.current?.stop();
+    stopCurrentSource();
 
-    gainNode.gain.value = 0.1;
+    gainNode.gain.setTargetAtTime(0.1, ctx.currentTime, 0.01);
 
     const osc = ctx.createOscillator();
     osc.type = 'sawtooth';
@@ -184,7 +195,25 @@ export function useButterchurn() {
     osc.start();
 
     sourceNodeRef.current = osc;
-  }, []);
+  }, [stopCurrentSource]);
+
+  const connectMicrophone = useCallback(
+    (stream: MediaStream): void => {
+      const ctx = audioContextRef.current;
+      const gainNode = gainNodeRef.current;
+      if (!ctx || !gainNode) return;
+
+      stopCurrentSource();
+
+      gainNode.gain.setTargetAtTime(1.0, ctx.currentTime, 0.01);
+
+      const source = ctx.createMediaStreamSource(stream);
+      source.connect(gainNode);
+
+      sourceNodeRef.current = source;
+    },
+    [stopCurrentSource]
+  );
 
   // On mount: run init (preview under the button). Splash stays until user triggers the start.
   useEffect(() => {
@@ -218,6 +247,7 @@ export function useButterchurn() {
     changePreset,
     connectAudioBuffer,
     connectOscillator,
+    connectMicrophone,
     presetIndex,
     presetKeys,
     presetNameToIndex,
