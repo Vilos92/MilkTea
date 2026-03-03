@@ -65,6 +65,7 @@ export function App() {
       .finally(() => setPendingAudioSource(undefined));
 
     setTrackName(file.name);
+    if (!started) start();
   };
 
   const onAudioFileChange = (event: Event) => {
