@@ -26,6 +26,7 @@ import {
 
 type HelpProps = {
   visualizerActive: boolean;
+  trackName: string | undefined;
   onClose: () => void;
 };
 
@@ -33,7 +34,7 @@ type HelpProps = {
  * Component.
  */
 
-export function Help({onClose, visualizerActive}: HelpProps) {
+export function Help({visualizerActive, trackName, onClose}: HelpProps) {
   const t = useTranslate();
 
   const overlayClass = visualizerActive ? overlayActive : overlaySplash;
@@ -85,6 +86,14 @@ export function Help({onClose, visualizerActive}: HelpProps) {
             </li>
           </ul>
         </section>
+        {trackName && (
+          <section class={section} aria-labelledby="help-track-name">
+            <h2 id="help-track-name" class={headingClass}>
+              {t('help.trackName')}
+            </h2>
+            <p class={paragraphClass}>{trackName}</p>
+          </section>
+        )}
         <div class={closeRow}>
           <button type="button" class={closeBtnClass} onClick={onClose} aria-label={t('help.close')}>
             {t('help.close')}

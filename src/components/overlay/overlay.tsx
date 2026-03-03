@@ -1,4 +1,5 @@
 import type {RefObject} from 'preact';
+import {useEffect, useState} from 'preact/hooks';
 
 import {useReducedMotion} from '../../hooks/useReducedMotion';
 import {useLocaleContext} from '../../provider/locale';
@@ -16,7 +17,9 @@ import {
   splashCutoutColumn,
   splashDisclaimer,
   splashSubtext,
-  splashTitleLine
+  splashTitleLine,
+  trackNameLabel,
+  trackNameLabelFading
 } from './overlay.css.ts';
 
 /*
@@ -32,6 +35,7 @@ export type OverlayProps = {
   controlsVisible: boolean;
   setControlsVisibility: (visibility: boolean) => void;
   changePreset: (delta: number) => void;
+  trackName: string | undefined;
 };
 
 /*
@@ -47,11 +51,30 @@ export function Overlay(props: OverlayProps) {
     toggleFullscreen,
     controlsVisible,
     setControlsVisibility,
-    changePreset
+    changePreset,
+    trackName
   } = props;
   const reducedMotion = useReducedMotion();
   const t = useTranslate();
   const {isDragging} = useDragArea();
+
+  const [displayedTrack, setDisplayedTrack] = useState<string | undefined>(undefined);
+  const [isFading, setIsFading] = useState(false);
+
+  useEffect(() => {
+    if (trackName === undefined) return;
+    setDisplayedTrack(trackName);
+
+    setIsFading(false);
+    const id = setTimeout(() => setIsFading(true), 2500);
+    return () => clearTimeout(id);
+  }, [trackName]);
+
+  const handleTrackNameTransitionEnd = () => {
+    if (isFading) {
+      setDisplayedTrack(undefined);
+    }
+  };
 
   const {locale} = useLocaleContext();
   const isEnglish = locale === 'en';
@@ -98,8 +121,22 @@ export function Overlay(props: OverlayProps) {
   }
 
   const overlayClass = controlsVisible ? overlay : [overlay, overlayHideCursor].join(' ');
+  const trackNameClass = displayedTrack
+    ? [trackNameLabel, isFading ? trackNameLabelFading : ''].filter(Boolean).join(' ')
+    : '';
+
   return (
     <div ref={overlayRef} class={overlayClass}>
+      {displayedTrack && (
+        <div
+          class={trackNameClass}
+          onTransitionEnd={handleTrackNameTransitionEnd}
+          role="status"
+          aria-live="polite"
+        >
+          {displayedTrack}
+        </div>
+      )}
       <Controls
         overlayRef={overlayRef}
         isFullscreen={isCanvasFullscreen}

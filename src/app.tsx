@@ -48,6 +48,8 @@ export function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const micStreamRef = useRef<MediaStream | null>(null);
 
+  const [trackName, setTrackName] = useState<string | undefined>(undefined);
+
   const handleAudioFile = (file: File) => {
     if (!file.type.startsWith('audio/')) {
       console.error('File is not a valid audio file:', file);
@@ -61,6 +63,8 @@ export function App() {
       .then(() => setAudioSource(AudioSource.FILE))
       .catch(error => console.error('Failed to connect audio buffer:', error))
       .finally(() => setPendingAudioSource(undefined));
+
+    setTrackName(file.name);
   };
 
   const onAudioFileChange = (event: Event) => {
@@ -137,6 +141,7 @@ export function App() {
               controlsVisible={controlsVisibility}
               setControlsVisibility={setControlsVisibility}
               changePreset={changePreset}
+              trackName={trackName}
             />
             <Visualizer canvasRef={canvasRef} />
 
@@ -163,7 +168,9 @@ export function App() {
               alwaysLight={started}
             />
 
-            {helpOpen && <Help visualizerActive={started} onClose={() => setHelpOpen(false)} />}
+            {helpOpen && (
+              <Help visualizerActive={started} trackName={trackName} onClose={() => setHelpOpen(false)} />
+            )}
           </div>
         </DragArea>
       </TranslateProvider>

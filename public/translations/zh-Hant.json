@@ -22,6 +22,7 @@
   "help.keyNextAction": "下一個預設",
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "全螢幕",
+  "help.trackName": "正在播放",
   "dragDrop.message": "拖入音訊檔案即可播放。",
   "source.oscillator": "振盪器",
   "source.file": "音訊檔案",

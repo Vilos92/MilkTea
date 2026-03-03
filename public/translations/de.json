@@ -22,6 +22,7 @@
   "help.keyNextAction": "Nächstes Preset",
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "Vollbild",
+  "help.trackName": "Jetzt läuft",
   "dragDrop.message": "Audiodatei ablegen, um sie abzuspielen.",
   "source.oscillator": "Oszillator",
   "source.file": "Audiodatei",

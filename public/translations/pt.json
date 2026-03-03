@@ -22,6 +22,7 @@
   "help.keyNextAction": "Preset seguinte",
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "Ecrã inteiro",
+  "help.trackName": "A tocar agora",
   "dragDrop.message": "Solte um ficheiro de áudio para o reproduzir.",
   "source.oscillator": "Oscilador",
   "source.file": "Ficheiro de áudio",

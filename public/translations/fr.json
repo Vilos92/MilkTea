@@ -22,6 +22,7 @@
   "help.keyNextAction": "Prését suivant",
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "Plein écran",
+  "help.trackName": "En cours de lecture",
   "dragDrop.message": "Déposez un fichier audio pour le lire.",
   "source.oscillator": "Oscillateur",
   "source.file": "Fichier audio",

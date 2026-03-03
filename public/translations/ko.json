@@ -22,6 +22,7 @@
   "help.keyNextAction": "다음 프리셋",
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "전체 화면",
+  "help.trackName": "재생 중",
   "dragDrop.message": "오디오 파일을 놓으면 재생됩니다.",
   "source.oscillator": "오실레이터",
   "source.file": "오디오 파일",

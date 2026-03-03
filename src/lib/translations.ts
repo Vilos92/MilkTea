@@ -29,6 +29,7 @@ export type TranslationKey =
   | 'help.keyNextAction'
   | 'help.keyFullscreenKeys'
   | 'help.keyFullscreenAction'
+  | 'help.trackName'
   | 'dragDrop.message'
   | 'source.oscillator'
   | 'source.file'
@@ -66,6 +67,7 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'help.keyNextAction': 'Next preset',
   'help.keyFullscreenKeys': 'F',
   'help.keyFullscreenAction': 'Toggle fullscreen',
+  'help.trackName': 'Now playing',
   'dragDrop.message': 'Drop an audio file to play it.',
   'source.oscillator': 'Oscillator',
   'source.file': 'Audio file',
