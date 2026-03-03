@@ -9,10 +9,11 @@ import {useDragArea} from '../dragArea/useDragArea.ts';
 import {
   btn,
   btnSolid,
+  faded,
   overlay,
   overlayHideCursor,
   overlaySplash,
-  presetNameCenteredAtControls,
+  presetNameAtBottom,
   presetNameClass,
   splashButtonContent,
   splashCutout,
@@ -20,8 +21,7 @@ import {
   splashDisclaimer,
   splashSubtext,
   splashTitleLine,
-  trackNameLabel,
-  trackNameLabelFading
+  trackNameLabel
 } from './overlay.css.ts';
 
 /*
@@ -143,14 +143,10 @@ export function Overlay(props: OverlayProps) {
 
   const overlayClass = controlsVisible ? overlay : [overlay, overlayHideCursor].join(' ');
   const trackNameClass = displayedTrack
-    ? [trackNameLabel, isTrackFading ? trackNameLabelFading : ''].filter(Boolean).join(' ')
+    ? [trackNameLabel, isTrackFading ? faded : ''].filter(Boolean).join(' ')
     : '';
   const presetClass = displayedPreset
-    ? [
-        presetNameClass,
-        controlsVisible ? '' : presetNameCenteredAtControls,
-        isPresetFading ? trackNameLabelFading : ''
-      ]
+    ? [presetNameClass, controlsVisible ? '' : presetNameAtBottom, isPresetFading ? faded : '']
         .filter(Boolean)
         .join(' ')
     : '';

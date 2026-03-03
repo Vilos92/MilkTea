@@ -211,7 +211,7 @@ export const presetNameClass = style({
   }
 });
 
-export const presetNameCenteredAtControls = style({
+export const presetNameAtBottom = style({
   bottom: '52px'
 });
 
@@ -236,6 +236,6 @@ export const trackNameLabel = style({
   }
 });
 
-export const trackNameLabelFading = style({
+export const faded = style({
   opacity: 0
 });
