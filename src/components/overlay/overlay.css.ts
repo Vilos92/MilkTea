@@ -192,7 +192,7 @@ export const btn = style({
 
 export const presetNameClass = style({
   position: 'fixed',
-  bottom: '112px', // Above the controls bar when controls are visible
+  bottom: '112px',
   left: '50%',
   transform: 'translateX(-50%)',
   width: '90vw',
