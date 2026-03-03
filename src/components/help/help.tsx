@@ -17,6 +17,7 @@ import {
   overlaySplash,
   paragraph,
   paragraphSplash,
+  scrollArea,
   section
 } from './help.css.ts';
 
@@ -26,6 +27,7 @@ import {
 
 type HelpProps = {
   visualizerActive: boolean;
+  presetName: string | undefined;
   trackName: string | undefined;
   onClose: () => void;
 };
@@ -34,7 +36,7 @@ type HelpProps = {
  * Component.
  */
 
-export function Help({visualizerActive, trackName, onClose}: HelpProps) {
+export function Help({visualizerActive, presetName, trackName, onClose}: HelpProps) {
   const t = useTranslate();
 
   const overlayClass = visualizerActive ? overlayActive : overlaySplash;
@@ -57,43 +59,53 @@ export function Help({visualizerActive, trackName, onClose}: HelpProps) {
   return (
     <div class={overlayClass} role="dialog" aria-modal="true" aria-labelledby="help-about">
       <div class={content}>
-        <section class={section} aria-labelledby="help-about">
-          <h2 id="help-about" class={headingClass}>
-            {t('help.about')}
-          </h2>
-          <p class={paragraphClass}>{t('help.aboutText')}</p>
-        </section>
-        <section class={section} aria-labelledby="help-hotkeys">
-          <h2 id="help-hotkeys" class={headingClass}>
-            {t('help.hotkeys')}
-          </h2>
-          <ul class={listClass}>
-            <li class={hotkeyRow}>
-              <span class={keyCell}>{t('help.keyHelpKeys')}</span>
-              <span class={actionCell}>{t('help.keyHelpAction')}</span>
-            </li>
-            <li class={hotkeyRow}>
-              <span class={keyCell}>{t('help.keyPrevKeys')}</span>
-              <span class={actionCell}>{t('help.keyPrevAction')}</span>
-            </li>
-            <li class={hotkeyRow}>
-              <span class={keyCell}>{t('help.keyNextKeys')}</span>
-              <span class={actionCell}>{t('help.keyNextAction')}</span>
-            </li>
-            <li class={hotkeyRow}>
-              <span class={keyCell}>{t('help.keyFullscreenKeys')}</span>
-              <span class={actionCell}>{t('help.keyFullscreenAction')}</span>
-            </li>
-          </ul>
-        </section>
-        {trackName && (
-          <section class={section} aria-labelledby="help-track-name">
-            <h2 id="help-track-name" class={headingClass}>
-              {t('help.trackName')}
+        <div class={scrollArea}>
+          <section class={section} aria-labelledby="help-about">
+            <h2 id="help-about" class={headingClass}>
+              {t('help.about')}
             </h2>
-            <p class={paragraphClass}>{trackName}</p>
+            <p class={paragraphClass}>{t('help.aboutText')}</p>
           </section>
-        )}
+          <section class={section} aria-labelledby="help-hotkeys">
+            <h2 id="help-hotkeys" class={headingClass}>
+              {t('help.hotkeys')}
+            </h2>
+            <ul class={listClass}>
+              <li class={hotkeyRow}>
+                <span class={keyCell}>{t('help.keyHelpKeys')}</span>
+                <span class={actionCell}>{t('help.keyHelpAction')}</span>
+              </li>
+              <li class={hotkeyRow}>
+                <span class={keyCell}>{t('help.keyPrevKeys')}</span>
+                <span class={actionCell}>{t('help.keyPrevAction')}</span>
+              </li>
+              <li class={hotkeyRow}>
+                <span class={keyCell}>{t('help.keyNextKeys')}</span>
+                <span class={actionCell}>{t('help.keyNextAction')}</span>
+              </li>
+              <li class={hotkeyRow}>
+                <span class={keyCell}>{t('help.keyFullscreenKeys')}</span>
+                <span class={actionCell}>{t('help.keyFullscreenAction')}</span>
+              </li>
+            </ul>
+          </section>
+          {presetName && (
+            <section class={section} aria-labelledby="help-preset-name">
+              <h2 id="help-preset-name" class={headingClass}>
+                {t('help.presetName')}
+              </h2>
+              <p class={paragraphClass}>{presetName}</p>
+            </section>
+          )}
+          {trackName && (
+            <section class={section} aria-labelledby="help-track-name">
+              <h2 id="help-track-name" class={headingClass}>
+                {t('help.trackName')}
+              </h2>
+              <p class={paragraphClass}>{trackName}</p>
+            </section>
+          )}
+        </div>
         <div class={closeRow}>
           <button type="button" class={closeBtnClass} onClick={onClose} aria-label={t('help.close')}>
             {t('help.close')}

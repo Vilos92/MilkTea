@@ -23,6 +23,7 @@
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "Pantalla completa",
   "help.trackName": "Sonando ahora",
+  "help.presetName": "Preset",
   "dragDrop.message": "Suelta un archivo de audio para reproducirlo.",
   "source.oscillator": "Oscilador",
   "source.file": "Archivo de audio",

@@ -23,6 +23,7 @@
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "Teljes képernyő",
   "help.trackName": "Most játszott",
+  "help.presetName": "Előbeállítás",
   "dragDrop.message": "Ejtsen ide egy hangfájlt a lejátszáshoz.",
   "source.oscillator": "Oszcillátor",
   "source.file": "Hangfájl",

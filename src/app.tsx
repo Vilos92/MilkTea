@@ -15,7 +15,7 @@ import {DragArea} from './components/dragArea/dragArea';
 import {Help} from './components/help/help';
 import {HelpButton} from './components/help/helpButton';
 import {LocaleSwitcher} from './components/locale/localeSwitcher';
-import {Overlay} from './components/overlay/overlay';
+import {Overlay} from './components/overlay/overlay.tsx';
 import {Visualizer} from './components/visualizer/visualizer';
 import {useButterchurn} from './hooks/useButterchurn';
 import {LocaleProvider} from './provider/locale';
@@ -33,6 +33,7 @@ export function App() {
     toggleFullscreen,
     started,
     start,
+    presetName,
     changePreset,
     connectAudioBuffer,
     connectOscillator,
@@ -141,6 +142,7 @@ export function App() {
               toggleFullscreen={toggleFullscreen}
               controlsVisible={controlsVisibility}
               setControlsVisibility={setControlsVisibility}
+              presetName={presetName}
               changePreset={changePreset}
               trackName={trackName}
             />
@@ -170,7 +172,12 @@ export function App() {
             />
 
             {helpOpen && (
-              <Help visualizerActive={started} trackName={trackName} onClose={() => setHelpOpen(false)} />
+              <Help
+                visualizerActive={started}
+                presetName={presetName}
+                trackName={trackName}
+                onClose={() => setHelpOpen(false)}
+              />
             )}
           </div>
         </DragArea>

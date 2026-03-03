@@ -23,6 +23,7 @@
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "Полный экран",
   "help.trackName": "Сейчас играет",
+  "help.presetName": "Пресет",
   "dragDrop.message": "Перетащите аудиофайл для воспроизведения.",
   "source.oscillator": "Осциллятор",
   "source.file": "Аудиофайл",

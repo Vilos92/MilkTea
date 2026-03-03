@@ -53,6 +53,8 @@ export function useButterchurn() {
     [presetKeys]
   );
 
+  const presetName: string | undefined = presetKeys[presetIndex];
+
   const toggleFullscreen = useCallback(() => {
     if (containerRef.current) toggleContainerFullscreen(containerRef.current);
   }, []);
@@ -244,6 +246,7 @@ export function useButterchurn() {
     toggleFullscreen,
     started,
     start,
+    presetName,
     changePreset,
     presetIndex,
     presetKeys,

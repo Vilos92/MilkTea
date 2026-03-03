@@ -23,6 +23,7 @@
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "Ecran complet",
   "help.trackName": "Acum redă",
+  "help.presetName": "Preset",
   "dragDrop.message": "Trageți un fișier audio pentru a-l reda.",
   "source.oscillator": "Oscilator",
   "source.file": "Fișier audio",

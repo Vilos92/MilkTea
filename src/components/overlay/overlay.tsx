@@ -1,17 +1,19 @@
 import type {RefObject} from 'preact';
 import {useEffect, useState} from 'preact/hooks';
 
-import {useReducedMotion} from '../../hooks/useReducedMotion';
-import {useLocaleContext} from '../../provider/locale';
-import {useTranslate} from '../../provider/translation';
-import {Controls} from '../controls/controls';
-import {useDragArea} from '../dragArea/useDragArea';
+import {useReducedMotion} from '../../hooks/useReducedMotion.ts';
+import {useLocaleContext} from '../../provider/locale.tsx';
+import {useTranslate} from '../../provider/translation.tsx';
+import {Controls} from '../controls/controls.tsx';
+import {useDragArea} from '../dragArea/useDragArea.ts';
 import {
   btn,
   btnSolid,
   overlay,
   overlayHideCursor,
   overlaySplash,
+  presetNameCenteredAtControls,
+  presetNameClass,
   splashButtonContent,
   splashCutout,
   splashCutoutColumn,
@@ -34,6 +36,7 @@ export type OverlayProps = {
   toggleFullscreen: () => void;
   controlsVisible: boolean;
   setControlsVisibility: (visibility: boolean) => void;
+  presetName: string | undefined;
   changePreset: (delta: number) => void;
   trackName: string | undefined;
 };
@@ -51,6 +54,7 @@ export function Overlay(props: OverlayProps) {
     toggleFullscreen,
     controlsVisible,
     setControlsVisibility,
+    presetName,
     changePreset,
     trackName
   } = props;
@@ -59,20 +63,37 @@ export function Overlay(props: OverlayProps) {
   const {isDragging} = useDragArea();
 
   const [displayedTrack, setDisplayedTrack] = useState<string | undefined>(undefined);
-  const [isFading, setIsFading] = useState(false);
+  const [isTrackFading, setIsTrackFading] = useState(false);
+  const [displayedPreset, setDisplayedPreset] = useState<string | undefined>(undefined);
+  const [isPresetFading, setIsPresetFading] = useState(false);
 
   useEffect(() => {
     if (trackName === undefined) return;
     setDisplayedTrack(trackName);
 
-    setIsFading(false);
-    const id = setTimeout(() => setIsFading(true), 2500);
+    setIsTrackFading(false);
+    const id = setTimeout(() => setIsTrackFading(true), 2500);
     return () => clearTimeout(id);
   }, [trackName]);
 
   const handleTrackNameTransitionEnd = () => {
-    if (isFading) {
+    if (isTrackFading) {
       setDisplayedTrack(undefined);
+    }
+  };
+
+  useEffect(() => {
+    if (presetName === undefined) return;
+    setDisplayedPreset(presetName);
+
+    setIsPresetFading(false);
+    const id = setTimeout(() => setIsPresetFading(true), 2500);
+    return () => clearTimeout(id);
+  }, [presetName]);
+
+  const handlePresetNameTransitionEnd = () => {
+    if (isPresetFading) {
+      setDisplayedPreset(undefined);
     }
   };
 
@@ -122,7 +143,16 @@ export function Overlay(props: OverlayProps) {
 
   const overlayClass = controlsVisible ? overlay : [overlay, overlayHideCursor].join(' ');
   const trackNameClass = displayedTrack
-    ? [trackNameLabel, isFading ? trackNameLabelFading : ''].filter(Boolean).join(' ')
+    ? [trackNameLabel, isTrackFading ? trackNameLabelFading : ''].filter(Boolean).join(' ')
+    : '';
+  const presetClass = displayedPreset
+    ? [
+        presetNameClass,
+        controlsVisible ? '' : presetNameCenteredAtControls,
+        isPresetFading ? trackNameLabelFading : ''
+      ]
+        .filter(Boolean)
+        .join(' ')
     : '';
 
   return (
@@ -135,6 +165,16 @@ export function Overlay(props: OverlayProps) {
           aria-live="polite"
         >
           {displayedTrack}
+        </div>
+      )}
+      {displayedPreset && (
+        <div
+          class={presetClass}
+          onTransitionEnd={handlePresetNameTransitionEnd}
+          role="status"
+          aria-live="polite"
+        >
+          {displayedPreset}
         </div>
       )}
       <Controls

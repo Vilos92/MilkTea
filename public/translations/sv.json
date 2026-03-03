@@ -23,6 +23,7 @@
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "Fullskärm",
   "help.trackName": "Spelar nu",
+  "help.presetName": "Förinställning",
   "dragDrop.message": "Släpp en ljudfil för att spela den.",
   "source.oscillator": "Oscillator",
   "source.file": "Ljudfil",

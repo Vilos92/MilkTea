@@ -23,6 +23,7 @@
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "Pełny ekran",
   "help.trackName": "Teraz odtwarzane",
+  "help.presetName": "Preset",
   "dragDrop.message": "Upuść plik audio, aby go odtworzyć.",
   "source.oscillator": "Oscylator",
   "source.file": "Plik audio",
