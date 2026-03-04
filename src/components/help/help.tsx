@@ -1,6 +1,7 @@
 import {useEffect} from 'preact/hooks';
 
 import {useTranslate} from '../../provider/translation';
+import {LocaleSwitcher} from '../locale/localeSwitcher';
 import {
   actionCell,
   closeBtn,
@@ -13,6 +14,7 @@ import {
   keyCell,
   list,
   listSplash,
+  localeRow,
   overlayActive,
   overlaySplash,
   paragraph,
@@ -60,6 +62,9 @@ export function Help({visualizerActive, presetName, trackName, onClose}: HelpPro
     <div class={overlayClass} role="dialog" aria-modal="true" aria-labelledby="help-about">
       <div class={content}>
         <div class={scrollArea}>
+          <div class={localeRow}>
+            <LocaleSwitcher alwaysLight={true} />
+          </div>
           <section class={section} aria-labelledby="help-about">
             <h2 id="help-about" class={headingClass}>
               {t('help.about')}
@@ -86,6 +91,10 @@ export function Help({visualizerActive, presetName, trackName, onClose}: HelpPro
               <li class={hotkeyRow}>
                 <span class={keyCell}>{t('help.keyFullscreenKeys')}</span>
                 <span class={actionCell}>{t('help.keyFullscreenAction')}</span>
+              </li>
+              <li class={hotkeyRow}>
+                <span class={keyCell}>{t('help.keySettingsKeys')}</span>
+                <span class={actionCell}>{t('help.keySettingsAction')}</span>
               </li>
             </ul>
           </section>

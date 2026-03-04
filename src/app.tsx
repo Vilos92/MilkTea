@@ -11,10 +11,10 @@ import {
   topVisible
 } from './app.css.ts';
 import {AudioSource, AudioSourceButtons} from './components/audioSourceButtons/audioSourceButtons.tsx';
+import {CommandPalette} from './components/commandPalette/commandPalette';
 import {DragArea} from './components/dragArea/dragArea';
 import {Help} from './components/help/help';
-import {HelpButton} from './components/help/helpButton';
-import {LocaleSwitcher} from './components/locale/localeSwitcher';
+import {CommandPaletteButton, HelpButton} from './components/help/helpButton';
 import {Overlay} from './components/overlay/overlay.tsx';
 import {Visualizer} from './components/visualizer/visualizer';
 import {useButterchurn} from './hooks/useButterchurn';
@@ -43,6 +43,9 @@ export function App() {
   const overlayRef = useRef<HTMLDivElement>(null);
   const [controlsVisibility, setControlsVisibility] = useState(true);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [showPresetNameOnChange, setShowPresetNameOnChange] = useState(true);
+  const [showTrackNameOnChange, setShowTrackNameOnChange] = useState(true);
 
   const [audioSource, setAudioSource] = useState<AudioSource>(AudioSource.OSCILLATOR);
   const [pendingAudioSource, setPendingAudioSource] = useState<AudioSource | undefined>(undefined);
@@ -129,6 +132,32 @@ export function App() {
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [started, start]);
 
+  const setHelpOpenWithExclusivity = (fn: (open: boolean) => boolean) => {
+    setHelpOpen(prev => {
+      const next = fn(prev);
+      if (next) setCommandPaletteOpen(false);
+      return next;
+    });
+  };
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
+        event.preventDefault();
+        setCommandPaletteOpen(open => {
+          if (!open) setHelpOpen(false);
+          return !open;
+        });
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, []);
+
+  useEffect(() => {
+    if (helpOpen || commandPaletteOpen) setControlsVisibility(true);
+  }, [helpOpen, commandPaletteOpen]);
+
   return (
     <LocaleProvider>
       <TranslateProvider>
@@ -145,18 +174,25 @@ export function App() {
               presetName={presetName}
               changePreset={changePreset}
               trackName={trackName}
+              showPresetNameOnChange={showPresetNameOnChange}
+              showTrackNameOnChange={showTrackNameOnChange}
             />
             <Visualizer canvasRef={canvasRef} />
 
-            <HelpButton
-              class={[topCorner, topLeftCorner, controlsVisibility || !started ? topVisible : topFaded].join(
-                ' '
-              )}
+            <CommandPaletteButton
+              class={[
+                topCorner,
+                topLeftCorner,
+                controlsVisibility || !started || helpOpen || commandPaletteOpen ? topVisible : topFaded
+              ].join(' ')}
               alwaysLight={started}
-              setHelpOpen={setHelpOpen}
+              onOpen={() => {
+                setHelpOpen(false);
+                setCommandPaletteOpen(open => !open);
+              }}
             />
             <AudioSourceButtons
-              class={controlsVisibility || !started ? topVisible : topFaded}
+              class={controlsVisibility || !started || helpOpen || commandPaletteOpen ? topVisible : topFaded}
               fileInputRef={fileInputRef}
               onFileChange={onAudioFileChange}
               audioSource={audioSource}
@@ -164,19 +200,42 @@ export function App() {
               started={started}
               onSourceChange={handleSourceChange}
             />
-            <LocaleSwitcher
-              class={[topCorner, topRightCorner, controlsVisibility || !started ? topVisible : topFaded].join(
-                ' '
-              )}
+            <HelpButton
+              class={[
+                topCorner,
+                topRightCorner,
+                controlsVisibility || !started || helpOpen || commandPaletteOpen ? topVisible : topFaded
+              ].join(' ')}
               alwaysLight={started}
+              setHelpOpen={setHelpOpenWithExclusivity}
             />
-
             {helpOpen && (
               <Help
                 visualizerActive={started}
                 presetName={presetName}
                 trackName={trackName}
                 onClose={() => setHelpOpen(false)}
+              />
+            )}
+            {commandPaletteOpen && (
+              <CommandPalette
+                visualizerActive={started}
+                showPresetNameOnChange={showPresetNameOnChange}
+                showTrackNameOnChange={showTrackNameOnChange}
+                onShowPresetNameOnChange={setShowPresetNameOnChange}
+                onShowTrackNameOnChange={setShowTrackNameOnChange}
+                onClose={() => setCommandPaletteOpen(false)}
+                onOpenHelp={() => {
+                  setCommandPaletteOpen(false);
+                  setHelpOpen(true);
+                }}
+                onPrevPreset={() => changePreset(-1)}
+                onNextPreset={() => changePreset(1)}
+                isFullscreen={isCanvasFullscreen}
+                onFullScreen={toggleFullscreen}
+                onOpenFilePicker={() => fileInputRef.current?.click()}
+                onSelectOscillator={() => handleSourceChange(AudioSource.OSCILLATOR)}
+                onSelectMic={() => handleSourceChange(AudioSource.MICROPHONE)}
               />
             )}
           </div>

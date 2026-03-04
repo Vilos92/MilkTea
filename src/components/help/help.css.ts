@@ -51,7 +51,14 @@ export const scrollArea = style({
   display: 'flex',
   flexDirection: 'column',
   gap: '28px',
-  overflowY: 'auto'
+  overflowY: 'auto',
+  paddingTop: '16px'
+});
+
+/** Centered row for locale switcher above About. */
+export const localeRow = style({
+  display: 'flex',
+  justifyContent: 'center'
 });
 
 export const section = style({

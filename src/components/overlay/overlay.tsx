@@ -39,6 +39,8 @@ export type OverlayProps = {
   presetName: string | undefined;
   changePreset: (delta: number) => void;
   trackName: string | undefined;
+  showPresetNameOnChange?: boolean;
+  showTrackNameOnChange?: boolean;
 };
 
 /*
@@ -56,7 +58,9 @@ export function Overlay(props: OverlayProps) {
     setControlsVisibility,
     presetName,
     changePreset,
-    trackName
+    trackName,
+    showPresetNameOnChange = true,
+    showTrackNameOnChange = true
   } = props;
   const reducedMotion = useReducedMotion();
   const t = useTranslate();
@@ -153,7 +157,7 @@ export function Overlay(props: OverlayProps) {
 
   return (
     <div ref={overlayRef} class={overlayClass}>
-      {displayedTrack && (
+      {showTrackNameOnChange && displayedTrack && (
         <div
           class={trackNameClass}
           onTransitionEnd={handleTrackNameTransitionEnd}
@@ -163,7 +167,7 @@ export function Overlay(props: OverlayProps) {
           {displayedTrack}
         </div>
       )}
-      {displayedPreset && (
+      {showPresetNameOnChange && displayedPreset && (
         <div
           class={presetClass}
           onTransitionEnd={handlePresetNameTransitionEnd}

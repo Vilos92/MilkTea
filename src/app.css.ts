@@ -44,6 +44,11 @@ export const topRightCorner = style({
   right: '12px'
 });
 
+export const bottomRightCorner = style({
+  bottom: '12px',
+  right: '12px'
+});
+
 export const topVisible = style({
   opacity: 1
 });

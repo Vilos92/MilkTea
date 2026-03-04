@@ -1,28 +1,24 @@
 import {style} from '@vanilla-extract/css';
 
 export const helpButtonRoot = style({
-  position: 'fixed',
-  top: '12px',
-  left: '12px',
-  zIndex: 400,
   display: 'flex',
-  alignItems: 'center',
-  minHeight: '48px',
-  '@media': {
-    '(pointer: fine)': {
-      minHeight: '28px'
-    }
-  }
+  alignItems: 'center'
+});
+
+/** In-flow root when HelpButton is inside leftCornerGroup. */
+export const helpButtonRootInline = style({
+  display: 'flex',
+  alignItems: 'center'
 });
 
 export const helpButton = style({
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: '32px',
-  height: '32px',
+  width: '48px',
+  height: '48px',
   padding: 0,
-  fontSize: '1.1rem',
+  fontSize: '1.2rem',
   lineHeight: 1,
   background: 'transparent',
   color: 'rgba(255,255,255,0.8)',

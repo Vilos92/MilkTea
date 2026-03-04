@@ -29,8 +29,18 @@ export type TranslationKey =
   | 'help.keyNextAction'
   | 'help.keyFullscreenKeys'
   | 'help.keyFullscreenAction'
+  | 'help.keySettingsKeys'
+  | 'help.keySettingsAction'
   | 'help.trackName'
   | 'help.presetName'
+  | 'settings.title'
+  | 'settings.close'
+  | 'settings.showPresetNameOnChange'
+  | 'settings.showTrackNameOnChange'
+  | 'commandPalette.searchPlaceholder'
+  | 'commandPalette.group.command'
+  | 'commandPalette.group.audio'
+  | 'commandPalette.group.settings'
   | 'dragDrop.message'
   | 'source.oscillator'
   | 'source.file'
@@ -68,8 +78,18 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'help.keyNextAction': 'Next preset',
   'help.keyFullscreenKeys': 'F',
   'help.keyFullscreenAction': 'Toggle fullscreen',
+  'help.keySettingsKeys': '⌘K',
+  'help.keySettingsAction': 'Command Palette',
   'help.trackName': 'Now playing',
   'help.presetName': 'Preset',
+  'settings.title': 'Settings',
+  'settings.close': 'Close',
+  'settings.showPresetNameOnChange': 'Show preset name on change',
+  'settings.showTrackNameOnChange': 'Show audio track name on change',
+  'commandPalette.searchPlaceholder': 'Search…',
+  'commandPalette.group.command': 'Command',
+  'commandPalette.group.audio': 'Audio',
+  'commandPalette.group.settings': 'Settings',
   'dragDrop.message': 'Drop an audio file to play it.',
   'source.oscillator': 'Oscillator',
   'source.file': 'Audio file',
