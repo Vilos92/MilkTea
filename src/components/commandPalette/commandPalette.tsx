@@ -41,13 +41,13 @@ const PaletteItemType = {
 } as const;
 type PaletteItemType = (typeof PaletteItemType)[keyof typeof PaletteItemType];
 
-type PaletteGroup = 'settings' | 'command' | 'audio';
+type PaletteGroup = 'command' | 'audio' | 'settings';
 
 /*
  * Constants.
  */
 
-const groupOrder: PaletteGroup[] = ['command', 'audio', 'settings'];
+const groupOrder: readonly PaletteGroup[] = ['command', 'audio', 'settings'];
 
 /*
  * Types.
@@ -111,7 +111,7 @@ export function CommandPalette({
   const headingClass = visualizerActive ? heading : headingSplash;
   const closeBtnClass = visualizerActive ? closeBtn : closeBtnSplash;
 
-  const allItems: PaletteItem[] = usePaletteItems(
+  const allItems: readonly PaletteItem[] = usePaletteItems(
     onOpenHelp,
     onPrevPreset,
     onNextPreset,
@@ -122,7 +122,7 @@ export function CommandPalette({
     onOpenFilePicker
   );
 
-  const filteredItems = useMemo(() => {
+  const filteredItems: readonly PaletteItem[] = useMemo(() => {
     const rawQuery = query.trim();
     if (!rawQuery) return allItems;
 
@@ -141,7 +141,7 @@ export function CommandPalette({
     });
   }, [allItems, query, locale, t]);
 
-  const itemsByGroup = useMemo(() => {
+  const itemsByGroup: Record<PaletteGroup, readonly PaletteItem[]> = useMemo(() => {
     return filteredItems.reduce<Record<PaletteGroup, PaletteItem[]>>(
       (currentItemsByGroup, item) => {
         const group = parsePaletteGroup(item.type);
@@ -290,7 +290,7 @@ function usePaletteItems(
   onSelectOscillator: () => void,
   onSelectMic: () => void,
   onOpenFilePicker: () => void
-): PaletteItem[] {
+): readonly PaletteItem[] {
   const t = useTranslate();
   const {shouldShowPresetName, setShouldShowPresetName, shouldShowTrackName, setShouldShowTrackName} =
     useSettingsContext();

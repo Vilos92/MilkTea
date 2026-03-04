@@ -10,13 +10,13 @@ import {
   topRightCorner,
   topVisible
 } from './app.css.ts';
-import {AudioSource, AudioSourceButtons} from './components/audioSourceButtons/audioSourceButtons.tsx';
+import {AudioSource, AudioSourceButtons} from './components/audioSourceButtons/audioSourceButtons';
 import {CommandPalette} from './components/commandPalette/commandPalette';
 import {CommandPaletteButton} from './components/commandPalette/commandPaletteButton';
 import {DragArea} from './components/dragArea/dragArea';
 import {Help} from './components/help/help';
 import {HelpButton} from './components/help/helpButton';
-import {Overlay} from './components/overlay/overlay.tsx';
+import {Overlay} from './components/overlay/overlay';
 import {Visualizer} from './components/visualizer/visualizer';
 import {useButterchurn} from './hooks/useButterchurn';
 import {LocaleProvider} from './providers/locale';
@@ -44,8 +44,8 @@ export function App() {
 
   const overlayRef = useRef<HTMLDivElement>(null);
   const [controlsVisibility, setControlsVisibility] = useState(true);
-  const [helpOpen, setHelpOpen] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
 
   const [audioSource, setAudioSource] = useState<AudioSource>(AudioSource.OSCILLATOR);
   const [pendingAudioSource, setPendingAudioSource] = useState<AudioSource | undefined>(undefined);
@@ -132,14 +132,6 @@ export function App() {
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [started, start]);
 
-  const setHelpOpenWithExclusivity = (fn: (open: boolean) => boolean) => {
-    setHelpOpen(prev => {
-      const next = fn(prev);
-      if (next) setCommandPaletteOpen(false);
-      return next;
-    });
-  };
-
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
@@ -211,7 +203,10 @@ export function App() {
                   controlsVisibility || !started || helpOpen || commandPaletteOpen ? topVisible : topFaded
                 ].join(' ')}
                 alwaysLight={started}
-                setHelpOpen={setHelpOpenWithExclusivity}
+                onOpen={() => {
+                  setCommandPaletteOpen(false);
+                  setHelpOpen(open => !open);
+                }}
               />
               {helpOpen && (
                 <Help

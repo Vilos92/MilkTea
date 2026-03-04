@@ -5,12 +5,6 @@ export const helpButtonRoot = style({
   alignItems: 'center'
 });
 
-/** In-flow root when HelpButton is inside leftCornerGroup. */
-export const helpButtonRootInline = style({
-  display: 'flex',
-  alignItems: 'center'
-});
-
 export const helpButton = style({
   display: 'inline-flex',
   alignItems: 'center',

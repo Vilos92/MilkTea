@@ -1,12 +1,11 @@
 import {style} from '@vanilla-extract/css';
 
 export const root = style({
-  // Reset button defaults
   all: 'unset',
   display: 'inline-flex',
   alignItems: 'center',
   gap: '0.5rem',
-  // Ensure focus ring is visible when using keyboard
+  // Ensure focus ring is visible when using keyboard.
   ':focus-visible': {
     outline: '2px solid hsl(215 100% 50%)',
     outlineOffset: '2px',
@@ -24,8 +23,8 @@ export const track = style({
   position: 'relative',
   display: 'inline-flex',
   alignItems: 'center',
-  width: '2.75rem', // 44px
-  height: '1.5rem', // 24px
+  width: '2.75rem',
+  height: '1.5rem',
   borderRadius: '9999px',
   backgroundColor: 'hsl(240 5% 84%)',
   flexShrink: 0,
@@ -54,8 +53,8 @@ export const track = style({
 
 export const thumb = style({
   position: 'absolute',
-  left: '0.1875rem', // 3px inset
-  width: '1.125rem', // 18px
+  left: '0.1875rem',
+  width: '1.125rem',
   height: '1.125rem',
   borderRadius: '9999px',
   backgroundColor: 'white',
@@ -63,7 +62,6 @@ export const thumb = style({
 
   selectors: {
     [`${root}[data-checked] &`]: {
-      // travel = track width - thumb width - (2 * inset) = 44 - 18 - 6 = 20px
       transform: 'translateX(1.25rem)'
     }
   }

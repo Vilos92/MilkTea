@@ -10,14 +10,14 @@ import {helpButton, helpButtonAlwaysLight, helpButtonRoot} from './helpButton.cs
 type HelpButtonProps = {
   class?: string;
   alwaysLight: boolean;
-  setHelpOpen: (fn: (open: boolean) => boolean) => void;
+  onOpen: () => void;
 };
 
 /*
  * Component.
  */
 
-export function HelpButton({alwaysLight, setHelpOpen, class: className}: HelpButtonProps) {
+export function HelpButton({alwaysLight, onOpen, class: className}: HelpButtonProps) {
   const t = useTranslate();
   const buttonClass = alwaysLight ? [helpButton, helpButtonAlwaysLight].join(' ') : helpButton;
   const rootClass = className ? [helpButtonRoot, className].join(' ') : helpButtonRoot;
@@ -26,18 +26,18 @@ export function HelpButton({alwaysLight, setHelpOpen, class: className}: HelpBut
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== '?' && !(event.key === '/' && event.shiftKey)) return;
       event.preventDefault();
-      setHelpOpen(open => !open);
+      onOpen();
     };
     document.addEventListener('keydown', onKeyDown, true);
     return () => document.removeEventListener('keydown', onKeyDown, true);
-  }, [setHelpOpen]);
+  }, [onOpen]);
 
   return (
     <div class={rootClass}>
       <button
         type="button"
         class={buttonClass}
-        onClick={() => setHelpOpen(open => !open)}
+        onClick={onOpen}
         aria-label={t('help.openLabel')}
         title={t('help.openLabel')}
       >
