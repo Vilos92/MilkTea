@@ -30,6 +30,7 @@
   "settings.close": "Sluiten",
   "settings.showPresetNameOnChange": "Presetnaam tonen bij wijziging",
   "settings.showTrackNameOnChange": "Audiotracknaam tonen bij wijziging",
+  "settings.autoStart": "MilkDrop automatisch starten.",
   "commandPalette.searchPlaceholder": "Zoeken…",
   "commandPalette.group.command": "Commando's",
   "commandPalette.group.audio": "Audio",

@@ -30,6 +30,7 @@
   "settings.close": "Kapat",
   "settings.showPresetNameOnChange": "Değişimde ön ayar adını göster",
   "settings.showTrackNameOnChange": "Değişimde ses parçası adını göster",
+  "settings.autoStart": "MilkDrop’u otomatik olarak başlat.",
   "commandPalette.searchPlaceholder": "Ara…",
   "commandPalette.group.command": "Komutlar",
   "commandPalette.group.audio": "Ses",

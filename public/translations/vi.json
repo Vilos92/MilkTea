@@ -30,6 +30,7 @@
   "settings.close": "Đóng",
   "settings.showPresetNameOnChange": "Hiển thị tên cài sẵn khi thay đổi",
   "settings.showTrackNameOnChange": "Hiển thị tên bản nhạc khi thay đổi",
+  "settings.autoStart": "Tự động khởi động MilkDrop.",
   "commandPalette.searchPlaceholder": "Tìm kiếm…",
   "commandPalette.group.command": "Lệnh",
   "commandPalette.group.audio": "Âm thanh",

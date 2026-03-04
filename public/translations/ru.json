@@ -30,6 +30,7 @@
   "settings.close": "Закрыть",
   "settings.showPresetNameOnChange": "Показывать название пресета при смене",
   "settings.showTrackNameOnChange": "Показывать название трека при смене",
+  "settings.autoStart": "Автоматически запускать MilkDrop.",
   "commandPalette.searchPlaceholder": "Поиск…",
   "commandPalette.group.command": "Команды",
   "commandPalette.group.audio": "Аудио",

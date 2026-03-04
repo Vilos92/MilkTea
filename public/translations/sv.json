@@ -30,6 +30,7 @@
   "settings.close": "Stäng",
   "settings.showPresetNameOnChange": "Visa förinställningsnamn vid ändring",
   "settings.showTrackNameOnChange": "Visa ljudspårsnamn vid ändring",
+  "settings.autoStart": "Starta MilkDrop automatiskt.",
   "commandPalette.searchPlaceholder": "Sök…",
   "commandPalette.group.command": "Kommandon",
   "commandPalette.group.audio": "Ljud",

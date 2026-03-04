@@ -203,7 +203,7 @@ export const presetNameNotify = style({
   textShadow: '0 1px 4px rgba(0,0,0,0.8)',
   pointerEvents: 'none',
   opacity: 1,
-  transition: 'opacity 0.5s ease-out, bottom 0.35s ease-out',
+  transition: 'opacity 0.5s ease-out',
   '@media': {
     '(prefers-reduced-motion: reduce)': {
       transition: 'opacity 0.15s ease-out'
@@ -234,4 +234,8 @@ export const trackNameNotify = style({
       transition: 'opacity 0.15s ease-out'
     }
   }
+});
+
+export const faded = style({
+  opacity: 0
 });

@@ -208,14 +208,6 @@ export function App() {
                   setHelpOpen(open => !open);
                 }}
               />
-              {helpOpen && (
-                <Help
-                  visualizerActive={started}
-                  presetName={presetName}
-                  trackName={trackName}
-                  onClose={() => setHelpOpen(false)}
-                />
-              )}
               {commandPaletteOpen && (
                 <CommandPalette
                   visualizerActive={started}
@@ -231,6 +223,14 @@ export function App() {
                   onOpenFilePicker={() => fileInputRef.current?.click()}
                   onSelectOscillator={() => handleSourceChange(AudioSource.OSCILLATOR)}
                   onSelectMic={() => handleSourceChange(AudioSource.MICROPHONE)}
+                />
+              )}
+              {helpOpen && (
+                <Help
+                  visualizerActive={started}
+                  presetName={presetName}
+                  trackName={trackName}
+                  onClose={() => setHelpOpen(false)}
                 />
               )}
             </div>

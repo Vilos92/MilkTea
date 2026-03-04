@@ -30,6 +30,7 @@
   "settings.close": "Zavřít",
   "settings.showPresetNameOnChange": "Zobrazit název předvolby při změně",
   "settings.showTrackNameOnChange": "Zobrazit název stopy při změně",
+  "settings.autoStart": "Spustit MilkDrop automaticky.",
   "commandPalette.searchPlaceholder": "Hledat…",
   "commandPalette.group.command": "Příkazy",
   "commandPalette.group.audio": "Zvuk",

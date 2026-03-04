@@ -30,6 +30,7 @@
   "settings.close": "閉じる",
   "settings.showPresetNameOnChange": "変更時にプリセット名を表示",
   "settings.showTrackNameOnChange": "変更時にオーディオトラック名を表示",
+  "settings.autoStart": "MilkDrop を自動的に開始する。",
   "commandPalette.searchPlaceholder": "検索…",
   "commandPalette.group.command": "コマンド",
   "commandPalette.group.audio": "オーディオ",

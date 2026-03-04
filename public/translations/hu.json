@@ -30,6 +30,7 @@
   "settings.close": "Bezárás",
   "settings.showPresetNameOnChange": "Előbeállítás nevének megjelenítése váltáskor",
   "settings.showTrackNameOnChange": "Audió sáv nevének megjelenítése váltáskor",
+  "settings.autoStart": "A MilkDrop automatikus indítása.",
   "commandPalette.searchPlaceholder": "Keresés…",
   "commandPalette.group.command": "Parancsok",
   "commandPalette.group.audio": "Hang",

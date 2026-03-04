@@ -37,6 +37,7 @@ export type TranslationKey =
   | 'settings.close'
   | 'settings.showPresetNameOnChange'
   | 'settings.showTrackNameOnChange'
+  | 'settings.autoStart'
   | 'commandPalette.searchPlaceholder'
   | 'commandPalette.group.command'
   | 'commandPalette.group.audio'
@@ -86,6 +87,7 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'settings.close': 'Close',
   'settings.showPresetNameOnChange': 'Show preset name on change',
   'settings.showTrackNameOnChange': 'Show audio track name on change',
+  'settings.autoStart': 'Start MilkDrop automatically.',
   'commandPalette.searchPlaceholder': 'Search…',
   'commandPalette.group.command': 'Command',
   'commandPalette.group.audio': 'Audio',

@@ -30,6 +30,7 @@
   "settings.close": "סגור",
   "settings.showPresetNameOnChange": "הצג שם ערכת הגדרות בעת שינוי",
   "settings.showTrackNameOnChange": "הצג שם רצועת שמע בעת שינוי",
+  "settings.autoStart": "הפעל את MilkDrop באופן אוטומטי.",
   "commandPalette.searchPlaceholder": "חיפוש…",
   "commandPalette.group.command": "פקודות",
   "commandPalette.group.audio": "שמע",

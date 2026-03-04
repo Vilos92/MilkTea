@@ -5,12 +5,12 @@ import {useReducedMotion} from '../../hooks/useReducedMotion';
 import {useLocaleContext} from '../../providers/locale';
 import {useSettingsContext} from '../../providers/settings';
 import {useTranslate} from '../../providers/translation';
-import {faded} from '../../styles/util.css';
 import {Controls} from '../controls/controls';
 import {useDragArea} from '../dragArea/useDragArea';
 import {
   btn,
   btnSolid,
+  faded,
   overlay,
   overlayHideCursor,
   overlaySplash,
@@ -62,7 +62,7 @@ export function Overlay(props: OverlayProps) {
   const reducedMotion = useReducedMotion();
   const t = useTranslate();
   const {isDragging} = useDragArea();
-  const {shouldShowPresetName, shouldShowTrackName} = useSettingsContext();
+  const {shouldSkipSplashOnLoad, shouldShowPresetName, shouldShowTrackName} = useSettingsContext();
 
   const [displayedPreset, setDisplayedPreset] = useState<string | undefined>(undefined);
   const [isPresetFading, setIsPresetFading] = useState(false);
@@ -70,12 +70,23 @@ export function Overlay(props: OverlayProps) {
   const [isTrackFading, setIsTrackFading] = useState(false);
 
   useEffect(() => {
+    if (!started && shouldSkipSplashOnLoad) {
+      start();
+    }
+  }, [started, shouldSkipSplashOnLoad, start]);
+
+  useEffect(() => {
     if (presetName === undefined) return;
     setDisplayedPreset(presetName);
 
     setIsPresetFading(false);
-    const id = setTimeout(() => setIsPresetFading(true), 2500);
-    return () => clearTimeout(id);
+    const fadeId = setTimeout(() => setIsPresetFading(true), 2500);
+    const clearId = setTimeout(() => setDisplayedPreset(undefined), 3000);
+
+    return () => {
+      clearTimeout(fadeId);
+      clearTimeout(clearId);
+    };
   }, [presetName]);
 
   const handlePresetNameTransitionEnd = () => {
@@ -89,8 +100,13 @@ export function Overlay(props: OverlayProps) {
     setDisplayedTrack(trackName);
 
     setIsTrackFading(false);
-    const id = setTimeout(() => setIsTrackFading(true), 2500);
-    return () => clearTimeout(id);
+    const fadeId = setTimeout(() => setIsTrackFading(true), 2500);
+    const clearId = setTimeout(() => setDisplayedTrack(undefined), 3000);
+
+    return () => {
+      clearTimeout(fadeId);
+      clearTimeout(clearId);
+    };
   }, [trackName]);
 
   const handleTrackNameTransitionEnd = () => {
@@ -111,7 +127,7 @@ export function Overlay(props: OverlayProps) {
     </span>
   );
 
-  if (!started && reducedMotion) {
+  if (!started && reducedMotion && !shouldSkipSplashOnLoad) {
     return (
       <div class={overlaySplash}>
         <div class={splashCutoutColumn}>
@@ -129,7 +145,7 @@ export function Overlay(props: OverlayProps) {
     );
   }
 
-  if (!started) {
+  if (!started && !shouldSkipSplashOnLoad) {
     return (
       <div class={overlaySplash}>
         <div class={splashCutout}>

@@ -2,8 +2,16 @@ import type {Locale} from '../../lib/locale';
 import {LOCALE_OPTIONS} from '../../lib/locale';
 import {useLocaleContext} from '../../providers/locale';
 import {useTranslate} from '../../providers/translation';
-import {srOnly} from '../../styles/util.css';
-import {globe, label, labelAlwaysLight, root, row, select, selectAlwaysLight} from './localeSwitcher.css';
+import {
+  globe,
+  label,
+  labelAlwaysLight,
+  root,
+  row,
+  select,
+  selectAlwaysLight,
+  srOnly
+} from './localeSwitcher.css';
 
 /*
  * Types.

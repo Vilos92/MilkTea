@@ -30,6 +30,7 @@
   "settings.close": "關閉",
   "settings.showPresetNameOnChange": "變更時顯示預設名稱",
   "settings.showTrackNameOnChange": "變更時顯示音軌名稱",
+  "settings.autoStart": "自動啟動 MilkDrop。",
   "commandPalette.searchPlaceholder": "搜尋…",
   "commandPalette.group.command": "命令",
   "commandPalette.group.audio": "音訊",

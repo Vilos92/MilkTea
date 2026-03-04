@@ -30,6 +30,7 @@
   "settings.close": "Κλείσιμο",
   "settings.showPresetNameOnChange": "Εμφάνιση ονόματος προεπιλογής κατά την αλλαγή",
   "settings.showTrackNameOnChange": "Εμφάνιση ονόματος τραγουδιού κατά την αλλαγή",
+  "settings.autoStart": "Εκκίνηση του MilkDrop αυτόματα.",
   "commandPalette.searchPlaceholder": "Αναζήτηση…",
   "commandPalette.group.command": "Εντολές",
   "commandPalette.group.audio": "Ήχος",

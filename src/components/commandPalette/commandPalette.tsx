@@ -36,6 +36,7 @@ const PaletteItemType = {
   AUDIO_INPUT_MIC: 'audio_input_mic',
   AUDIO_INPUT_FILE: 'audio_input_file',
   AUDIO_INPUT_OSCILLATOR: 'audio_input_oscillator',
+  SETTINGS_SKIP_SPLASH_ON_LOAD: 'settings_skip_splash_on_load',
   SETTINGS_SHOW_PRESET_ON_CHANGE: 'settings_show_preset_on_change',
   SETTINGS_SHOW_TRACK_ON_CHANGE: 'settings_show_track_on_change'
 } as const;
@@ -292,11 +293,23 @@ function usePaletteItems(
   onOpenFilePicker: () => void
 ): readonly PaletteItem[] {
   const t = useTranslate();
-  const {shouldShowPresetName, setShouldShowPresetName, shouldShowTrackName, setShouldShowTrackName} =
-    useSettingsContext();
+  const {
+    shouldSkipSplashOnLoad,
+    setShouldSkipSplashOnLoad,
+    shouldShowPresetName,
+    setShouldShowPresetName,
+    shouldShowTrackName,
+    setShouldShowTrackName
+  } = useSettingsContext();
 
   return useMemo(
     () => [
+      {
+        type: PaletteItemType.SETTINGS_SKIP_SPLASH_ON_LOAD,
+        label: t('settings.autoStart'),
+        checked: shouldSkipSplashOnLoad,
+        onChange: setShouldSkipSplashOnLoad
+      },
       {
         type: PaletteItemType.COMMAND_HELP,
         label: t('help.openLabel'),
@@ -354,8 +367,10 @@ function usePaletteItems(
       onPrevPreset,
       onSelectMic,
       onSelectOscillator,
+      setShouldSkipSplashOnLoad,
       setShouldShowPresetName,
       setShouldShowTrackName,
+      shouldSkipSplashOnLoad,
       shouldShowPresetName,
       shouldShowTrackName,
       t

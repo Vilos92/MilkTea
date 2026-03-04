@@ -30,6 +30,7 @@
   "settings.close": "إغلاق",
   "settings.showPresetNameOnChange": "اعرض اسم القالب عند التغيير",
   "settings.showTrackNameOnChange": "اعرض اسم المسار الصوتي عند التغيير",
+  "settings.autoStart": "بدء MilkDrop تلقائيًا.",
   "commandPalette.searchPlaceholder": "بحث…",
   "commandPalette.group.command": "الأوامر",
   "commandPalette.group.audio": "الصوت",
