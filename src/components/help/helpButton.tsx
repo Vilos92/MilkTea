@@ -1,7 +1,7 @@
 import {useEffect} from 'preact/hooks';
 
-import {useTranslate} from '../../provider/translation';
-import {helpButton, helpButtonAlwaysLight, helpButtonRoot, helpButtonRootInline} from './helpButton.css.ts';
+import {useTranslate} from '../../providers/translation';
+import {helpButton, helpButtonAlwaysLight, helpButtonRoot, helpButtonRootInline} from './helpButton.css';
 
 /*
  * Types.
@@ -47,27 +47,5 @@ export function HelpButton({alwaysLight, setHelpOpen, inline, class: className}:
         ❓
       </button>
     </div>
-  );
-}
-
-type CommandPaletteButtonProps = {
-  alwaysLight: boolean;
-  onOpen: () => void;
-  class?: string;
-};
-
-export function CommandPaletteButton({alwaysLight, onOpen, class: className}: CommandPaletteButtonProps) {
-  const t = useTranslate();
-  const buttonClass = alwaysLight ? [helpButton, helpButtonAlwaysLight].join(' ') : helpButton;
-  return (
-    <button
-      type="button"
-      class={className ? [buttonClass, className].join(' ') : buttonClass}
-      onClick={onOpen}
-      aria-label={t('help.keySettingsAction')}
-      title={t('help.keySettingsAction')}
-    >
-      &gt;_
-    </button>
   );
 }

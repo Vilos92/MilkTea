@@ -12,14 +12,16 @@ import {
 } from './app.css.ts';
 import {AudioSource, AudioSourceButtons} from './components/audioSourceButtons/audioSourceButtons.tsx';
 import {CommandPalette} from './components/commandPalette/commandPalette';
+import {CommandPaletteButton} from './components/commandPalette/commandPaletteButton';
 import {DragArea} from './components/dragArea/dragArea';
 import {Help} from './components/help/help';
-import {CommandPaletteButton, HelpButton} from './components/help/helpButton';
+import {HelpButton} from './components/help/helpButton';
 import {Overlay} from './components/overlay/overlay.tsx';
 import {Visualizer} from './components/visualizer/visualizer';
 import {useButterchurn} from './hooks/useButterchurn';
-import {LocaleProvider} from './provider/locale';
-import {TranslateProvider} from './provider/translation';
+import {LocaleProvider} from './providers/locale';
+import {SettingsProvider} from './providers/settings';
+import {TranslateProvider} from './providers/translation';
 
 /*
  * App.
@@ -44,8 +46,6 @@ export function App() {
   const [controlsVisibility, setControlsVisibility] = useState(true);
   const [helpOpen, setHelpOpen] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
-  const [showPresetNameOnChange, setShowPresetNameOnChange] = useState(true);
-  const [showTrackNameOnChange, setShowTrackNameOnChange] = useState(true);
 
   const [audioSource, setAudioSource] = useState<AudioSource>(AudioSource.OSCILLATOR);
   const [pendingAudioSource, setPendingAudioSource] = useState<AudioSource | undefined>(undefined);
@@ -161,85 +161,86 @@ export function App() {
   return (
     <LocaleProvider>
       <TranslateProvider>
-        <DragArea handleDrop={handleAudioFileDrop}>
-          <div ref={containerRef} class={[container, started ? containerStarted : containerSplash].join(' ')}>
-            <Overlay
-              overlayRef={overlayRef}
-              started={started}
-              start={start}
-              isCanvasFullscreen={isCanvasFullscreen}
-              toggleFullscreen={toggleFullscreen}
-              controlsVisible={controlsVisibility}
-              setControlsVisibility={setControlsVisibility}
-              presetName={presetName}
-              changePreset={changePreset}
-              trackName={trackName}
-              showPresetNameOnChange={showPresetNameOnChange}
-              showTrackNameOnChange={showTrackNameOnChange}
-            />
-            <Visualizer canvasRef={canvasRef} />
-
-            <CommandPaletteButton
-              class={[
-                topCorner,
-                topLeftCorner,
-                controlsVisibility || !started || helpOpen || commandPaletteOpen ? topVisible : topFaded
-              ].join(' ')}
-              alwaysLight={started}
-              onOpen={() => {
-                setHelpOpen(false);
-                setCommandPaletteOpen(open => !open);
-              }}
-            />
-            <AudioSourceButtons
-              class={controlsVisibility || !started || helpOpen || commandPaletteOpen ? topVisible : topFaded}
-              fileInputRef={fileInputRef}
-              onFileChange={onAudioFileChange}
-              audioSource={audioSource}
-              pendingAudioSource={pendingAudioSource}
-              started={started}
-              onSourceChange={handleSourceChange}
-            />
-            <HelpButton
-              class={[
-                topCorner,
-                topRightCorner,
-                controlsVisibility || !started || helpOpen || commandPaletteOpen ? topVisible : topFaded
-              ].join(' ')}
-              alwaysLight={started}
-              setHelpOpen={setHelpOpenWithExclusivity}
-            />
-            {helpOpen && (
-              <Help
-                visualizerActive={started}
+        <SettingsProvider>
+          <DragArea handleDrop={handleAudioFileDrop}>
+            <div
+              ref={containerRef}
+              class={[container, started ? containerStarted : containerSplash].join(' ')}
+            >
+              <Overlay
+                overlayRef={overlayRef}
+                started={started}
+                start={start}
+                isCanvasFullscreen={isCanvasFullscreen}
+                toggleFullscreen={toggleFullscreen}
+                controlsVisible={controlsVisibility}
+                setControlsVisibility={setControlsVisibility}
                 presetName={presetName}
+                changePreset={changePreset}
                 trackName={trackName}
-                onClose={() => setHelpOpen(false)}
               />
-            )}
-            {commandPaletteOpen && (
-              <CommandPalette
-                visualizerActive={started}
-                showPresetNameOnChange={showPresetNameOnChange}
-                showTrackNameOnChange={showTrackNameOnChange}
-                onShowPresetNameOnChange={setShowPresetNameOnChange}
-                onShowTrackNameOnChange={setShowTrackNameOnChange}
-                onClose={() => setCommandPaletteOpen(false)}
-                onOpenHelp={() => {
-                  setCommandPaletteOpen(false);
-                  setHelpOpen(true);
+              <Visualizer canvasRef={canvasRef} />
+
+              <CommandPaletteButton
+                class={[
+                  topCorner,
+                  topLeftCorner,
+                  controlsVisibility || !started || helpOpen || commandPaletteOpen ? topVisible : topFaded
+                ].join(' ')}
+                alwaysLight={started}
+                onOpen={() => {
+                  setHelpOpen(false);
+                  setCommandPaletteOpen(open => !open);
                 }}
-                onPrevPreset={() => changePreset(-1)}
-                onNextPreset={() => changePreset(1)}
-                isFullscreen={isCanvasFullscreen}
-                onFullScreen={toggleFullscreen}
-                onOpenFilePicker={() => fileInputRef.current?.click()}
-                onSelectOscillator={() => handleSourceChange(AudioSource.OSCILLATOR)}
-                onSelectMic={() => handleSourceChange(AudioSource.MICROPHONE)}
               />
-            )}
-          </div>
-        </DragArea>
+              <AudioSourceButtons
+                class={
+                  controlsVisibility || !started || helpOpen || commandPaletteOpen ? topVisible : topFaded
+                }
+                fileInputRef={fileInputRef}
+                onFileChange={onAudioFileChange}
+                audioSource={audioSource}
+                pendingAudioSource={pendingAudioSource}
+                started={started}
+                onSourceChange={handleSourceChange}
+              />
+              <HelpButton
+                class={[
+                  topCorner,
+                  topRightCorner,
+                  controlsVisibility || !started || helpOpen || commandPaletteOpen ? topVisible : topFaded
+                ].join(' ')}
+                alwaysLight={started}
+                setHelpOpen={setHelpOpenWithExclusivity}
+              />
+              {helpOpen && (
+                <Help
+                  visualizerActive={started}
+                  presetName={presetName}
+                  trackName={trackName}
+                  onClose={() => setHelpOpen(false)}
+                />
+              )}
+              {commandPaletteOpen && (
+                <CommandPalette
+                  visualizerActive={started}
+                  onClose={() => setCommandPaletteOpen(false)}
+                  onOpenHelp={() => {
+                    setCommandPaletteOpen(false);
+                    setHelpOpen(true);
+                  }}
+                  onPrevPreset={() => changePreset(-1)}
+                  onNextPreset={() => changePreset(1)}
+                  isFullscreen={isCanvasFullscreen}
+                  onFullScreen={toggleFullscreen}
+                  onOpenFilePicker={() => fileInputRef.current?.click()}
+                  onSelectOscillator={() => handleSourceChange(AudioSource.OSCILLATOR)}
+                  onSelectMic={() => handleSourceChange(AudioSource.MICROPHONE)}
+                />
+              )}
+            </div>
+          </DragArea>
+        </SettingsProvider>
       </TranslateProvider>
     </LocaleProvider>
   );

@@ -190,7 +190,7 @@ export const btn = style({
   }
 });
 
-export const presetNameClass = style({
+export const presetNameNotify = style({
   position: 'fixed',
   bottom: '112px',
   left: '50%',
@@ -211,11 +211,11 @@ export const presetNameClass = style({
   }
 });
 
-export const presetNameAtBottom = style({
+export const presetNameNotifyAtBottom = style({
   bottom: '52px'
 });
 
-export const trackNameLabel = style({
+export const trackNameNotify = style({
   position: 'fixed',
   top: '50%',
   left: '50%',
@@ -234,8 +234,4 @@ export const trackNameLabel = style({
       transition: 'opacity 0.15s ease-out'
     }
   }
-});
-
-export const faded = style({
-  opacity: 0
 });

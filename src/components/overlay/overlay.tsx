@@ -1,28 +1,29 @@
 import type {RefObject} from 'preact';
 import {useEffect, useState} from 'preact/hooks';
 
-import {useReducedMotion} from '../../hooks/useReducedMotion.ts';
-import {useLocaleContext} from '../../provider/locale.tsx';
-import {useTranslate} from '../../provider/translation.tsx';
-import {Controls} from '../controls/controls.tsx';
-import {useDragArea} from '../dragArea/useDragArea.ts';
+import {useReducedMotion} from '../../hooks/useReducedMotion';
+import {useLocaleContext} from '../../providers/locale';
+import {useSettingsContext} from '../../providers/settings';
+import {useTranslate} from '../../providers/translation';
+import {faded} from '../../styles/util.css';
+import {Controls} from '../controls/controls';
+import {useDragArea} from '../dragArea/useDragArea';
 import {
   btn,
   btnSolid,
-  faded,
   overlay,
   overlayHideCursor,
   overlaySplash,
-  presetNameAtBottom,
-  presetNameClass,
+  presetNameNotify,
+  presetNameNotifyAtBottom,
   splashButtonContent,
   splashCutout,
   splashCutoutColumn,
   splashDisclaimer,
   splashSubtext,
   splashTitleLine,
-  trackNameLabel
-} from './overlay.css.ts';
+  trackNameNotify
+} from './overlay.css';
 
 /*
  * Types.
@@ -39,8 +40,6 @@ export type OverlayProps = {
   presetName: string | undefined;
   changePreset: (delta: number) => void;
   trackName: string | undefined;
-  showPresetNameOnChange?: boolean;
-  showTrackNameOnChange?: boolean;
 };
 
 /*
@@ -58,33 +57,17 @@ export function Overlay(props: OverlayProps) {
     setControlsVisibility,
     presetName,
     changePreset,
-    trackName,
-    showPresetNameOnChange = true,
-    showTrackNameOnChange = true
+    trackName
   } = props;
   const reducedMotion = useReducedMotion();
   const t = useTranslate();
   const {isDragging} = useDragArea();
+  const {shouldShowPresetName, shouldShowTrackName} = useSettingsContext();
 
-  const [displayedTrack, setDisplayedTrack] = useState<string | undefined>(undefined);
-  const [isTrackFading, setIsTrackFading] = useState(false);
   const [displayedPreset, setDisplayedPreset] = useState<string | undefined>(undefined);
   const [isPresetFading, setIsPresetFading] = useState(false);
-
-  useEffect(() => {
-    if (trackName === undefined) return;
-    setDisplayedTrack(trackName);
-
-    setIsTrackFading(false);
-    const id = setTimeout(() => setIsTrackFading(true), 2500);
-    return () => clearTimeout(id);
-  }, [trackName]);
-
-  const handleTrackNameTransitionEnd = () => {
-    if (isTrackFading) {
-      setDisplayedTrack(undefined);
-    }
-  };
+  const [displayedTrack, setDisplayedTrack] = useState<string | undefined>(undefined);
+  const [isTrackFading, setIsTrackFading] = useState(false);
 
   useEffect(() => {
     if (presetName === undefined) return;
@@ -98,6 +81,21 @@ export function Overlay(props: OverlayProps) {
   const handlePresetNameTransitionEnd = () => {
     if (isPresetFading) {
       setDisplayedPreset(undefined);
+    }
+  };
+
+  useEffect(() => {
+    if (trackName === undefined) return;
+    setDisplayedTrack(trackName);
+
+    setIsTrackFading(false);
+    const id = setTimeout(() => setIsTrackFading(true), 2500);
+    return () => clearTimeout(id);
+  }, [trackName]);
+
+  const handleTrackNameTransitionEnd = () => {
+    if (isTrackFading) {
+      setDisplayedTrack(undefined);
     }
   };
 
@@ -147,17 +145,17 @@ export function Overlay(props: OverlayProps) {
 
   const overlayClass = controlsVisible ? overlay : [overlay, overlayHideCursor].join(' ');
   const trackNameClass = displayedTrack
-    ? [trackNameLabel, isTrackFading ? faded : ''].filter(Boolean).join(' ')
+    ? [trackNameNotify, isTrackFading ? faded : ''].filter(Boolean).join(' ')
     : '';
   const presetClass = displayedPreset
-    ? [presetNameClass, controlsVisible ? '' : presetNameAtBottom, isPresetFading ? faded : '']
+    ? [presetNameNotify, controlsVisible ? '' : presetNameNotifyAtBottom, isPresetFading ? faded : '']
         .filter(Boolean)
         .join(' ')
     : '';
 
   return (
     <div ref={overlayRef} class={overlayClass}>
-      {showTrackNameOnChange && displayedTrack && (
+      {shouldShowTrackName && displayedTrack && (
         <div
           class={trackNameClass}
           onTransitionEnd={handleTrackNameTransitionEnd}
@@ -167,7 +165,7 @@ export function Overlay(props: OverlayProps) {
           {displayedTrack}
         </div>
       )}
-      {showPresetNameOnChange && displayedPreset && (
+      {shouldShowPresetName && displayedPreset && (
         <div
           class={presetClass}
           onTransitionEnd={handlePresetNameTransitionEnd}

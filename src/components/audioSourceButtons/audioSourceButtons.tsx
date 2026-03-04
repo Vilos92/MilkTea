@@ -1,6 +1,6 @@
 import type {RefObject} from 'preact';
 
-import {useTranslate} from '../../provider/translation.tsx';
+import {useTranslate} from '../../providers/translation';
 import {
   audioSourceButton,
   audioSourceButtonActive,

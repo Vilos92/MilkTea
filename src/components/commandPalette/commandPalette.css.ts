@@ -12,7 +12,6 @@ const baseOverlay = style({
   boxSizing: 'border-box'
 });
 
-/** Before visualizer started: solid background. */
 export const overlaySplash = style([
   baseOverlay,
   {
@@ -27,7 +26,6 @@ export const overlaySplash = style([
   }
 ]);
 
-/** Visualizer active: translucent. */
 export const overlayActive = style([
   baseOverlay,
   {
@@ -36,7 +34,6 @@ export const overlayActive = style([
   }
 ]);
 
-/** Content column. */
 export const content = style({
   display: 'flex',
   flexDirection: 'column',
@@ -50,7 +47,6 @@ export const content = style({
   boxSizing: 'border-box'
 });
 
-/** Static header: title + search (does not scroll). */
 export const header = style({
   flexShrink: 0,
   display: 'flex',
@@ -91,7 +87,6 @@ export const searchInput = style({
   }
 });
 
-/** Scrollable list of groups only (title + search stay fixed above). */
 export const scrollArea = style({
   flex: 1,
   minHeight: 0,
@@ -116,13 +111,12 @@ export const groupHeading = style({
   }
 });
 
-export const group = style({
+export const paletteGroup = style({
   display: 'flex',
   flexDirection: 'column',
   gap: '8px'
 });
 
-/** Shared row dimensions so settings (switch) and command/audio rows match. */
 const rowPadding = '10px 12px';
 const rowMinHeight = '44px';
 const rowFontSize = '14px';

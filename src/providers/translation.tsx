@@ -13,6 +13,12 @@ import {
 import {useLocaleContext} from './locale';
 
 /*
+ * Types.
+ */
+
+export type Translate = (key: TranslationKey) => string;
+
+/*
  * Context.
  */
 
@@ -82,7 +88,7 @@ export function useTranslateContext(): Translations {
  * Returns a function that looks up a key and returns the translated string.
  * Falls back to English if the current locale's translation is missing.
  */
-export function useTranslate(): (key: TranslationKey) => string {
+export function useTranslate(): Translate {
   const translations = useTranslateContext();
 
   return useCallback((key: TranslationKey) => translations[key] ?? ENGLISH_TRANSLATIONS[key], [translations]);

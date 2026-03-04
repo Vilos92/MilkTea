@@ -1,9 +1,9 @@
 import {createContext} from 'preact';
 import {useCallback, useContext, useState} from 'preact/hooks';
 
-import {useLocale} from '../hooks/useLocale.ts';
-import {DEFAULT_LOCALE, type Locale, isLocale} from '../lib/locale.ts';
-import {getStorageLocale, setStorageLocale} from '../lib/storage.ts';
+import {useLocale} from '../hooks/useLocale';
+import {DEFAULT_LOCALE, type Locale, isLocale} from '../lib/locale';
+import {getStorageLocale, setStorageLocale} from '../lib/storage';
 
 /*
  * Types.

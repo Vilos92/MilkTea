@@ -1,7 +1,8 @@
 import {useEffect, useMemo, useRef, useState} from 'preact/hooks';
 
-import {useLocaleContext} from '../../provider/locale';
-import {useTranslate} from '../../provider/translation';
+import {useLocaleContext} from '../../providers/locale';
+import {useSettingsContext} from '../../providers/settings';
+import {type Translate, useTranslate} from '../../providers/translation';
 import {Switch} from '../switch/switch';
 import {
   closeBtn,
@@ -10,24 +11,24 @@ import {
   commandButton,
   commandButtonActive,
   content,
-  group,
   groupHeading,
   header,
   heading,
   headingSplash,
   overlayActive,
   overlaySplash,
+  paletteGroup,
   scrollArea,
   searchInput,
   switchRow,
   switchRowActive
-} from './commandPalette.css.ts';
+} from './commandPalette.css';
 
 /*
- * Palette item types and group derivation.
+ * Enums.
  */
 
-export const PaletteItemType = {
+const PaletteItemType = {
   COMMAND_HELP: 'command_help',
   COMMAND_PREV_PRESET: 'command_prev_preset',
   COMMAND_NEXT_PRESET: 'command_next_preset',
@@ -38,60 +39,50 @@ export const PaletteItemType = {
   SETTINGS_SHOW_PRESET_ON_CHANGE: 'settings_show_preset_on_change',
   SETTINGS_SHOW_TRACK_ON_CHANGE: 'settings_show_track_on_change'
 } as const;
+type PaletteItemType = (typeof PaletteItemType)[keyof typeof PaletteItemType];
 
-export type PaletteItemType = (typeof PaletteItemType)[keyof typeof PaletteItemType];
+type PaletteGroup = 'settings' | 'command' | 'audio';
 
-/** Derive group from type key prefix: SETTINGS_ → 'settings', COMMAND_ → 'command', AUDIO_ → 'audio'. */
-export function getGroup(type: PaletteItemType): 'settings' | 'command' | 'audio' {
-  if (type.startsWith('settings_')) return 'settings';
-  if (type.startsWith('command_')) return 'command';
-  if (type.startsWith('audio_')) return 'audio';
-  return 'settings';
-}
+/*
+ * Constants.
+ */
 
-export type SwitchPaletteItem = {
+const groupOrder: PaletteGroup[] = ['command', 'audio', 'settings'];
+
+/*
+ * Types.
+ */
+
+type CommandPaletteItem = {
+  type: PaletteItemType;
+  label: string;
+  onSelect: () => void;
+};
+
+type SwitchPaletteItem = {
   type: PaletteItemType;
   label: string;
   checked: boolean;
   onChange: (value: boolean) => void;
 };
 
-export type CommandPaletteItem = {
-  type: PaletteItemType;
-  label: string;
-  onSelect: () => void;
-};
+type PaletteItem = CommandPaletteItem | SwitchPaletteItem;
 
-export type PaletteItem = SwitchPaletteItem | CommandPaletteItem;
-
-function isSwitchItem(item: PaletteItem): item is SwitchPaletteItem {
+function isSwitchPaletteItem(item: PaletteItem): item is SwitchPaletteItem {
   return 'onChange' in item;
 }
 
-/** Normalize string for accent-insensitive search (NFD + strip combining marks). */
-function normalizeForSearch(str: string): string {
-  return str.normalize('NFD').replace(/\p{Mark}/gu, '');
-}
-
-/*
- * Component props.
- */
-
 type CommandPaletteProps = {
   visualizerActive: boolean;
-  showPresetNameOnChange: boolean;
-  showTrackNameOnChange: boolean;
-  onShowPresetNameOnChange: (value: boolean) => void;
-  onShowTrackNameOnChange: (value: boolean) => void;
   onClose: () => void;
-  onOpenHelp?: () => void;
-  onPrevPreset?: () => void;
-  onNextPreset?: () => void;
-  isFullscreen?: boolean;
-  onFullScreen?: () => void;
-  onOpenFilePicker?: () => void;
-  onSelectOscillator?: () => void;
-  onSelectMic?: () => void;
+  onOpenHelp: () => void;
+  onPrevPreset: () => void;
+  onNextPreset: () => void;
+  isFullscreen: boolean;
+  onFullScreen: () => void;
+  onOpenFilePicker: () => void;
+  onSelectOscillator: () => void;
+  onSelectMic: () => void;
 };
 
 /*
@@ -100,15 +91,11 @@ type CommandPaletteProps = {
 
 export function CommandPalette({
   visualizerActive,
-  showPresetNameOnChange,
-  showTrackNameOnChange,
-  onShowPresetNameOnChange,
-  onShowTrackNameOnChange,
   onClose,
   onOpenHelp,
   onPrevPreset,
   onNextPreset,
-  isFullscreen = false,
+  isFullscreen,
   onFullScreen,
   onOpenFilePicker,
   onSelectOscillator,
@@ -124,97 +111,56 @@ export function CommandPalette({
   const headingClass = visualizerActive ? heading : headingSplash;
   const closeBtnClass = visualizerActive ? closeBtn : closeBtnSplash;
 
-  const allItems: PaletteItem[] = useMemo(
-    () => [
-      {
-        type: PaletteItemType.COMMAND_HELP,
-        label: t('help.openLabel'),
-        onSelect: onOpenHelp ?? (() => {})
-      },
-      {
-        type: PaletteItemType.COMMAND_PREV_PRESET,
-        label: t('controls.prevPreset'),
-        onSelect: onPrevPreset ?? (() => {})
-      },
-      {
-        type: PaletteItemType.COMMAND_NEXT_PRESET,
-        label: t('controls.nextPreset'),
-        onSelect: onNextPreset ?? (() => {})
-      },
-      {
-        type: PaletteItemType.COMMAND_FULL_SCREEN,
-        label: isFullscreen ? t('controls.exitFullscreen') : t('controls.enterFullscreen'),
-        onSelect: onFullScreen ?? (() => {})
-      },
-      {
-        type: PaletteItemType.AUDIO_INPUT_OSCILLATOR,
-        label: t('source.oscillator'),
-        onSelect: onSelectOscillator ?? (() => {})
-      },
-      {
-        type: PaletteItemType.AUDIO_INPUT_MIC,
-        label: t('source.microphone'),
-        onSelect: onSelectMic ?? (() => {})
-      },
-      {
-        type: PaletteItemType.AUDIO_INPUT_FILE,
-        label: t('source.file'),
-        onSelect: onOpenFilePicker ?? (() => {})
-      },
-      {
-        type: PaletteItemType.SETTINGS_SHOW_PRESET_ON_CHANGE,
-        label: t('settings.showPresetNameOnChange'),
-        checked: showPresetNameOnChange,
-        onChange: onShowPresetNameOnChange
-      },
-      {
-        type: PaletteItemType.SETTINGS_SHOW_TRACK_ON_CHANGE,
-        label: t('settings.showTrackNameOnChange'),
-        checked: showTrackNameOnChange,
-        onChange: onShowTrackNameOnChange
-      }
-    ],
-    [
-      t,
-      showPresetNameOnChange,
-      showTrackNameOnChange,
-      onShowPresetNameOnChange,
-      onShowTrackNameOnChange,
-      onOpenHelp,
-      onPrevPreset,
-      onNextPreset,
-      isFullscreen,
-      onFullScreen,
-      onOpenFilePicker,
-      onSelectOscillator,
-      onSelectMic
-    ]
+  const allItems: PaletteItem[] = usePaletteItems(
+    onOpenHelp,
+    onPrevPreset,
+    onNextPreset,
+    isFullscreen,
+    onFullScreen,
+    onSelectOscillator,
+    onSelectMic,
+    onOpenFilePicker
   );
 
   const filteredItems = useMemo(() => {
-    const raw = query.trim();
-    if (!raw) return allItems;
-    const q = normalizeForSearch(raw).toLocaleLowerCase(locale);
-    return allItems.filter(item => normalizeForSearch(item.label).toLocaleLowerCase(locale).includes(q));
-  }, [allItems, query, locale]);
+    const rawQuery = query.trim();
+    if (!rawQuery) return allItems;
 
-  const byGroup = useMemo(() => {
-    const map = new Map<'settings' | 'command' | 'audio', PaletteItem[]>();
-    for (const item of filteredItems) {
-      const g = getGroup(item.type);
-      const list = map.get(g) ?? [];
-      list.push(item);
-      map.set(g, list);
-    }
-    return map;
+    const searchQuery = normalizeForSearch(rawQuery).toLocaleLowerCase(locale);
+
+    return allItems.filter(item => {
+      // Match against the item label.
+      const normalizedLabel = normalizeForSearch(item.label).toLocaleLowerCase(locale);
+      if (normalizedLabel.includes(searchQuery)) return true;
+
+      // Also match against the group's localized heading (e.g., "Command", "Audio", "Settings").
+      const group = parsePaletteGroup(item.type);
+      const groupHeading = formatGroupHeading(t, group);
+      const normalizedGroupHeading = normalizeForSearch(groupHeading).toLocaleLowerCase(locale);
+      return normalizedGroupHeading.includes(searchQuery);
+    });
+  }, [allItems, query, locale, t]);
+
+  const itemsByGroup = useMemo(() => {
+    return filteredItems.reduce<Record<PaletteGroup, PaletteItem[]>>(
+      (currentItemsByGroup, item) => {
+        const group = parsePaletteGroup(item.type);
+        currentItemsByGroup[group].push(item);
+        return currentItemsByGroup;
+      },
+      {
+        command: [],
+        audio: [],
+        settings: []
+      }
+    );
   }, [filteredItems]);
 
-  const groupOrder: ('command' | 'audio' | 'settings')[] = ['command', 'audio', 'settings'];
   const activeItem = filteredItems[activeIndex];
 
-  // Clamp activeIndex when filtered list shrinks
+  // Clamp `activeIndex` when filtered list shrinks.
   useEffect(() => {
-    setActiveIndex(i => Math.min(i, Math.max(0, filteredItems.length - 1)));
+    setActiveIndex(currentIndex => Math.min(currentIndex, Math.max(0, filteredItems.length - 1)));
   }, [filteredItems.length]);
 
   useEffect(() => {
@@ -232,28 +178,62 @@ export function CommandPalette({
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [onClose]);
 
-  function handleSearchKeyDown(e: KeyboardEvent) {
-    if (e.key === 'ArrowDown' || (e.key === 'Tab' && !e.shiftKey)) {
-      e.preventDefault();
-      setActiveIndex(i => Math.min(i + 1, filteredItems.length - 1));
+  const handleSearchKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'ArrowDown' || (event.key === 'Tab' && !event.shiftKey)) {
+      event.preventDefault();
+      setActiveIndex(currentIndex => Math.min(currentIndex + 1, filteredItems.length - 1));
       return;
     }
-    if (e.key === 'ArrowUp' || (e.key === 'Tab' && e.shiftKey)) {
-      e.preventDefault();
+    if (event.key === 'ArrowUp' || (event.key === 'Tab' && event.shiftKey)) {
+      event.preventDefault();
       setActiveIndex(i => Math.max(0, i - 1));
       return;
     }
-    if (e.key === 'Enter') {
+    if (event.key === 'Enter') {
       if (!activeItem) return;
-      e.preventDefault();
-      if (isSwitchItem(activeItem)) {
+      event.preventDefault();
+      if (isSwitchPaletteItem(activeItem)) {
         activeItem.onChange(!activeItem.checked);
-      } else {
-        activeItem.onSelect();
-        onClose();
+        return;
       }
+
+      activeItem.onSelect();
+      onClose();
     }
-  }
+  };
+
+  const renderPaletteItem = (item: PaletteItem, isActive: boolean) => {
+    if (isSwitchPaletteItem(item)) {
+      return (
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+        <div
+          key={item.type}
+          class={[switchRow, isActive && switchRowActive].filter(Boolean).join(' ')}
+          onClick={() => {
+            setActiveIndex(filteredItems.indexOf(item));
+            inputRef.current?.focus();
+          }}
+        >
+          <span>{item.label}</span>
+          <Switch checked={item.checked} onChange={item.onChange} />
+        </div>
+      );
+    }
+
+    return (
+      <button
+        key={item.type}
+        type="button"
+        class={[commandButton, isActive && commandButtonActive].filter(Boolean).join(' ')}
+        onClick={() => {
+          item.onSelect();
+          onClose();
+        }}
+      >
+        {item.label}
+      </button>
+    );
+  };
 
   return (
     <div class={overlayClass} role="dialog" aria-modal="true" aria-labelledby="command-palette-title">
@@ -267,8 +247,8 @@ export function CommandPalette({
             type="search"
             class={searchInput}
             value={query}
-            onInput={e => {
-              setQuery((e.target as HTMLInputElement).value);
+            onInput={event => {
+              setQuery((event.target as HTMLInputElement).value);
               setActiveIndex(0);
             }}
             onKeyDown={handleSearchKeyDown}
@@ -278,46 +258,11 @@ export function CommandPalette({
         </div>
         <div class={scrollArea}>
           {groupOrder.map(
-            g =>
-              byGroup.get(g)?.length && (
-                <div key={g} class={group}>
-                  <h3 class={groupHeading}>
-                    {t(
-                      g === 'command'
-                        ? 'commandPalette.group.command'
-                        : g === 'audio'
-                          ? 'commandPalette.group.audio'
-                          : 'commandPalette.group.settings'
-                    )}
-                  </h3>
-                  {byGroup.get(g)!.map(item => {
-                    const isActive = item === activeItem;
-                    return isSwitchItem(item) ? (
-                      <div
-                        key={item.type}
-                        class={[switchRow, isActive && switchRowActive].filter(Boolean).join(' ')}
-                        onClick={() => {
-                          setActiveIndex(filteredItems.indexOf(item));
-                          inputRef.current?.focus();
-                        }}
-                      >
-                        <span>{item.label}</span>
-                        <Switch checked={item.checked} onChange={item.onChange} />
-                      </div>
-                    ) : (
-                      <button
-                        key={item.type}
-                        type="button"
-                        class={[commandButton, isActive && commandButtonActive].filter(Boolean).join(' ')}
-                        onClick={() => {
-                          item.onSelect();
-                          onClose();
-                        }}
-                      >
-                        {item.label}
-                      </button>
-                    );
-                  })}
+            group =>
+              itemsByGroup[group].length > 0 && (
+                <div key={group} class={paletteGroup}>
+                  <h3 class={groupHeading}>{formatGroupHeading(t, group)}</h3>
+                  {itemsByGroup[group].map(item => renderPaletteItem(item, item === activeItem))}
                 </div>
               )
           )}
@@ -330,4 +275,134 @@ export function CommandPalette({
       </div>
     </div>
   );
+}
+
+/*
+ * Hooks.
+ */
+
+function usePaletteItems(
+  onOpenHelp: () => void,
+  onPrevPreset: () => void,
+  onNextPreset: () => void,
+  isFullscreen: boolean,
+  onFullScreen: () => void,
+  onSelectOscillator: () => void,
+  onSelectMic: () => void,
+  onOpenFilePicker: () => void
+): PaletteItem[] {
+  const t = useTranslate();
+  const {shouldShowPresetName, setShouldShowPresetName, shouldShowTrackName, setShouldShowTrackName} =
+    useSettingsContext();
+
+  return useMemo(
+    () => [
+      {
+        type: PaletteItemType.COMMAND_HELP,
+        label: t('help.openLabel'),
+        onSelect: onOpenHelp
+      },
+      {
+        type: PaletteItemType.COMMAND_PREV_PRESET,
+        label: t('controls.prevPreset'),
+        onSelect: onPrevPreset
+      },
+      {
+        type: PaletteItemType.COMMAND_NEXT_PRESET,
+        label: t('controls.nextPreset'),
+        onSelect: onNextPreset
+      },
+      {
+        type: PaletteItemType.COMMAND_FULL_SCREEN,
+        label: isFullscreen ? t('controls.exitFullscreen') : t('controls.enterFullscreen'),
+        onSelect: onFullScreen
+      },
+      {
+        type: PaletteItemType.AUDIO_INPUT_OSCILLATOR,
+        label: t('source.oscillator'),
+        onSelect: onSelectOscillator
+      },
+      {
+        type: PaletteItemType.AUDIO_INPUT_MIC,
+        label: t('source.microphone'),
+        onSelect: onSelectMic
+      },
+      {
+        type: PaletteItemType.AUDIO_INPUT_FILE,
+        label: t('source.file'),
+        onSelect: onOpenFilePicker
+      },
+      {
+        type: PaletteItemType.SETTINGS_SHOW_PRESET_ON_CHANGE,
+        label: t('settings.showPresetNameOnChange'),
+        checked: shouldShowPresetName,
+        onChange: setShouldShowPresetName
+      },
+      {
+        type: PaletteItemType.SETTINGS_SHOW_TRACK_ON_CHANGE,
+        label: t('settings.showTrackNameOnChange'),
+        checked: shouldShowTrackName,
+        onChange: setShouldShowTrackName
+      }
+    ],
+    [
+      isFullscreen,
+      onFullScreen,
+      onNextPreset,
+      onOpenFilePicker,
+      onOpenHelp,
+      onPrevPreset,
+      onSelectMic,
+      onSelectOscillator,
+      setShouldShowPresetName,
+      setShouldShowTrackName,
+      shouldShowPresetName,
+      shouldShowTrackName,
+      t
+    ]
+  );
+}
+
+/*
+ * Helpers.
+ */
+
+function formatGroupHeading(t: Translate, group: PaletteGroup): string {
+  switch (group) {
+    case 'command':
+      return t('commandPalette.group.command');
+    case 'audio':
+      return t('commandPalette.group.audio');
+    case 'settings':
+      return t('commandPalette.group.settings');
+    default:
+      throw new Error(`Unknown palette group: ${group}`);
+  }
+}
+
+/**
+ * Derive group from type key prefix.
+ *
+ * @example
+ * - SETTINGS_SHOW_PRESET_ON_CHANGE → 'settings'
+ * - COMMAND_HELP → 'command'
+ * - AUDIO_INPUT_MIC → 'audio'
+ */
+function parsePaletteGroup(type: PaletteItemType): PaletteGroup {
+  if (type.startsWith('settings_')) return 'settings';
+  if (type.startsWith('command_')) return 'command';
+  if (type.startsWith('audio_')) return 'audio';
+  return 'settings';
+}
+
+/**
+ * Normalize string for accent-insensitive search.
+ *
+ * @example
+ * - 'Hello' → 'Hello'
+ * - 'Héllo' → 'Hello'
+ * - 'Héllo' → 'Hello'
+ */
+function normalizeForSearch(str: string): string {
+  return str.normalize('NFD').replace(/\p{Mark}/gu, '');
 }

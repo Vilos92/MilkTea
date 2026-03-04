@@ -2,8 +2,8 @@ import type {RefObject} from 'preact';
 import {useEffect, useRef, useState} from 'preact/hooks';
 
 import {useSwipe} from '../../hooks/useSwipe';
-import {useTranslate} from '../../provider/translation';
-import {controlBtn, controls, controlsPill, controlsPillHovered} from './controls.css.ts';
+import {useTranslate} from '../../providers/translation';
+import {controlBtn, controls, controlsPill, controlsPillHovered} from './controls.css';
 
 /*
  * Types.

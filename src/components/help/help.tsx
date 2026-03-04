@@ -1,6 +1,6 @@
 import {useEffect} from 'preact/hooks';
 
-import {useTranslate} from '../../provider/translation';
+import {useTranslate} from '../../providers/translation';
 import {LocaleSwitcher} from '../locale/localeSwitcher';
 import {
   actionCell,
