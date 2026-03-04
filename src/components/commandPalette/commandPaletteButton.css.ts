@@ -1,11 +1,6 @@
 import {style} from '@vanilla-extract/css';
 
-export const helpButtonRoot = style({
-  display: 'flex',
-  alignItems: 'center'
-});
-
-export const helpButton = style({
+export const commandPaletteButton = style({
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -51,7 +46,7 @@ export const helpButton = style({
   }
 });
 
-export const helpButtonAlwaysLight = style({
+export const commandPaletteButtonAlwaysLight = style({
   background: 'rgba(0,0,0,0.5)',
   color: 'rgba(255,255,255,0.9)',
   border: '1px solid rgba(255,255,255,0.3)',

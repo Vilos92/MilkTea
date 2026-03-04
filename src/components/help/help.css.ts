@@ -41,7 +41,23 @@ export const content = style({
   width: '100%',
   display: 'flex',
   flexDirection: 'column',
-  gap: '28px'
+  marginTop: '40px',
+  gap: '16px',
+  maxHeight: 'min(640px, calc(100vh - 80px))'
+});
+
+export const scrollArea = style({
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '28px',
+  overflowY: 'auto',
+  paddingTop: '16px'
+});
+
+export const localeRow = style({
+  display: 'flex',
+  justifyContent: 'center'
 });
 
 export const section = style({

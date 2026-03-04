@@ -1,7 +1,7 @@
 import type {Locale} from '../../lib/locale';
 import {LOCALE_OPTIONS} from '../../lib/locale';
-import {useLocaleContext} from '../../provider/locale';
-import {useTranslate} from '../../provider/translation';
+import {useLocaleContext} from '../../providers/locale';
+import {useTranslate} from '../../providers/translation';
 import {
   globe,
   label,
@@ -11,7 +11,7 @@ import {
   select,
   selectAlwaysLight,
   srOnly
-} from './localeSwitcher.css.ts';
+} from './localeSwitcher.css';
 
 /*
  * Types.
@@ -19,14 +19,13 @@ import {
 
 type LocaleSwitcherProps = {
   class?: string;
-  alwaysLight: boolean;
 };
 
 /*
  * Component.
  */
 
-export function LocaleSwitcher({class: className, alwaysLight}: LocaleSwitcherProps) {
+export function LocaleSwitcher({class: className}: LocaleSwitcherProps) {
   const {locale, setLocaleOverride} = useLocaleContext();
   const t = useTranslate();
 
@@ -34,8 +33,8 @@ export function LocaleSwitcher({class: className, alwaysLight}: LocaleSwitcherPr
     setLocaleOverride((event.target as HTMLSelectElement).value as Locale);
   }
 
-  const labelClass = alwaysLight ? [label, labelAlwaysLight].join(' ') : label;
-  const selectClass = alwaysLight ? [select, selectAlwaysLight].join(' ') : select;
+  const labelClass = [label, labelAlwaysLight].join(' ');
+  const selectClass = [select, selectAlwaysLight].join(' ');
   const rootClass = className ? [root, className].join(' ') : root;
 
   return (

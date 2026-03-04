@@ -8,16 +8,15 @@ export const audioSourceRoot = style({
   transform: 'translateX(-50%)',
   display: 'flex',
   alignItems: 'center',
+  justifyContent: 'center',
+  flexWrap: 'nowrap',
   gap: '8px',
   transition: 'opacity 0.35s ease',
   '@media': {
-    '(max-width: 640px)': {
-      top: '68px',
-      left: 'auto',
-      right: '12px',
-      transform: 'none'
+    '(max-width: 314px)': {
+      top: '68px'
     },
-    '(max-width: 640px) and (pointer: fine)': {
+    '(max-width: 314px) and (pointer: fine)': {
       top: '48px'
     }
   }
@@ -27,10 +26,10 @@ export const audioSourceButton = style({
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: '32px',
-  height: '32px',
+  width: '48px',
+  height: '48px',
   padding: 0,
-  fontSize: '1.1rem',
+  fontSize: '1.2rem',
   lineHeight: 1,
   background: 'rgba(0,0,0,0.45)',
   border: '1px solid rgba(255,255,255,0.25)',

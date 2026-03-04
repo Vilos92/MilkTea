@@ -1,10 +1,6 @@
 import {style} from '@vanilla-extract/css';
 
 export const root = style({
-  position: 'fixed',
-  top: '12px',
-  right: '12px',
-  zIndex: 300,
   display: 'flex',
   alignItems: 'center',
   gap: '8px'
@@ -130,6 +126,7 @@ export const selectAlwaysLight = style({
   }
 });
 
+/** Visually hidden but accessible to screen readers. */
 export const srOnly = style({
   position: 'absolute',
   width: '1px',

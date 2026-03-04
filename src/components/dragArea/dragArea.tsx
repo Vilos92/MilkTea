@@ -1,4 +1,4 @@
-import {useTranslate} from '../../provider/translation';
+import {useTranslate} from '../../providers/translation';
 import {dragIndicator, dragIndicatorText, dragWrapper} from './dragArea.css';
 import {DragAreaProvider} from './dragAreaProvider';
 import {useDragArea} from './useDragArea';

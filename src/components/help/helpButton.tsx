@@ -1,23 +1,23 @@
 import {useEffect} from 'preact/hooks';
 
-import {useTranslate} from '../../provider/translation';
-import {helpButton, helpButtonAlwaysLight, helpButtonRoot} from './helpButton.css.ts';
+import {useTranslate} from '../../providers/translation';
+import {helpButton, helpButtonAlwaysLight, helpButtonRoot} from './helpButton.css';
 
 /*
  * Types.
  */
 
 type HelpButtonProps = {
-  alwaysLight: boolean;
-  setHelpOpen: (fn: (open: boolean) => boolean) => void;
   class?: string;
+  alwaysLight: boolean;
+  onOpen: () => void;
 };
 
 /*
  * Component.
  */
 
-export function HelpButton({alwaysLight, setHelpOpen, class: className}: HelpButtonProps) {
+export function HelpButton({alwaysLight, onOpen, class: className}: HelpButtonProps) {
   const t = useTranslate();
   const buttonClass = alwaysLight ? [helpButton, helpButtonAlwaysLight].join(' ') : helpButton;
   const rootClass = className ? [helpButtonRoot, className].join(' ') : helpButtonRoot;
@@ -26,18 +26,18 @@ export function HelpButton({alwaysLight, setHelpOpen, class: className}: HelpBut
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== '?' && !(event.key === '/' && event.shiftKey)) return;
       event.preventDefault();
-      setHelpOpen(open => !open);
+      onOpen();
     };
     document.addEventListener('keydown', onKeyDown, true);
     return () => document.removeEventListener('keydown', onKeyDown, true);
-  }, [setHelpOpen]);
+  }, [onOpen]);
 
   return (
     <div class={rootClass}>
       <button
         type="button"
         class={buttonClass}
-        onClick={() => setHelpOpen(open => !open)}
+        onClick={onOpen}
         aria-label={t('help.openLabel')}
         title={t('help.openLabel')}
       >
