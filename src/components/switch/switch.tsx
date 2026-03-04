@@ -1,4 +1,4 @@
-import {label as labelClass, root, thumb, track} from './switch.css.ts';
+import {root, thumb, track} from './switch.css.ts';
 
 /*
  * Types.
@@ -45,7 +45,6 @@ export function Switch({class: className, checked, onChange, label, disabled = f
       <span class={track} aria-hidden="true">
         <span class={thumb} />
       </span>
-      {label && <span class={labelClass}>{label}</span>}
     </span>
   );
 }
