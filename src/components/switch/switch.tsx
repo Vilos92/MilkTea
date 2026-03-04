@@ -1,12 +1,20 @@
 import {label as labelClass, root, thumb, track} from './switch.css.ts';
 
+/*
+ * Types.
+ */
+
 export type SwitchProps = {
   class?: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
-  label?: string;
+  label: string;
   disabled?: boolean;
 };
+
+/*
+ * Component.
+ */
 
 export function Switch({class: className, checked, onChange, label, disabled = false}: SwitchProps) {
   const handleClick = () => {
@@ -25,6 +33,7 @@ export function Switch({class: className, checked, onChange, label, disabled = f
       class={[root, className].filter(Boolean).join(' ')}
       role="switch"
       aria-checked={checked}
+      aria-label={label}
       aria-disabled={disabled || undefined}
       // `data-*` attributes drive all CSS state selectors.
       data-checked={checked ? '' : undefined}

@@ -215,7 +215,7 @@ export function CommandPalette({
           }}
         >
           <span>{item.label}</span>
-          <Switch checked={item.checked} onChange={item.onChange} />
+          <Switch checked={item.checked} onChange={item.onChange} label={item.label} />
         </div>
       );
     }
