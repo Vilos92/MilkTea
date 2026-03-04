@@ -1,29 +1,26 @@
 import {useEffect} from 'preact/hooks';
 
 import {useTranslate} from '../../providers/translation';
-import {helpButton, helpButtonAlwaysLight, helpButtonRoot, helpButtonRootInline} from './helpButton.css';
+import {helpButton, helpButtonAlwaysLight, helpButtonRoot} from './helpButton.css';
 
 /*
  * Types.
  */
 
 type HelpButtonProps = {
+  class?: string;
   alwaysLight: boolean;
   setHelpOpen: (fn: (open: boolean) => boolean) => void;
-  /** When true, root has no fixed position (for use inside leftCornerGroup). */
-  inline?: boolean;
-  class?: string;
 };
 
 /*
  * Component.
  */
 
-export function HelpButton({alwaysLight, setHelpOpen, inline, class: className}: HelpButtonProps) {
+export function HelpButton({alwaysLight, setHelpOpen, class: className}: HelpButtonProps) {
   const t = useTranslate();
   const buttonClass = alwaysLight ? [helpButton, helpButtonAlwaysLight].join(' ') : helpButton;
-  const root = inline ? helpButtonRootInline : helpButtonRoot;
-  const rootClass = className ? [root, className].join(' ') : root;
+  const rootClass = className ? [helpButtonRoot, className].join(' ') : helpButtonRoot;
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {

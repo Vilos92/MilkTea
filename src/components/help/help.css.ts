@@ -55,7 +55,6 @@ export const scrollArea = style({
   paddingTop: '16px'
 });
 
-/** Centered row for locale switcher above About. */
 export const localeRow = style({
   display: 'flex',
   justifyContent: 'center'

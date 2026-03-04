@@ -11,14 +11,13 @@ import {globe, label, labelAlwaysLight, root, row, select, selectAlwaysLight} fr
 
 type LocaleSwitcherProps = {
   class?: string;
-  alwaysLight: boolean;
 };
 
 /*
  * Component.
  */
 
-export function LocaleSwitcher({class: className, alwaysLight}: LocaleSwitcherProps) {
+export function LocaleSwitcher({class: className}: LocaleSwitcherProps) {
   const {locale, setLocaleOverride} = useLocaleContext();
   const t = useTranslate();
 
@@ -26,8 +25,8 @@ export function LocaleSwitcher({class: className, alwaysLight}: LocaleSwitcherPr
     setLocaleOverride((event.target as HTMLSelectElement).value as Locale);
   }
 
-  const labelClass = alwaysLight ? [label, labelAlwaysLight].join(' ') : label;
-  const selectClass = alwaysLight ? [select, selectAlwaysLight].join(' ') : select;
+  const labelClass = [label, labelAlwaysLight].join(' ');
+  const selectClass = [select, selectAlwaysLight].join(' ');
   const rootClass = className ? [root, className].join(' ') : root;
 
   return (

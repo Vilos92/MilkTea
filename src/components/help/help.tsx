@@ -63,7 +63,7 @@ export function Help({visualizerActive, presetName, trackName, onClose}: HelpPro
       <div class={content}>
         <div class={scrollArea}>
           <div class={localeRow}>
-            <LocaleSwitcher alwaysLight={true} />
+            <LocaleSwitcher />
           </div>
           <section class={section} aria-labelledby="help-about">
             <h2 id="help-about" class={headingClass}>
