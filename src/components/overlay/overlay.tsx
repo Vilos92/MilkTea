@@ -1,5 +1,5 @@
 import type {RefObject} from 'preact';
-import {useEffect, useState} from 'preact/hooks';
+import {useEffect, useRef, useState} from 'preact/hooks';
 
 import {useReducedMotion} from '../../hooks/useReducedMotion';
 import {useLocaleContext} from '../../providers/locale';
@@ -70,7 +70,7 @@ export function Overlay(props: OverlayProps) {
   const [isTrackFading, setIsTrackFading] = useState(false);
 
   useEffect(() => {
-    if (!started && shouldSkipSplashOnLoad) {
+    if (shouldSkipSplashOnLoad && !started) {
       start();
     }
   }, [started, shouldSkipSplashOnLoad, start]);

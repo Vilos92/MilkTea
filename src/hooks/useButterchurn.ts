@@ -119,14 +119,20 @@ export function useButterchurn() {
     sourceNodeRef.current = null;
   }, []);
 
+  const isInitializingRef = useRef(false);
+
   // fetch preset data, create `AudioContext`, setup visualizer.
   const initVisualizer = useCallback(async (): Promise<void> => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) {
+      return;
+    }
 
     const keys = await getPresetKeys();
     setPresetKeys(keys);
-    if (!keys.length) return;
+    if (!keys.length) {
+      return;
+    }
 
     const initialIndex = Math.floor(Math.random() * keys.length);
     const preset = await fetchPresetByIndex(initialIndex);
@@ -147,6 +153,8 @@ export function useButterchurn() {
 
   // Starts the visualizer (if needed) and dismisses the splash.
   const start = useCallback(async () => {
+    if (started || isInitializingRef.current) return;
+
     if (audioContextRef.current) {
       if (audioContextRef.current.state === 'suspended') {
         await audioContextRef.current.resume();
@@ -154,9 +162,15 @@ export function useButterchurn() {
       setStarted(true);
       return;
     }
-    await initVisualizer();
-    setStarted(true);
-  }, [initVisualizer]);
+
+    isInitializingRef.current = true;
+    try {
+      await initVisualizer();
+      setStarted(true);
+    } finally {
+      isInitializingRef.current = false;
+    }
+  }, [started, initVisualizer]);
 
   const connectAudioBuffer = useCallback(
     async (arrayBuffer: ArrayBuffer): Promise<void> => {
@@ -217,10 +231,21 @@ export function useButterchurn() {
     [stopCurrentSource]
   );
 
-  // On mount: run init (preview under the button). Splash stays until user triggers the start.
+  // On mount: initialize visualizer for a splash preview.
+  // Do NOT signal as started. Only call `start` to exit splash
+  // (manual or auto-start only).
   useEffect(() => {
     if (reducedMotion) return;
-    initVisualizer();
+    if (audioContextRef.current || isInitializingRef.current) return;
+
+    isInitializingRef.current = true;
+    (async () => {
+      try {
+        await initVisualizer();
+      } finally {
+        isInitializingRef.current = false;
+      }
+    })();
   }, [reducedMotion, initVisualizer]);
 
   // Sync visualizer canvas to the current viewport size.
