@@ -1,5 +1,6 @@
 import {useEffect, useMemo, useRef, useState} from 'preact/hooks';
 
+import {useHasFinePointer} from '../../hooks/useHasFinePointer';
 import {useLocaleContext} from '../../providers/locale';
 import {useSettingsContext} from '../../providers/settings';
 import {type Translate, useTranslate} from '../../providers/translation';
@@ -104,6 +105,8 @@ export function CommandPalette({
 }: CommandPaletteProps) {
   const t = useTranslate();
   const {locale} = useLocaleContext();
+  const hasFinePointer = useHasFinePointer();
+
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -165,8 +168,9 @@ export function CommandPalette({
   }, [filteredItems.length]);
 
   useEffect(() => {
+    if (!hasFinePointer) return;
     inputRef.current?.focus();
-  }, []);
+  }, [hasFinePointer]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
