@@ -48,7 +48,7 @@ type PaletteGroup = 'command' | 'audio' | 'settings';
  * Constants.
  */
 
-const groupOrder: readonly PaletteGroup[] = ['command', 'audio', 'settings'];
+const groupOrder: readonly PaletteGroup[] = ['settings', 'command', 'audio'];
 
 /*
  * Types.
@@ -336,14 +336,14 @@ function usePaletteItems(
         onSelect: onSelectOscillator
       },
       {
-        type: PaletteItemType.AUDIO_INPUT_MIC,
-        label: t('source.microphone'),
-        onSelect: onSelectMic
-      },
-      {
         type: PaletteItemType.AUDIO_INPUT_FILE,
         label: t('source.file'),
         onSelect: onOpenFilePicker
+      },
+      {
+        type: PaletteItemType.AUDIO_INPUT_MIC,
+        label: t('source.microphone'),
+        onSelect: onSelectMic
       },
       {
         type: PaletteItemType.SETTINGS_SHOW_PRESET_ON_CHANGE,
