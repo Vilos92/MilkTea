@@ -1,5 +1,5 @@
 import type {RefObject} from 'preact';
-import {useEffect, useRef, useState} from 'preact/hooks';
+import {useEffect, useState} from 'preact/hooks';
 
 import {useReducedMotion} from '../../hooks/useReducedMotion';
 import {useLocaleContext} from '../../providers/locale';
