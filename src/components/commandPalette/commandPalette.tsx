@@ -145,27 +145,38 @@ export function CommandPalette({
     });
   }, [allItems, query, locale, t]);
 
-  const itemsByGroup: Record<PaletteGroup, readonly PaletteItem[]> = useMemo(() => {
-    return filteredItems.reduce<Record<PaletteGroup, PaletteItem[]>>(
-      (currentItemsByGroup, item) => {
-        const group = parsePaletteGroup(item.type);
-        currentItemsByGroup[group].push(item);
-        return currentItemsByGroup;
-      },
-      {
-        command: [],
-        audio: [],
-        settings: []
-      }
-    );
+  const {
+    itemsByGroup,
+    orderedItems
+  }: {
+    itemsByGroup: Record<PaletteGroup, readonly PaletteItem[]>;
+    orderedItems: readonly PaletteItem[];
+  } = useMemo(() => {
+    const grouped: Record<PaletteGroup, PaletteItem[]> = {
+      command: [],
+      audio: [],
+      settings: []
+    };
+
+    for (const item of filteredItems) {
+      const group = parsePaletteGroup(item.type);
+      grouped[group].push(item);
+    }
+
+    const ordered: PaletteItem[] = [];
+    for (const group of groupOrder) {
+      ordered.push(...grouped[group]);
+    }
+
+    return {itemsByGroup: grouped, orderedItems: ordered};
   }, [filteredItems]);
 
-  const activeItem = filteredItems[activeIndex];
+  const activeItem = orderedItems[activeIndex];
 
-  // Clamp `activeIndex` when filtered list shrinks.
+  // Clamp `activeIndex` when list shrinks.
   useEffect(() => {
-    setActiveIndex(currentIndex => Math.min(currentIndex, Math.max(0, filteredItems.length - 1)));
-  }, [filteredItems.length]);
+    setActiveIndex(currentIndex => Math.min(currentIndex, Math.max(0, orderedItems.length - 1)));
+  }, [orderedItems.length]);
 
   useEffect(() => {
     if (!hasFinePointer) return;
@@ -186,7 +197,7 @@ export function CommandPalette({
   const handleSearchKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'ArrowDown' || (event.key === 'Tab' && !event.shiftKey)) {
       event.preventDefault();
-      setActiveIndex(currentIndex => Math.min(currentIndex + 1, filteredItems.length - 1));
+      setActiveIndex(currentIndex => Math.min(currentIndex + 1, orderedItems.length - 1));
       return;
     }
     if (event.key === 'ArrowUp' || (event.key === 'Tab' && event.shiftKey)) {
@@ -215,7 +226,7 @@ export function CommandPalette({
           key={item.type}
           class={[switchRow, isActive && switchRowActive].filter(Boolean).join(' ')}
           onClick={() => {
-            setActiveIndex(filteredItems.indexOf(item));
+            setActiveIndex(orderedItems.indexOf(item));
             inputRef.current?.focus();
           }}
         >
