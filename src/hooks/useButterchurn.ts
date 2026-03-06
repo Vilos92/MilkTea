@@ -56,13 +56,17 @@ export function useButterchurn() {
   const presetName: string | undefined = presetIndex !== undefined ? presetKeys[presetIndex] : undefined;
 
   const toggleFullscreen = useCallback(() => {
-    if (containerRef.current) toggleContainerFullscreen(containerRef.current);
+    if (containerRef.current) {
+      toggleContainerFullscreen(containerRef.current);
+    }
   }, []);
 
   const changePreset = useCallback(
     (delta: number) => {
       const keys = presetKeys;
-      if (!keys.length || !visualizerRef.current) return;
+      if (!keys.length || !visualizerRef.current) {
+        return;
+      }
 
       const n = keys.length;
       const newIndex = ((presetIndex ?? 0) + delta + n) % n;
@@ -83,7 +87,9 @@ export function useButterchurn() {
       createVisualizerRef.current = (size: Size) => {
         requestAnimationFrame(() => {
           const c = canvasRef.current;
-          if (!c || !audioContextRef.current || !gainNodeRef.current) return;
+          if (!c || !audioContextRef.current || !gainNodeRef.current) {
+            return;
+          }
           visualizerRef.current = null;
           c.width = size.width;
           c.height = size.height;
@@ -113,9 +119,13 @@ export function useButterchurn() {
 
   const stopCurrentSource = useCallback(() => {
     const node = sourceNodeRef.current;
-    if (!node) return;
+    if (!node) {
+      return;
+    }
     node.disconnect();
-    if ('stop' in node) node.stop();
+    if ('stop' in node) {
+      node.stop();
+    }
     sourceNodeRef.current = null;
   }, []);
 
@@ -153,7 +163,9 @@ export function useButterchurn() {
 
   // Starts the visualizer (if needed) and dismisses the splash.
   const start = useCallback(async () => {
-    if (started || isInitializingRef.current) return;
+    if (started || isInitializingRef.current) {
+      return;
+    }
 
     if (audioContextRef.current) {
       if (audioContextRef.current.state === 'suspended') {
@@ -176,7 +188,9 @@ export function useButterchurn() {
     async (arrayBuffer: ArrayBuffer): Promise<void> => {
       const ctx = audioContextRef.current;
       const gainNode = gainNodeRef.current;
-      if (!ctx || !gainNode) return;
+      if (!ctx || !gainNode) {
+        return;
+      }
 
       const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
 
@@ -198,7 +212,9 @@ export function useButterchurn() {
   const connectOscillator = useCallback((): void => {
     const ctx = audioContextRef.current;
     const gainNode = gainNodeRef.current;
-    if (!ctx || !gainNode) return;
+    if (!ctx || !gainNode) {
+      return;
+    }
 
     stopCurrentSource();
 
@@ -217,7 +233,9 @@ export function useButterchurn() {
     (stream: MediaStream): void => {
       const ctx = audioContextRef.current;
       const gainNode = gainNodeRef.current;
-      if (!ctx || !gainNode) return;
+      if (!ctx || !gainNode) {
+        return;
+      }
 
       stopCurrentSource();
 
@@ -235,8 +253,12 @@ export function useButterchurn() {
   // Do NOT signal as started. Only call `start` to exit splash
   // (manual or auto-start only).
   useEffect(() => {
-    if (reducedMotion) return;
-    if (audioContextRef.current || isInitializingRef.current) return;
+    if (reducedMotion) {
+      return;
+    }
+    if (audioContextRef.current || isInitializingRef.current) {
+      return;
+    }
 
     isInitializingRef.current = true;
     (async () => {

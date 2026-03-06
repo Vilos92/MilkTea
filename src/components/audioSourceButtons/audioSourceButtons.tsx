@@ -96,7 +96,11 @@ function buttonClass(
   const base = [audioSourceButton, started ? audioSourceButtonAlwaysLight : undefined]
     .filter(Boolean)
     .join(' ');
-  if (pendingSource === source) return [base, audioSourceButtonPending].join(' ');
-  if (activeSource === source) return [base, audioSourceButtonActive].join(' ');
+  if (pendingSource === source) {
+    return [base, audioSourceButtonPending].join(' ');
+  }
+  if (activeSource === source) {
+    return [base, audioSourceButtonActive].join(' ');
+  }
   return base;
 }

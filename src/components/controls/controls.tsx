@@ -99,7 +99,9 @@ function usePresetKeys(changePreset: (delta: number) => void, toggleFullscreen: 
   useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
       const el = event.target as HTMLElement;
-      if (el?.closest?.('input, textarea') || el?.isContentEditable) return;
+      if (el?.closest?.('input, textarea') || el?.isContentEditable) {
+        return;
+      }
 
       const key = event.key;
       const code = event.code;

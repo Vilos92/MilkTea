@@ -30,7 +30,9 @@ const LocaleContext = createContext<LocaleContextValue>({
 export function LocaleProvider({children}: {children: preact.ComponentChildren}) {
   const {locale: browserLocale} = useLocale();
   const [overrideLocale, setOverrideLocale] = useState<Locale | undefined>(() => {
-    if (typeof localStorage === 'undefined') return undefined;
+    if (typeof localStorage === 'undefined') {
+      return undefined;
+    }
     const storageLocale = getStorageLocale();
     return storageLocale && isLocale(storageLocale) ? storageLocale : undefined;
   });

@@ -34,7 +34,9 @@ const TranslateContext = createContext<Translations>(ENGLISH_TRANSLATIONS);
 export function TranslateProvider({children}: {children: preact.ComponentChildren}) {
   const {locale: desiredLocale} = useLocaleContext();
   const [translations, setTranslations] = useState<Translations>(() => {
-    if (typeof localStorage === 'undefined') return ENGLISH_TRANSLATIONS;
+    if (typeof localStorage === 'undefined') {
+      return ENGLISH_TRANSLATIONS;
+    }
     const storageTranslations = getStorageTranslations();
     return storageTranslations ?? ENGLISH_TRANSLATIONS;
   });

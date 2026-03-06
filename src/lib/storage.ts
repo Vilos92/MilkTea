@@ -78,7 +78,9 @@ function setStorageItem<TData>(key: StorageKey, value: TData | undefined): void 
 
 function getStorageItem<TData>(key: StorageKey): TData | undefined {
   const item = localStorage.getItem(formatStorageKey(key));
-  if (item === null) return undefined;
+  if (item === null) {
+    return undefined;
+  }
 
   try {
     return JSON.parse(item) as TData;

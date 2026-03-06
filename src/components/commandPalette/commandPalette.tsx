@@ -138,14 +138,18 @@ export function CommandPalette({
 
   const filteredItems: readonly PaletteItem[] = useMemo(() => {
     const rawQuery = query.trim();
-    if (!rawQuery) return allItems;
+    if (!rawQuery) {
+      return allItems;
+    }
 
     const searchQuery = normalizeForSearch(rawQuery).toLocaleLowerCase(locale);
 
     return allItems.filter(item => {
       // Match against the item label.
       const normalizedLabel = normalizeForSearch(item.label).toLocaleLowerCase(locale);
-      if (normalizedLabel.includes(searchQuery)) return true;
+      if (normalizedLabel.includes(searchQuery)) {
+        return true;
+      }
 
       // Also match against the group's localized heading (e.g., "Command", "Audio", "Settings").
       const group = parsePaletteGroup(item.type);
@@ -189,7 +193,9 @@ export function CommandPalette({
   }, [orderedItems.length]);
 
   useEffect(() => {
-    if (!hasFinePointer) return;
+    if (!hasFinePointer) {
+      return;
+    }
     inputRef.current?.focus();
   }, [hasFinePointer]);
 
@@ -216,7 +222,9 @@ export function CommandPalette({
       return;
     }
     if (event.key === 'Enter') {
-      if (!activeItem) return;
+      if (!activeItem) {
+        return;
+      }
       event.preventDefault();
       if (isSwitchPaletteItem(activeItem)) {
         activeItem.onChange(!activeItem.checked);
@@ -429,9 +437,15 @@ function formatGroupHeading(t: Translate, group: PaletteGroup): string {
  * - AUDIO_INPUT_MIC → 'audio'
  */
 function parsePaletteGroup(type: PaletteItemType): PaletteGroup {
-  if (type.startsWith('settings_')) return 'settings';
-  if (type.startsWith('command_')) return 'command';
-  if (type.startsWith('audio_')) return 'audio';
+  if (type.startsWith('settings_')) {
+    return 'settings';
+  }
+  if (type.startsWith('command_')) {
+    return 'command';
+  }
+  if (type.startsWith('audio_')) {
+    return 'audio';
+  }
   return 'settings';
 }
 

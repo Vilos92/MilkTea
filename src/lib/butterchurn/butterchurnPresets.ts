@@ -44,10 +44,14 @@ const inFlight = new Map<number, Promise<ButterchurnPreset>>();
  * Fetch manifest and return the preset keys.
  */
 export async function getPresetKeys(): Promise<string[]> {
-  if (manifest) return manifest.keys;
+  if (manifest) {
+    return manifest.keys;
+  }
 
   const res = await fetch('/butterchurn/presets/manifest.json');
-  if (!res.ok) throw new Error(`Failed to load preset manifest: ${res.status}`);
+  if (!res.ok) {
+    throw new Error(`Failed to load preset manifest: ${res.status}`);
+  }
 
   const data = (await res.json()) as {version?: string; keys: string[]};
   manifest = data;
@@ -60,14 +64,20 @@ export async function getPresetKeys(): Promise<string[]> {
  */
 export async function fetchPresetByIndex(index: number): Promise<ButterchurnPreset> {
   const stored = presetStore.get(index);
-  if (stored) return Promise.resolve(stored);
+  if (stored) {
+    return Promise.resolve(stored);
+  }
 
   const existing = inFlight.get(index);
-  if (existing) return existing;
+  if (existing) {
+    return existing;
+  }
 
   const promise = (async () => {
     const res = await fetch(`/butterchurn/presets/${index}.json`);
-    if (!res.ok) throw new Error(`Failed to load preset ${index}: ${res.status}`);
+    if (!res.ok) {
+      throw new Error(`Failed to load preset ${index}: ${res.status}`);
+    }
     const preset = (await res.json()) as ButterchurnPreset;
     presetStore.set(index, preset);
     return preset;
@@ -83,8 +93,12 @@ export async function fetchPresetByIndex(index: number): Promise<ButterchurnPres
  * Prefetch prev/current/next preset (with wrap). Dedupes via shared in-flight promises.
  */
 export function prefetchNeighborPresets(index: number, count: number): void {
-  if (count === 0) return;
+  if (count === 0) {
+    return;
+  }
   const n = count;
   const indices = [(index - 1 + n) % n, index, (index + 1) % n];
-  for (const i of indices) fetchPresetByIndex(i);
+  for (const i of indices) {
+    fetchPresetByIndex(i);
+  }
 }

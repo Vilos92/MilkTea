@@ -55,7 +55,9 @@ export function MilkTea() {
       .finally(() => setPendingAudioSource(undefined));
 
     setTrackName(file.name);
-    if (!started) start();
+    if (!started) {
+      start();
+    }
   };
 
   const onAudioFileChange = (event: Event) => {
@@ -69,7 +71,9 @@ export function MilkTea() {
 
   const handleAudioFileDrop = (event: DragEvent) => {
     const files = event.dataTransfer?.files ?? [];
-    if (!files[0]) return;
+    if (!files[0]) {
+      return;
+    }
 
     handleAudioFile(files[0]);
   };
@@ -80,7 +84,9 @@ export function MilkTea() {
   };
 
   const handleSourceChange = (newSource: AudioSource) => {
-    if (newSource === audioSource) return;
+    if (newSource === audioSource) {
+      return;
+    }
 
     stopMicHardware();
 
@@ -107,7 +113,9 @@ export function MilkTea() {
   };
 
   useEffect(() => {
-    if (started) return;
+    if (started) {
+      return;
+    }
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
@@ -122,7 +130,9 @@ export function MilkTea() {
     axis: Axis.VERTICAL,
     onSwipeUp: undefined,
     onSwipeDown: () => {
-      if (openPanel === MilkTeaPanel.HELP) return;
+      if (openPanel === MilkTeaPanel.HELP) {
+        return;
+      }
       setOpenPanel(MilkTeaPanel.COMMAND_PALETTE);
     }
   });

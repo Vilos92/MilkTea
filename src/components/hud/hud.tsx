@@ -58,7 +58,9 @@ export function Hud({
     useHudVisibility();
 
   useEffect(() => {
-    if (openPanel !== MilkTeaPanel.NONE) forceVisible();
+    if (openPanel !== MilkTeaPanel.NONE) {
+      forceVisible();
+    }
   }, [openPanel, forceVisible]);
 
   useEffect(() => {
@@ -124,7 +126,9 @@ function useHudVisibility() {
 
   useEffect(() => {
     const scheduleFadeOut = () => {
-      if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
+      if (fadeTimeoutRef.current) {
+        clearTimeout(fadeTimeoutRef.current);
+      }
       fadeTimeoutRef.current = setTimeout(() => setHudVisible(false), CONTROLS_FADE_DELAY_MS);
     };
     scheduleFadeOutRef.current = scheduleFadeOut;
@@ -142,7 +146,9 @@ function useHudVisibility() {
       window.removeEventListener('mousemove', showControls);
       window.removeEventListener('touchstart', showControls);
       scheduleFadeOutRef.current = null;
-      if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
+      if (fadeTimeoutRef.current) {
+        clearTimeout(fadeTimeoutRef.current);
+      }
     };
   }, []);
 

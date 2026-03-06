@@ -42,7 +42,9 @@ export function useSwipe(elementRef: RefObject<HTMLElement | null>, config: Swip
 
   useEffect(() => {
     const element = elementRef.current;
-    if (!element) return;
+    if (!element) {
+      return;
+    }
 
     const handleStart = (event: TouchEvent) => {
       touchStart.current = {x: event.touches[0].clientX, y: event.touches[0].clientY};
@@ -55,13 +57,21 @@ export function useSwipe(elementRef: RefObject<HTMLElement | null>, config: Swip
 
       if (swipeConfig.axis === Axis.HORIZONTAL) {
         if (Math.abs(dX) > Math.abs(dY) && Math.abs(dX) > DEFAULT_THRESHOLD) {
-          if (dX > 0) swipeConfig.onSwipeRight?.();
-          if (dX < 0) swipeConfig.onSwipeLeft?.();
+          if (dX > 0) {
+            swipeConfig.onSwipeRight?.();
+          }
+          if (dX < 0) {
+            swipeConfig.onSwipeLeft?.();
+          }
         }
       } else {
         if (Math.abs(dY) > Math.abs(dX) && Math.abs(dY) > DEFAULT_THRESHOLD) {
-          if (dY > 0) swipeConfig.onSwipeDown?.();
-          if (dY < 0) swipeConfig.onSwipeUp?.();
+          if (dY > 0) {
+            swipeConfig.onSwipeDown?.();
+          }
+          if (dY < 0) {
+            swipeConfig.onSwipeUp?.();
+          }
         }
       }
     };

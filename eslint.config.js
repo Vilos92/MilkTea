@@ -29,6 +29,9 @@ export default defineConfig([
     rules: {
       ...jsxA11y.configs.recommended.rules,
 
+      // Require braces for all control flow statements
+      curly: ['error', 'all'],
+
       // Preact uses 'class' instead of 'className'
       'react/no-unknown-property': ['error', {ignore: ['class']}],
 

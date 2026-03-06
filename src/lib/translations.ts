@@ -135,17 +135,27 @@ export function getTranslations(locale: Locale): Translations | undefined {
  * Maps to a supported `Locale` or `DEFAULT_LOCALE`.
  */
 export function detectBrowserLocale(): Locale {
-  if (typeof navigator === 'undefined') return DEFAULT_LOCALE;
+  if (typeof navigator === 'undefined') {
+    return DEFAULT_LOCALE;
+  }
   const raw = navigator.language || navigator.languages?.[0] || 'en';
   const parts = raw.split('-').map((p, i) => (i === 0 ? p.toLowerCase() : p));
   const full = parts.join('-'); // e.g. zh-Hans
   const base = parts[0] ?? 'en';
 
-  if (SUPPORTED_LOCALES.has(full)) return full as Locale;
-  if (SUPPORTED_LOCALES.has(base)) return base as Locale;
+  if (SUPPORTED_LOCALES.has(full)) {
+    return full as Locale;
+  }
+  if (SUPPORTED_LOCALES.has(base)) {
+    return base as Locale;
+  }
   if (base === 'zh') {
-    if (raw.startsWith('zh-CN') || raw.startsWith('zh-SG')) return Locale.CHINESE_SIMPLIFIED;
-    if (raw.startsWith('zh-TW') || raw.startsWith('zh-HK')) return Locale.CHINESE_TRADITIONAL;
+    if (raw.startsWith('zh-CN') || raw.startsWith('zh-SG')) {
+      return Locale.CHINESE_SIMPLIFIED;
+    }
+    if (raw.startsWith('zh-TW') || raw.startsWith('zh-HK')) {
+      return Locale.CHINESE_TRADITIONAL;
+    }
     return Locale.CHINESE_SIMPLIFIED;
   }
   return DEFAULT_LOCALE;
@@ -161,7 +171,9 @@ export function detectBrowserLocale(): Locale {
  */
 export async function fetchTranslations(locale: Locale): Promise<Translations> {
   const stored = translationStore.get(locale);
-  if (stored) return Promise.resolve(stored);
+  if (stored) {
+    return Promise.resolve(stored);
+  }
 
   if (locale === 'en') {
     translationStore.set('en', ENGLISH_TRANSLATIONS);
@@ -169,13 +181,17 @@ export async function fetchTranslations(locale: Locale): Promise<Translations> {
   }
 
   const existing = inFlight.get(locale);
-  if (existing) return existing;
+  if (existing) {
+    return existing;
+  }
 
   const base = (typeof import.meta !== 'undefined' && import.meta.env?.BASE_URL) || '';
   const url = `${base.replace(/\/$/, '')}/translations/${locale}.json`;
   const translationsPromise = (async () => {
     const res = await fetch(url);
-    if (!res.ok) throw new Error(`Failed to load translations for ${locale}: ${res.status}`);
+    if (!res.ok) {
+      throw new Error(`Failed to load translations for ${locale}: ${res.status}`);
+    }
     const data = (await res.json()) as Translations;
     translationStore.set(locale, data);
     return data;

@@ -25,7 +25,9 @@ export function VisualizerOverlay({presetName, trackName}: VisualizerOverlayProp
   const [isTrackFading, setIsTrackFading] = useState(false);
 
   useEffect(() => {
-    if (presetName === undefined) return;
+    if (presetName === undefined) {
+      return;
+    }
     setDisplayedPreset(presetName);
 
     setIsPresetFading(false);
@@ -39,11 +41,15 @@ export function VisualizerOverlay({presetName, trackName}: VisualizerOverlayProp
   }, [presetName]);
 
   const handlePresetNameTransitionEnd = () => {
-    if (isPresetFading) setDisplayedPreset(undefined);
+    if (isPresetFading) {
+      setDisplayedPreset(undefined);
+    }
   };
 
   useEffect(() => {
-    if (trackName === undefined) return;
+    if (trackName === undefined) {
+      return;
+    }
     setDisplayedTrack(trackName);
 
     setIsTrackFading(false);
@@ -57,7 +63,9 @@ export function VisualizerOverlay({presetName, trackName}: VisualizerOverlayProp
   }, [trackName]);
 
   const handleTrackNameTransitionEnd = () => {
-    if (isTrackFading) setDisplayedTrack(undefined);
+    if (isTrackFading) {
+      setDisplayedTrack(undefined);
+    }
   };
 
   const trackNameClass = displayedTrack

@@ -18,7 +18,9 @@ export type SwitchProps = {
 
 export function Switch({class: className, checked, onChange, label, disabled = false}: SwitchProps) {
   const handleClick = () => {
-    if (!disabled) onChange(!checked);
+    if (!disabled) {
+      onChange(!checked);
+    }
   };
 
   const handleKeyDown = (event: KeyboardEvent) => {
