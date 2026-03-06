@@ -93,8 +93,8 @@ export function Help({visualizerActive, presetName, trackName, onClose}: HelpPro
                 <span class={actionCell}>{t('help.keyFullscreenAction')}</span>
               </li>
               <li class={hotkeyRow}>
-                <span class={keyCell}>{t('help.keySettingsKeys')}</span>
-                <span class={actionCell}>{t('help.keySettingsAction')}</span>
+                <span class={keyCell}>{t('help.keyCommandPaletteKeys')}</span>
+                <span class={actionCell}>{t('help.keyCommandPaletteAction')}</span>
               </li>
             </ul>
           </section>

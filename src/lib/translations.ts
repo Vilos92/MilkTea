@@ -29,8 +29,8 @@ export type TranslationKey =
   | 'help.keyNextAction'
   | 'help.keyFullscreenKeys'
   | 'help.keyFullscreenAction'
-  | 'help.keySettingsKeys'
-  | 'help.keySettingsAction'
+  | 'help.keyCommandPaletteKeys'
+  | 'help.keyCommandPaletteAction'
   | 'help.trackName'
   | 'help.presetName'
   | 'settings.title'
@@ -79,15 +79,15 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'help.keyNextAction': 'Next preset',
   'help.keyFullscreenKeys': 'F',
   'help.keyFullscreenAction': 'Toggle fullscreen',
-  'help.keySettingsKeys': '⌘K',
-  'help.keySettingsAction': 'Command Palette',
+  'help.keyCommandPaletteKeys': '⌘K',
+  'help.keyCommandPaletteAction': 'Command Palette',
   'help.trackName': 'Now playing',
   'help.presetName': 'Preset',
   'settings.title': 'Settings',
   'settings.close': 'Close',
   'settings.showPresetNameOnChange': 'Show preset name on change',
   'settings.showTrackNameOnChange': 'Show audio track name on change',
-  'settings.autoStart': 'Start MilkDrop automatically.',
+  'settings.autoStart': 'Start visualizer automatically.',
   'commandPalette.searchPlaceholder': 'Search…',
   'commandPalette.group.command': 'Command',
   'commandPalette.group.audio': 'Audio',

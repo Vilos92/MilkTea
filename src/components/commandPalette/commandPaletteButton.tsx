@@ -27,8 +27,8 @@ export function CommandPaletteButton({class: className, alwaysLight, onOpen}: Co
       type="button"
       class={buttonClass}
       onClick={onOpen}
-      aria-label={t('help.keySettingsAction')}
-      title={t('help.keySettingsAction')}
+      aria-label={t('help.keyCommandPaletteAction')}
+      title={t('help.keyCommandPaletteAction')}
     >
       &gt;_
     </button>

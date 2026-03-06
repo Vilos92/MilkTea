@@ -256,7 +256,7 @@ export function CommandPalette({
       <div class={content}>
         <div class={header}>
           <h2 id="command-palette-title" class={headingClass}>
-            {t('help.keySettingsAction')}
+            {t('help.keyCommandPaletteAction')}
           </h2>
           <input
             ref={inputRef}
