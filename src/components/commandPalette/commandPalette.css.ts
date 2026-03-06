@@ -7,7 +7,7 @@ const baseOverlay = style({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  justifyContent: 'center',
+  justifyContent: 'flex-start',
   padding: '24px',
   boxSizing: 'border-box'
 });
@@ -42,9 +42,15 @@ export const content = style({
   maxWidth: '420px',
   width: '100%',
   marginTop: '40px',
-  maxHeight: 'min(640px, calc(100vh - 80px))',
   padding: '0 24px',
   boxSizing: 'border-box'
+});
+
+export const headingRow = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: '8px'
 });
 
 export const header = style({
@@ -112,7 +118,8 @@ export const scrollArea = style({
   overflowY: 'auto',
   display: 'flex',
   flexDirection: 'column',
-  gap: '24px'
+  gap: '24px',
+  paddingBottom: '16px'
 });
 
 export const groupHeading = style({
@@ -285,62 +292,68 @@ export const switchRow = style({
   borderRadius: '4px'
 });
 
-export const closeRow = style({
-  marginTop: '24px',
+const closeBtnCornerBase = {
+  flexShrink: 0,
+  marginRight: '-12px',
+  width: '32px',
+  height: '32px',
   display: 'flex',
-  justifyContent: 'center'
-});
-
-export const closeBtn = style({
-  padding: '10px 20px',
-  fontSize: '14px',
-  background: 'rgba(255,255,255,0.12)',
-  color: '#fff',
-  border: '1px solid rgba(255,255,255,0.25)',
+  alignItems: 'center',
+  justifyContent: 'center',
+  appearance: 'none' as const,
+  background: 'transparent',
+  border: 'none',
   borderRadius: '4px',
+  color: 'rgba(255,255,255,0.45)',
+  fontSize: '16px',
+  lineHeight: 1,
   ':focus-visible': {
     outline: '2px solid rgba(255,255,255,0.5)',
     outlineOffset: 2
-  },
+  }
+};
+
+export const closeBtnCorner = style({
+  ...closeBtnCornerBase,
   '@media': {
+    '(pointer: coarse)': {
+      width: '44px',
+      height: '44px',
+      color: 'rgba(255,255,255,0.65)',
+      marginRight: '-16px'
+    },
     '(hover: hover)': {
       ':hover': {
-        background: 'rgba(255,255,255,0.18)',
-        borderColor: 'rgba(255,255,255,0.35)'
+        background: 'rgba(255,255,255,0.1)',
+        color: 'rgba(255,255,255,0.9)'
       }
     }
   }
 });
 
-export const closeBtnSplash = style({
-  padding: '10px 20px',
-  fontSize: '14px',
-  background: 'rgba(255,255,255,0.12)',
-  color: '#fff',
-  border: '1px solid rgba(255,255,255,0.25)',
-  borderRadius: '4px',
-  ':focus-visible': {
-    outline: '2px solid rgba(255,255,255,0.5)',
-    outlineOffset: 2
-  },
+export const closeBtnCornerSplash = style({
+  ...closeBtnCornerBase,
   '@media': {
+    '(pointer: coarse)': {
+      width: '44px',
+      height: '44px',
+      color: 'rgba(255,255,255,0.65)',
+      marginRight: '-16px'
+    },
     '(hover: hover)': {
       ':hover': {
-        background: 'rgba(255,255,255,0.18)',
-        borderColor: 'rgba(255,255,255,0.35)'
+        background: 'rgba(255,255,255,0.1)',
+        color: 'rgba(255,255,255,0.9)'
       }
     },
     '(prefers-color-scheme: light)': {
-      background: 'rgba(0,0,0,0.08)',
-      color: '#213547',
-      border: '1px solid rgba(0,0,0,0.2)',
+      color: 'rgba(0,0,0,0.4)',
       ':focus-visible': {
-        outline: '2px solid rgba(0,0,0,0.4)',
-        outlineOffset: 2
+        outlineColor: 'rgba(0,0,0,0.4)'
       },
       ':hover': {
-        background: 'rgba(0,0,0,0.12)',
-        borderColor: 'rgba(0,0,0,0.3)'
+        background: 'rgba(0,0,0,0.06)',
+        color: 'rgba(0,0,0,0.8)'
       }
     }
   }

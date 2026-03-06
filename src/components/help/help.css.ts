@@ -12,7 +12,6 @@ const baseOverlay = style({
   boxSizing: 'border-box'
 });
 
-/** Before visualizer started: solid background, respects light/dark mode. */
 export const overlaySplash = style([
   baseOverlay,
   {
@@ -27,7 +26,6 @@ export const overlaySplash = style([
   }
 ]);
 
-/** Visualizer active: translucent so the canvas shows through. */
 export const overlayActive = style([
   baseOverlay,
   {
@@ -171,7 +169,6 @@ export const closeBtn = style({
   color: '#fff',
   border: '1px solid rgba(255,255,255,0.25)',
   borderRadius: '4px',
-  cursor: 'pointer',
   ':focus-visible': {
     outline: '2px solid rgba(255,255,255,0.5)',
     outlineOffset: 2
@@ -193,7 +190,6 @@ export const closeBtnSplash = style({
   color: '#fff',
   border: '1px solid rgba(255,255,255,0.25)',
   borderRadius: '4px',
-  cursor: 'pointer',
   ':focus-visible': {
     outline: '2px solid rgba(255,255,255,0.5)',
     outlineOffset: 2

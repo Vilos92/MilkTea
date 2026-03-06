@@ -6,9 +6,8 @@ import {useSettingsContext} from '../../providers/settings';
 import {type Translate, useTranslate} from '../../providers/translation';
 import {Switch} from '../switch/switch';
 import {
-  closeBtn,
-  closeBtnSplash,
-  closeRow,
+  closeBtnCorner,
+  closeBtnCornerSplash,
   commandButton,
   commandButtonActive,
   commandButtonActiveSplash,
@@ -18,6 +17,7 @@ import {
   groupHeadingSplash,
   header,
   heading,
+  headingRow,
   headingSplash,
   overlayActive,
   overlaySplash,
@@ -115,10 +115,11 @@ export function CommandPalette({
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
 
   const overlayClass = visualizerActive ? overlayActive : overlaySplash;
   const headingClass = visualizerActive ? heading : headingSplash;
-  const closeBtnClass = visualizerActive ? closeBtn : closeBtnSplash;
+  const closeBtnCornerClass = visualizerActive ? closeBtnCorner : closeBtnCornerSplash;
   const searchInputClass = visualizerActive ? searchInput : searchInputSplash;
   const groupHeadingClass = visualizerActive ? groupHeading : groupHeadingSplash;
   const commandButtonClass = visualizerActive ? commandButton : commandButtonSplash;
@@ -218,7 +219,11 @@ export function CommandPalette({
     }
     if (event.key === 'ArrowUp' || (event.key === 'Tab' && event.shiftKey)) {
       event.preventDefault();
-      setActiveIndex(i => Math.max(0, i - 1));
+      if (event.key === 'Tab' && activeIndex === 0) {
+        closeBtnRef.current?.focus();
+      } else {
+        setActiveIndex(i => Math.max(0, i - 1));
+      }
       return;
     }
     if (event.key === 'Enter') {
@@ -273,9 +278,26 @@ export function CommandPalette({
     <div class={overlayClass} role="dialog" aria-modal="true" aria-labelledby="command-palette-title">
       <div class={content}>
         <div class={header}>
-          <h2 id="command-palette-title" class={headingClass}>
-            {t('help.keyCommandPaletteAction')}
-          </h2>
+          <div class={headingRow}>
+            <h2 id="command-palette-title" class={headingClass}>
+              {t('help.keyCommandPaletteAction')}
+            </h2>
+            <button
+              ref={closeBtnRef}
+              type="button"
+              class={closeBtnCornerClass}
+              onClick={onClose}
+              aria-label={t('settings.close')}
+              onKeyDown={event => {
+                if (event.key === 'Tab' && !event.shiftKey) {
+                  event.preventDefault();
+                  inputRef.current?.focus();
+                }
+              }}
+            >
+              ✕
+            </button>
+          </div>
           <input
             ref={inputRef}
             type="search"
@@ -300,11 +322,6 @@ export function CommandPalette({
                 </div>
               )
           )}
-        </div>
-        <div class={closeRow}>
-          <button type="button" class={closeBtnClass} onClick={onClose} aria-label={t('settings.close')}>
-            {t('settings.close')}
-          </button>
         </div>
       </div>
     </div>
