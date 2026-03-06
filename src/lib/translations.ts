@@ -29,7 +29,8 @@ export type TranslationKey =
   | 'help.keyNextAction'
   | 'help.keyFullscreenKeys'
   | 'help.keyFullscreenAction'
-  | 'help.keyCommandPaletteKeys'
+  | 'help.keyCommandPaletteKeysMac'
+  | 'help.keyCommandPaletteKeysWindows'
   | 'help.keyCommandPaletteAction'
   | 'help.trackName'
   | 'help.presetName'
@@ -79,7 +80,8 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'help.keyNextAction': 'Next preset',
   'help.keyFullscreenKeys': 'F',
   'help.keyFullscreenAction': 'Toggle fullscreen',
-  'help.keyCommandPaletteKeys': '⌘K',
+  'help.keyCommandPaletteKeysMac': '⌘K',
+  'help.keyCommandPaletteKeysWindows': 'Ctrl+K',
   'help.keyCommandPaletteAction': 'Command Palette',
   'help.trackName': 'Now playing',
   'help.presetName': 'Preset',

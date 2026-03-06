@@ -1,6 +1,7 @@
 import {useEffect} from 'preact/hooks';
 
-import {useTranslate} from '../../providers/translation';
+import {isMac} from '../../lib/platform';
+import {type Translate, useTranslate} from '../../providers/translation';
 import {LocaleSwitcher} from '../locale/localeSwitcher';
 import {
   actionCell,
@@ -92,10 +93,7 @@ export function Help({visualizerActive, presetName, trackName, onClose}: HelpPro
                 <span class={keyCell}>{t('help.keyFullscreenKeys')}</span>
                 <span class={actionCell}>{t('help.keyFullscreenAction')}</span>
               </li>
-              <li class={hotkeyRow}>
-                <span class={keyCell}>{t('help.keyCommandPaletteKeys')}</span>
-                <span class={actionCell}>{t('help.keyCommandPaletteAction')}</span>
-              </li>
+              {renderCommandPaletteRow(t, isMac)}
             </ul>
           </section>
           {presetName && (
@@ -122,5 +120,26 @@ export function Help({visualizerActive, presetName, trackName, onClose}: HelpPro
         </div>
       </div>
     </div>
+  );
+}
+
+/*
+ * Helpers.
+ */
+
+function renderCommandPaletteRow(t: Translate, isMac: boolean): preact.VNode {
+  if (isMac) {
+    return (
+      <li class={hotkeyRow}>
+        <span class={keyCell}>{t('help.keyCommandPaletteKeysMac')}</span>
+        <span class={actionCell}>{t('help.keyCommandPaletteAction')}</span>
+      </li>
+    );
+  }
+  return (
+    <li class={hotkeyRow}>
+      <span class={keyCell}>{t('help.keyCommandPaletteKeysWindows')}</span>
+      <span class={actionCell}>{t('help.keyCommandPaletteAction')}</span>
+    </li>
   );
 }
