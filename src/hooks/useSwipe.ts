@@ -2,6 +2,30 @@ import type {RefObject} from 'preact';
 import {useEffect, useRef} from 'preact/hooks';
 
 /*
+ * Types.
+ */
+
+export const Axis = {
+  HORIZONTAL: 'horizontal',
+  VERTICAL: 'vertical'
+} as const;
+export type Axis = (typeof Axis)[keyof typeof Axis];
+
+type SwipeConfigHorizontal = {
+  axis: typeof Axis.HORIZONTAL;
+  onSwipeLeft?: () => void;
+  onSwipeRight?: () => void;
+};
+
+type SwipeConfigVertical = {
+  axis: typeof Axis.VERTICAL;
+  onSwipeUp?: () => void;
+  onSwipeDown?: () => void;
+};
+
+export type SwipeConfig = SwipeConfigHorizontal | SwipeConfigVertical;
+
+/*
  * Constants.
  */
 
@@ -11,41 +35,43 @@ const DEFAULT_THRESHOLD = 50;
  * Hook.
  */
 
-export function useSwipe(
-  elementRef: RefObject<HTMLElement | null>,
-  onSwipeLeft: () => void,
-  onSwipeRight: () => void
-) {
+export function useSwipe(elementRef: RefObject<HTMLElement | null>, config: SwipeConfig) {
   const touchStart = useRef({x: 0, y: 0});
-  const onSwipeLeftRef = useRef(onSwipeLeft);
-  const onSwipeRightRef = useRef(onSwipeRight);
-  onSwipeLeftRef.current = onSwipeLeft;
-  onSwipeRightRef.current = onSwipeRight;
+  const configRef = useRef(config);
+  configRef.current = config;
 
   useEffect(() => {
-    const el = elementRef.current;
-    if (!el) return;
+    const element = elementRef.current;
+    if (!element) return;
 
-    const handleStart = (e: TouchEvent) => {
-      touchStart.current = {x: e.touches[0].clientX, y: e.touches[0].clientY};
+    const handleStart = (event: TouchEvent) => {
+      touchStart.current = {x: event.touches[0].clientX, y: event.touches[0].clientY};
     };
 
-    const handleEnd = (e: TouchEvent) => {
-      const dX = e.changedTouches[0].clientX - touchStart.current.x;
-      const dY = e.changedTouches[0].clientY - touchStart.current.y;
+    const handleEnd = (event: TouchEvent) => {
+      const dX = event.changedTouches[0].clientX - touchStart.current.x;
+      const dY = event.changedTouches[0].clientY - touchStart.current.y;
+      const swipeConfig = configRef.current;
 
-      if (Math.abs(dX) > Math.abs(dY) && Math.abs(dX) > DEFAULT_THRESHOLD) {
-        if (dX > 0) onSwipeRightRef.current();
-        if (dX < 0) onSwipeLeftRef.current();
+      if (swipeConfig.axis === Axis.HORIZONTAL) {
+        if (Math.abs(dX) > Math.abs(dY) && Math.abs(dX) > DEFAULT_THRESHOLD) {
+          if (dX > 0) swipeConfig.onSwipeRight?.();
+          if (dX < 0) swipeConfig.onSwipeLeft?.();
+        }
+      } else {
+        if (Math.abs(dY) > Math.abs(dX) && Math.abs(dY) > DEFAULT_THRESHOLD) {
+          if (dY > 0) swipeConfig.onSwipeDown?.();
+          if (dY < 0) swipeConfig.onSwipeUp?.();
+        }
       }
     };
 
-    el.addEventListener('touchstart', handleStart, {passive: true});
-    el.addEventListener('touchend', handleEnd, {passive: true});
+    element.addEventListener('touchstart', handleStart, {passive: true});
+    element.addEventListener('touchend', handleEnd, {passive: true});
 
     return () => {
-      el.removeEventListener('touchstart', handleStart);
-      el.removeEventListener('touchend', handleEnd);
+      element.removeEventListener('touchstart', handleStart);
+      element.removeEventListener('touchend', handleEnd);
     };
   }, [elementRef]);
 }

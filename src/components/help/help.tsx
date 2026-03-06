@@ -1,5 +1,6 @@
 import {useEffect} from 'preact/hooks';
 
+import {useHasFinePointer} from '../../hooks/useHasFinePointer';
 import {isMac} from '../../lib/platform';
 import {type Translate, useTranslate} from '../../providers/translation';
 import {LocaleSwitcher} from '../locale/localeSwitcher';
@@ -41,6 +42,7 @@ type HelpProps = {
 
 export function Help({visualizerActive, presetName, trackName, onClose}: HelpProps) {
   const t = useTranslate();
+  const hasFinePointer = useHasFinePointer();
 
   const overlayClass = visualizerActive ? overlayActive : overlaySplash;
   const headingClass = visualizerActive ? heading : headingSplash;
@@ -77,23 +79,7 @@ export function Help({visualizerActive, presetName, trackName, onClose}: HelpPro
               {t('help.hotkeys')}
             </h2>
             <ul class={listClass}>
-              <li class={hotkeyRow}>
-                <span class={keyCell}>{t('help.keyHelpKeys')}</span>
-                <span class={actionCell}>{t('help.keyHelpAction')}</span>
-              </li>
-              <li class={hotkeyRow}>
-                <span class={keyCell}>{t('help.keyPrevKeys')}</span>
-                <span class={actionCell}>{t('help.keyPrevAction')}</span>
-              </li>
-              <li class={hotkeyRow}>
-                <span class={keyCell}>{t('help.keyNextKeys')}</span>
-                <span class={actionCell}>{t('help.keyNextAction')}</span>
-              </li>
-              <li class={hotkeyRow}>
-                <span class={keyCell}>{t('help.keyFullscreenKeys')}</span>
-                <span class={actionCell}>{t('help.keyFullscreenAction')}</span>
-              </li>
-              {renderCommandPaletteRow(t, isMac)}
+              {hasFinePointer ? renderDesktopHotkeys(t, isMac) : renderMobileHotkeys(t)}
             </ul>
           </section>
           {presetName && (
@@ -126,6 +112,45 @@ export function Help({visualizerActive, presetName, trackName, onClose}: HelpPro
 /*
  * Helpers.
  */
+
+function renderMobileHotkeys(t: Translate): preact.VNode[] {
+  return [
+    <li class={hotkeyRow}>
+      <span class={keyCell}>{t('help.swipePrevKeys')}</span>
+      <span class={actionCell}>{t('help.swipePrevAction')}</span>
+    </li>,
+    <li class={hotkeyRow}>
+      <span class={keyCell}>{t('help.swipeNextKeys')}</span>
+      <span class={actionCell}>{t('help.swipeNextAction')}</span>
+    </li>,
+    <li class={hotkeyRow}>
+      <span class={keyCell}>{t('help.swipeDownKeys')}</span>
+      <span class={actionCell}>{t('help.swipeDownAction')}</span>
+    </li>
+  ];
+}
+
+function renderDesktopHotkeys(t: Translate, isMac: boolean): preact.VNode[] {
+  return [
+    <li class={hotkeyRow}>
+      <span class={keyCell}>{t('help.keyHelpKeys')}</span>
+      <span class={actionCell}>{t('help.keyHelpAction')}</span>
+    </li>,
+    <li class={hotkeyRow}>
+      <span class={keyCell}>{t('help.keyPrevKeys')}</span>
+      <span class={actionCell}>{t('help.keyPrevAction')}</span>
+    </li>,
+    <li class={hotkeyRow}>
+      <span class={keyCell}>{t('help.keyNextKeys')}</span>
+      <span class={actionCell}>{t('help.keyNextAction')}</span>
+    </li>,
+    <li class={hotkeyRow}>
+      <span class={keyCell}>{t('help.keyFullscreenKeys')}</span>
+      <span class={actionCell}>{t('help.keyFullscreenAction')}</span>
+    </li>,
+    renderCommandPaletteRow(t, isMac)
+  ];
+}
 
 function renderCommandPaletteRow(t: Translate, isMac: boolean): preact.VNode {
   if (isMac) {

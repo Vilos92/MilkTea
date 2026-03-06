@@ -32,6 +32,12 @@ export type TranslationKey =
   | 'help.keyCommandPaletteKeysMac'
   | 'help.keyCommandPaletteKeysWindows'
   | 'help.keyCommandPaletteAction'
+  | 'help.swipePrevKeys'
+  | 'help.swipePrevAction'
+  | 'help.swipeNextKeys'
+  | 'help.swipeNextAction'
+  | 'help.swipeDownKeys'
+  | 'help.swipeDownAction'
   | 'help.trackName'
   | 'help.presetName'
   | 'settings.title'
@@ -83,6 +89,12 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'help.keyCommandPaletteKeysMac': '⌘K',
   'help.keyCommandPaletteKeysWindows': 'Ctrl+K',
   'help.keyCommandPaletteAction': 'Command Palette',
+  'help.swipePrevKeys': 'Swipe left',
+  'help.swipePrevAction': 'Previous preset',
+  'help.swipeNextKeys': 'Swipe right',
+  'help.swipeNextAction': 'Next preset',
+  'help.swipeDownKeys': 'Swipe down',
+  'help.swipeDownAction': 'Command Palette',
   'help.trackName': 'Now playing',
   'help.presetName': 'Preset',
   'settings.title': 'Settings',

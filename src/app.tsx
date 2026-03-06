@@ -19,6 +19,7 @@ import {HelpButton} from './components/help/helpButton';
 import {Overlay} from './components/overlay/overlay';
 import {Visualizer} from './components/visualizer/visualizer';
 import {useButterchurn} from './hooks/useButterchurn';
+import {Axis, useSwipe} from './hooks/useSwipe.ts';
 import {LocaleProvider} from './providers/locale';
 import {SettingsProvider} from './providers/settings';
 import {TranslateProvider} from './providers/translation';
@@ -150,6 +151,19 @@ export function App() {
     if (helpOpen || commandPaletteOpen) setControlsVisibility(true);
   }, [helpOpen, commandPaletteOpen]);
 
+  useSwipe(containerRef, {
+    axis: Axis.VERTICAL,
+    onSwipeUp: undefined,
+    onSwipeDown: () => {
+      if (helpOpen) {
+        return;
+      }
+
+      setHelpOpen(false);
+      setCommandPaletteOpen(true);
+    }
+  });
+
   return (
     <LocaleProvider>
       <TranslateProvider>
@@ -180,6 +194,7 @@ export function App() {
                   controlsVisibility || !started || helpOpen || commandPaletteOpen ? topVisible : topFaded
                 ].join(' ')}
                 alwaysLight={started}
+                active={commandPaletteOpen}
                 onOpen={() => {
                   setHelpOpen(false);
                   setCommandPaletteOpen(open => !open);
@@ -203,6 +218,7 @@ export function App() {
                   controlsVisibility || !started || helpOpen || commandPaletteOpen ? topVisible : topFaded
                 ].join(' ')}
                 alwaysLight={started}
+                active={helpOpen}
                 onOpen={() => {
                   setCommandPaletteOpen(false);
                   setHelpOpen(open => !open);

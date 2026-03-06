@@ -1,5 +1,10 @@
 import {useTranslate} from '../../providers/translation';
-import {commandPaletteButton, commandPaletteButtonAlwaysLight} from './commandPaletteButton.css';
+import {
+  commandPaletteButton,
+  commandPaletteButtonActive,
+  commandPaletteButtonAlwaysLight,
+  commandPaletteButtonAlwaysLightActive
+} from './commandPaletteButton.css';
 
 /*
  * Types.
@@ -8,6 +13,7 @@ import {commandPaletteButton, commandPaletteButtonAlwaysLight} from './commandPa
 type CommandPaletteButtonProps = {
   class?: string;
   alwaysLight: boolean;
+  active?: boolean;
   onOpen: () => void;
 };
 
@@ -15,11 +21,20 @@ type CommandPaletteButtonProps = {
  * Component.
  */
 
-export function CommandPaletteButton({class: className, alwaysLight, onOpen}: CommandPaletteButtonProps) {
+export function CommandPaletteButton({
+  class: className,
+  alwaysLight,
+  active,
+  onOpen
+}: CommandPaletteButtonProps) {
   const t = useTranslate();
-  const baseClass = alwaysLight
-    ? [commandPaletteButton, commandPaletteButtonAlwaysLight].join(' ')
-    : commandPaletteButton;
+  const baseClass = [
+    commandPaletteButton,
+    alwaysLight && commandPaletteButtonAlwaysLight,
+    active && (alwaysLight ? commandPaletteButtonAlwaysLightActive : commandPaletteButtonActive)
+  ]
+    .filter(Boolean)
+    .join(' ');
   const buttonClass = className ? [baseClass, className].join(' ') : baseClass;
 
   return (

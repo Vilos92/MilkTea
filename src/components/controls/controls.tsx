@@ -1,7 +1,7 @@
 import type {RefObject} from 'preact';
 import {useEffect, useRef, useState} from 'preact/hooks';
 
-import {useSwipe} from '../../hooks/useSwipe';
+import {Axis, useSwipe} from '../../hooks/useSwipe';
 import {useTranslate} from '../../providers/translation';
 import {controlBtn, controls, controlsPill, controlsPillHovered} from './controls.css';
 
@@ -38,11 +38,11 @@ export const Controls = ({
   const {controlsVisible, controlsHovered, handleControlsEnter, handleControlsLeave} =
     useControls(setControlsVisibility);
 
-  useSwipe(
-    overlayRef,
-    () => changePreset(1),
-    () => changePreset(-1)
-  );
+  useSwipe(overlayRef, {
+    axis: Axis.HORIZONTAL,
+    onSwipeLeft: () => changePreset(1),
+    onSwipeRight: () => changePreset(-1)
+  });
   usePresetKeys(changePreset, toggleFullscreen);
 
   return (

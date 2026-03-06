@@ -1,7 +1,13 @@
 import {useEffect} from 'preact/hooks';
 
 import {useTranslate} from '../../providers/translation';
-import {helpButton, helpButtonAlwaysLight, helpButtonRoot} from './helpButton.css';
+import {
+  helpButton,
+  helpButtonActive,
+  helpButtonAlwaysLight,
+  helpButtonAlwaysLightActive,
+  helpButtonRoot
+} from './helpButton.css';
 
 /*
  * Types.
@@ -10,6 +16,7 @@ import {helpButton, helpButtonAlwaysLight, helpButtonRoot} from './helpButton.cs
 type HelpButtonProps = {
   class?: string;
   alwaysLight: boolean;
+  active?: boolean;
   onOpen: () => void;
 };
 
@@ -17,9 +24,15 @@ type HelpButtonProps = {
  * Component.
  */
 
-export function HelpButton({alwaysLight, onOpen, class: className}: HelpButtonProps) {
+export function HelpButton({alwaysLight, active, onOpen, class: className}: HelpButtonProps) {
   const t = useTranslate();
-  const buttonClass = alwaysLight ? [helpButton, helpButtonAlwaysLight].join(' ') : helpButton;
+  const buttonClass = [
+    helpButton,
+    alwaysLight && helpButtonAlwaysLight,
+    active && (alwaysLight ? helpButtonAlwaysLightActive : helpButtonActive)
+  ]
+    .filter(Boolean)
+    .join(' ');
   const rootClass = className ? [helpButtonRoot, className].join(' ') : helpButtonRoot;
 
   useEffect(() => {

@@ -46,6 +46,17 @@ export const commandPaletteButton = style({
   }
 });
 
+export const commandPaletteButtonActive = style({
+  borderColor: 'rgba(255,255,255,0.6)',
+  background: 'rgba(255,255,255,0.2)',
+  '@media': {
+    '(prefers-color-scheme: light)': {
+      borderColor: 'rgba(0,0,0,0.5)',
+      background: 'rgba(0,0,0,0.12)'
+    }
+  }
+});
+
 export const commandPaletteButtonAlwaysLight = style({
   background: 'rgba(0,0,0,0.5)',
   color: 'rgba(255,255,255,0.9)',
@@ -75,6 +86,17 @@ export const commandPaletteButtonAlwaysLight = style({
         borderColor: 'rgba(255,255,255,0.5)',
         background: 'rgba(255,255,255,0.1)'
       }
+    }
+  }
+});
+
+export const commandPaletteButtonAlwaysLightActive = style({
+  borderColor: 'rgba(255,255,255,0.7)',
+  background: 'rgba(255,255,255,0.25)',
+  '@media': {
+    '(prefers-color-scheme: light)': {
+      borderColor: 'rgba(255,255,255,0.6)',
+      background: 'rgba(255,255,255,0.3)'
     }
   }
 });
