@@ -1,5 +1,5 @@
 import type {RefObject} from 'preact';
-import {useEffect, useRef, useState} from 'preact/hooks';
+import {useEffect, useRef} from 'preact/hooks';
 
 import {Axis, useSwipe} from '../../hooks/useSwipe';
 import {useTranslate} from '../../providers/translation';
@@ -10,35 +10,33 @@ import {controlBtn, controls, controlsPill, controlsPillHovered} from './control
  */
 
 type ControlsProps = {
-  overlayRef: RefObject<HTMLElement>;
+  swipeRef: RefObject<HTMLElement>;
   isFullscreen: boolean;
   toggleFullscreen: () => void;
-  setControlsVisibility: (visibility: boolean) => void;
   changePreset: (delta: number) => void;
+  controlsVisible: boolean;
+  controlsHovered: boolean;
+  onControlsEnter: () => void;
+  onControlsLeave: () => void;
 };
-
-/*
- * Constants.
- */
-
-const CONTROLS_FADE_DELAY_MS = 2500;
 
 /*
  * Component.
  */
 
 export const Controls = ({
-  overlayRef,
+  swipeRef,
   isFullscreen,
   toggleFullscreen,
-  setControlsVisibility,
-  changePreset
+  changePreset,
+  controlsVisible,
+  controlsHovered,
+  onControlsEnter,
+  onControlsLeave
 }: ControlsProps) => {
   const t = useTranslate();
-  const {controlsVisible, controlsHovered, handleControlsEnter, handleControlsLeave} =
-    useControls(setControlsVisibility);
 
-  useSwipe(overlayRef, {
+  useSwipe(swipeRef, {
     axis: Axis.HORIZONTAL,
     onSwipeLeft: () => changePreset(1),
     onSwipeRight: () => changePreset(-1)
@@ -52,8 +50,8 @@ export const Controls = ({
         opacity: controlsVisible ? 1 : 0,
         pointerEvents: controlsVisible ? 'auto' : 'none'
       }}
-      onMouseEnter={handleControlsEnter}
-      onMouseLeave={handleControlsLeave}
+      onMouseEnter={onControlsEnter}
+      onMouseLeave={onControlsLeave}
     >
       <div class={controlsHovered ? [controlsPill, controlsPillHovered].join(' ') : controlsPill}>
         <button
@@ -138,64 +136,4 @@ function usePresetKeys(changePreset: (delta: number) => void, toggleFullscreen: 
 
     return () => window.removeEventListener('keydown', handleKeydown, true);
   }, []);
-}
-
-function useControls(setControlsVisibility: (visibility: boolean) => void) {
-  const [controlsVisible, setControlsVisible] = useState(true);
-  const [controlsHovered, setControlsHovered] = useState(false);
-  const fadeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const scheduleFadeOutRef = useRef<(() => void) | null>(null);
-  const onVisibleChangeRef = useRef(setControlsVisibility);
-  onVisibleChangeRef.current = setControlsVisibility;
-
-  const notifyVisible = (visible: boolean) => {
-    setControlsVisible(visible);
-    onVisibleChangeRef.current?.(visible);
-  };
-
-  useEffect(() => {
-    const scheduleFadeOut = () => {
-      if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
-      fadeTimeoutRef.current = setTimeout(() => notifyVisible(false), CONTROLS_FADE_DELAY_MS);
-    };
-    scheduleFadeOutRef.current = scheduleFadeOut;
-
-    const showControls = () => {
-      notifyVisible(true);
-      scheduleFadeOut();
-    };
-
-    window.addEventListener('mousemove', showControls);
-    window.addEventListener('touchstart', showControls, {passive: true});
-    scheduleFadeOut();
-
-    return () => {
-      window.removeEventListener('mousemove', showControls);
-      window.removeEventListener('touchstart', showControls);
-      scheduleFadeOutRef.current = null;
-      if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
-    };
-  }, []);
-
-  const handleControlsEnter = () => {
-    setControlsHovered(true);
-    if (fadeTimeoutRef.current) {
-      clearTimeout(fadeTimeoutRef.current);
-      fadeTimeoutRef.current = null;
-    }
-    notifyVisible(true);
-    scheduleFadeOutRef.current?.();
-  };
-
-  const handleControlsLeave = () => {
-    setControlsHovered(false);
-    scheduleFadeOutRef.current?.();
-  };
-
-  return {
-    controlsVisible,
-    controlsHovered,
-    handleControlsEnter,
-    handleControlsLeave
-  };
 }

@@ -1,19 +1,6 @@
 import {style} from '@vanilla-extract/css';
 
-export const overlay = style({
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  zIndex: 100,
-  width: '100%',
-  height: '100%',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center'
-});
-
-/** Full-screen overlay. Black everywhere except the button area, which stays transparent. */
-export const overlaySplash = style({
+export const splashOverlay = style({
   position: 'fixed',
   top: 0,
   left: 0,
@@ -36,7 +23,6 @@ export const splashCutout = style({
   }
 });
 
-/** Reduced-motion splash: button + disclaimer in a column. Solid background so canvas doesn't show through. */
 export const splashCutoutColumn = style({
   boxShadow: '0 0 0 100vmax #000',
   display: 'flex',
@@ -50,10 +36,6 @@ export const splashCutoutColumn = style({
       background: '#fff'
     }
   }
-});
-
-export const overlayHideCursor = style({
-  cursor: 'none'
 });
 
 /** Reduced-motion: solid button so animation is not visible through it. */
@@ -105,7 +87,6 @@ export const btnSolid = style({
   }
 });
 
-/** Disclaimer for reduced-motion / art-exhibit context. */
 export const splashDisclaimer = style({
   margin: '0 20px',
   padding: '14px 18px',
@@ -118,7 +99,6 @@ export const splashDisclaimer = style({
   textAlign: 'center'
 });
 
-/** Two-line splash label (localized title + "MilkTea" subtext) when `locale !== 'en'`. */
 export const splashButtonContent = style({
   display: 'flex',
   flexDirection: 'column',
@@ -126,7 +106,6 @@ export const splashButtonContent = style({
   gap: '4px'
 });
 
-/** Fixed-height slot for the top line so subtext doesn't cause layout shift. */
 export const splashTitleLine = style({
   display: 'block',
   minHeight: '1.2em',
@@ -140,7 +119,6 @@ export const splashSubtext = style({
   opacity: 0.9
 });
 
-/** Transparent "window" so the canvas shows through. */
 export const btn = style({
   display: 'flex',
   alignItems: 'center',
@@ -188,54 +166,4 @@ export const btn = style({
       }
     }
   }
-});
-
-export const presetNameNotify = style({
-  position: 'fixed',
-  bottom: '112px',
-  left: '50%',
-  transform: 'translateX(-50%)',
-  width: '90vw',
-  textAlign: 'center',
-  color: '#fff',
-  fontSize: '14px',
-  fontWeight: 500,
-  textShadow: '0 1px 4px rgba(0,0,0,0.8)',
-  pointerEvents: 'none',
-  opacity: 1,
-  transition: 'opacity 0.5s ease-out',
-  '@media': {
-    '(prefers-reduced-motion: reduce)': {
-      transition: 'opacity 0.15s ease-out'
-    }
-  }
-});
-
-export const presetNameNotifyAtBottom = style({
-  bottom: '52px'
-});
-
-export const trackNameNotify = style({
-  position: 'fixed',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: '90vw',
-  textAlign: 'center',
-  color: '#fff',
-  fontSize: '20px',
-  fontWeight: 500,
-  textShadow: '0 1px 4px rgba(0,0,0,0.8)',
-  pointerEvents: 'none',
-  opacity: 1,
-  transition: 'opacity 0.5s ease-out',
-  '@media': {
-    '(prefers-reduced-motion: reduce)': {
-      transition: 'opacity 0.15s ease-out'
-    }
-  }
-});
-
-export const faded = style({
-  opacity: 0
 });

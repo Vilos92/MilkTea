@@ -14,17 +14,19 @@ import {useEffect, useState} from 'react';
  * - On the server (or when `matchMedia` is unavailable), returns false.
  */
 export function useHasFinePointer(): boolean {
-  const [hasFinePointer, setHasFinePointer] = useState(false);
+  const pointerFineQuery = window.matchMedia('(pointer: fine)');
+  // We also check `(any-pointer: fine)` to avoid misclassifying some hybrids.
+  // e.g. a tablet with a mouse attached would be classfied as a fine pointer.
+  const anyPointerFineQuery = window.matchMedia('(any-pointer: fine)');
+
+  const [hasFinePointer, setHasFinePointer] = useState(
+    pointerFineQuery.matches || anyPointerFineQuery.matches
+  );
 
   useEffect(() => {
     if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
       return;
     }
-
-    const pointerFineQuery = window.matchMedia('(pointer: fine)');
-    // We also check `(any-pointer: fine)` to avoid misclassifying some hybrids.
-    // e.g. a tablet with a mouse attached would be classfied as a fine pointer.
-    const anyPointerFineQuery = window.matchMedia('(any-pointer: fine)');
 
     const checkHasFinePointer = () => {
       const hasFine = pointerFineQuery.matches || anyPointerFineQuery.matches;
@@ -48,7 +50,7 @@ export function useHasFinePointer(): boolean {
       pointerFineQuery.removeEventListener('change', handlePointerFineChange);
       anyPointerFineQuery.removeEventListener('change', handleAnyPointerFineChange);
     };
-  }, []);
+  }, [anyPointerFineQuery, pointerFineQuery]);
 
   return hasFinePointer;
 }

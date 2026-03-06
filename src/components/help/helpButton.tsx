@@ -1,5 +1,3 @@
-import {useEffect} from 'preact/hooks';
-
 import {useTranslate} from '../../providers/translation';
 import {
   helpButton,
@@ -34,16 +32,6 @@ export function HelpButton({alwaysLight, active, onOpen, class: className}: Help
     .filter(Boolean)
     .join(' ');
   const rootClass = className ? [helpButtonRoot, className].join(' ') : helpButtonRoot;
-
-  useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== '?' && !(event.key === '/' && event.shiftKey)) return;
-      event.preventDefault();
-      onOpen();
-    };
-    document.addEventListener('keydown', onKeyDown, true);
-    return () => document.removeEventListener('keydown', onKeyDown, true);
-  }, [onOpen]);
 
   return (
     <div class={rootClass}>
