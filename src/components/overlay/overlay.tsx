@@ -80,8 +80,8 @@ export function Overlay(props: OverlayProps) {
     setDisplayedPreset(presetName);
 
     setIsPresetFading(false);
-    const fadeId = setTimeout(() => setIsPresetFading(true), 2500);
-    const clearId = setTimeout(() => setDisplayedPreset(undefined), 3000);
+    const fadeId = setTimeout(() => setIsPresetFading(true), 2000);
+    const clearId = setTimeout(() => setDisplayedPreset(undefined), 2500);
 
     return () => {
       clearTimeout(fadeId);
@@ -100,8 +100,8 @@ export function Overlay(props: OverlayProps) {
     setDisplayedTrack(trackName);
 
     setIsTrackFading(false);
-    const fadeId = setTimeout(() => setIsTrackFading(true), 2500);
-    const clearId = setTimeout(() => setDisplayedTrack(undefined), 3000);
+    const fadeId = setTimeout(() => setIsTrackFading(true), 2000);
+    const clearId = setTimeout(() => setDisplayedTrack(undefined), 2500);
 
     return () => {
       clearTimeout(fadeId);
