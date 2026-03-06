@@ -72,6 +72,25 @@ export const searchInput = style({
   ':focus': {
     outline: 'none',
     borderColor: 'rgba(255,255,255,0.4)'
+  }
+});
+
+export const searchInputSplash = style({
+  width: '100%',
+  padding: '10px 12px',
+  fontSize: '14px',
+  lineHeight: 1.4,
+  color: 'inherit',
+  background: 'rgba(255,255,255,0.08)',
+  border: '1px solid rgba(255,255,255,0.2)',
+  borderRadius: '4px',
+  boxSizing: 'border-box',
+  '::placeholder': {
+    color: 'rgba(255,255,255,0.5)'
+  },
+  ':focus': {
+    outline: 'none',
+    borderColor: 'rgba(255,255,255,0.4)'
   },
   '@media': {
     '(prefers-color-scheme: light)': {
@@ -97,6 +116,16 @@ export const scrollArea = style({
 });
 
 export const groupHeading = style({
+  margin: 0,
+  fontSize: '12px',
+  fontWeight: 600,
+  textTransform: 'uppercase' as const,
+  letterSpacing: '0.06em',
+  color: 'rgba(255,255,255,0.5)',
+  paddingBottom: '4px'
+});
+
+export const groupHeadingSplash = style({
   margin: 0,
   fontSize: '12px',
   fontWeight: 600,
@@ -146,6 +175,34 @@ export const commandButton = style({
       ':hover': {
         background: 'rgba(255,255,255,0.08)'
       }
+    }
+  }
+});
+
+export const commandButtonSplash = style({
+  appearance: 'none',
+  width: '100%',
+  minHeight: rowMinHeight,
+  padding: rowPadding,
+  fontSize: rowFontSize,
+  lineHeight: rowLineHeight,
+  textAlign: 'left',
+  color: 'inherit',
+  background: 'transparent',
+  border: 'none',
+  borderRadius: '4px',
+  boxSizing: 'border-box',
+  display: 'flex',
+  alignItems: 'center',
+  ':focus-visible': {
+    outline: '2px solid rgba(255,255,255,0.5)',
+    outlineOffset: 2
+  },
+  '@media': {
+    '(hover: hover)': {
+      ':hover': {
+        background: 'rgba(255,255,255,0.08)'
+      }
     },
     '(prefers-color-scheme: light)': {
       ':focus-visible': {
@@ -159,6 +216,10 @@ export const commandButton = style({
 });
 
 export const commandButtonActive = style({
+  background: 'rgba(255,255,255,0.12)'
+});
+
+export const commandButtonActiveSplash = style({
   background: 'rgba(255,255,255,0.12)',
   '@media': {
     '(prefers-color-scheme: light)': {
@@ -168,6 +229,11 @@ export const commandButtonActive = style({
 });
 
 export const switchRowActive = style({
+  background: 'rgba(255,255,255,0.12)',
+  borderRadius: '4px'
+});
+
+export const switchRowActiveSplash = style({
   background: 'rgba(255,255,255,0.12)',
   borderRadius: '4px',
   '@media': {

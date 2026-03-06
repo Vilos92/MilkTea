@@ -11,8 +11,11 @@ import {
   closeRow,
   commandButton,
   commandButtonActive,
+  commandButtonActiveSplash,
+  commandButtonSplash,
   content,
   groupHeading,
+  groupHeadingSplash,
   header,
   heading,
   headingSplash,
@@ -21,8 +24,10 @@ import {
   paletteGroup,
   scrollArea,
   searchInput,
+  searchInputSplash,
   switchRow,
-  switchRowActive
+  switchRowActive,
+  switchRowActiveSplash
 } from './commandPalette.css';
 
 /*
@@ -114,6 +119,11 @@ export function CommandPalette({
   const overlayClass = visualizerActive ? overlayActive : overlaySplash;
   const headingClass = visualizerActive ? heading : headingSplash;
   const closeBtnClass = visualizerActive ? closeBtn : closeBtnSplash;
+  const searchInputClass = visualizerActive ? searchInput : searchInputSplash;
+  const groupHeadingClass = visualizerActive ? groupHeading : groupHeadingSplash;
+  const commandButtonClass = visualizerActive ? commandButton : commandButtonSplash;
+  const commandButtonActiveClass = visualizerActive ? commandButtonActive : commandButtonActiveSplash;
+  const switchRowActiveClass = visualizerActive ? switchRowActive : switchRowActiveSplash;
 
   const allItems: readonly PaletteItem[] = usePaletteItems(
     onOpenHelp,
@@ -224,7 +234,7 @@ export function CommandPalette({
         // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
         <div
           key={item.type}
-          class={[switchRow, isActive && switchRowActive].filter(Boolean).join(' ')}
+          class={[switchRow, isActive && switchRowActiveClass].filter(Boolean).join(' ')}
           onClick={() => {
             setActiveIndex(orderedItems.indexOf(item));
             inputRef.current?.focus();
@@ -240,7 +250,7 @@ export function CommandPalette({
       <button
         key={item.type}
         type="button"
-        class={[commandButton, isActive && commandButtonActive].filter(Boolean).join(' ')}
+        class={[commandButtonClass, isActive && commandButtonActiveClass].filter(Boolean).join(' ')}
         onClick={() => {
           item.onSelect();
           onClose();
@@ -261,7 +271,7 @@ export function CommandPalette({
           <input
             ref={inputRef}
             type="search"
-            class={searchInput}
+            class={searchInputClass}
             value={query}
             onInput={event => {
               setQuery((event.target as HTMLInputElement).value);
@@ -277,7 +287,7 @@ export function CommandPalette({
             group =>
               itemsByGroup[group].length > 0 && (
                 <div key={group} class={paletteGroup}>
-                  <h3 class={groupHeading}>{formatGroupHeading(t, group)}</h3>
+                  <h3 class={groupHeadingClass}>{formatGroupHeading(t, group)}</h3>
                   {itemsByGroup[group].map(item => renderPaletteItem(item, item === activeItem))}
                 </div>
               )
