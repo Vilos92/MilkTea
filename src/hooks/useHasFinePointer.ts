@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 
 /*
  * Hook.
@@ -6,51 +6,33 @@ import {useEffect, useState} from 'react';
 
 /**
  * Returns true when the environment should be treated as having a "fine"
- * pointer (mouse/trackpad/pen) for the purpose of sizing UI elements.
+ * pointer (mouse/trackpad) for the purpose of sizing UI elements.
  *
  * Behavior:
- * - In the browser, prefers `(pointer: fine)` but will also look at
- *   `(any-pointer: fine)` to avoid misclassifying some hybrids.
+ * - In the browser, uses `(pointer: fine)` to detect the primary pointer.
  * - On the server (or when `matchMedia` is unavailable), returns false.
  */
 export function useHasFinePointer(): boolean {
-  const pointerFineQuery = window.matchMedia('(pointer: fine)');
-  // We also check `(any-pointer: fine)` to avoid misclassifying some hybrids.
-  // e.g. a tablet with a mouse attached would be classfied as a fine pointer.
-  const anyPointerFineQuery = window.matchMedia('(any-pointer: fine)');
+  const queryRef = useRef<MediaQueryList | null>(null);
+  if (queryRef.current === null && typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+    queryRef.current = window.matchMedia('(pointer: fine)');
+  }
 
-  const [hasFinePointer, setHasFinePointer] = useState(
-    pointerFineQuery.matches || anyPointerFineQuery.matches
-  );
+  const [hasFinePointer, setHasFinePointer] = useState(() => queryRef.current?.matches ?? false);
 
   useEffect(() => {
-    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+    const query = queryRef.current;
+    if (!query) {
       return;
     }
 
-    const checkHasFinePointer = () => {
-      const hasFine = pointerFineQuery.matches || anyPointerFineQuery.matches;
-      setHasFinePointer(hasFine);
+    const handleChange = () => {
+      setHasFinePointer(query.matches);
     };
 
-    checkHasFinePointer();
-
-    const handlePointerFineChange = () => {
-      checkHasFinePointer();
-    };
-
-    const handleAnyPointerFineChange = () => {
-      checkHasFinePointer();
-    };
-
-    pointerFineQuery.addEventListener('change', handlePointerFineChange);
-    anyPointerFineQuery.addEventListener('change', handleAnyPointerFineChange);
-
-    return () => {
-      pointerFineQuery.removeEventListener('change', handlePointerFineChange);
-      anyPointerFineQuery.removeEventListener('change', handleAnyPointerFineChange);
-    };
-  }, [anyPointerFineQuery, pointerFineQuery]);
+    query.addEventListener('change', handleChange);
+    return () => query.removeEventListener('change', handleChange);
+  }, []);
 
   return hasFinePointer;
 }
