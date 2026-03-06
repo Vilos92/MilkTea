@@ -43,7 +43,7 @@ export function useButterchurn() {
   const [started, setStarted] = useState(false);
   const [isCanvasFullscreen, setIsCanvasFullscreen] = useState(false);
 
-  const [presetIndex, setPresetIndex] = useState(0);
+  const [presetIndex, setPresetIndex] = useState<number | undefined>(undefined);
   const [presetKeys, setPresetKeys] = useState<string[]>([]);
 
   /** Preset name → index (for lookup). List of [name, index] for UI. */
@@ -53,7 +53,7 @@ export function useButterchurn() {
     [presetKeys]
   );
 
-  const presetName: string | undefined = presetKeys[presetIndex];
+  const presetName: string | undefined = presetIndex !== undefined ? presetKeys[presetIndex] : undefined;
 
   const toggleFullscreen = useCallback(() => {
     if (containerRef.current) toggleContainerFullscreen(containerRef.current);
@@ -65,7 +65,7 @@ export function useButterchurn() {
       if (!keys.length || !visualizerRef.current) return;
 
       const n = keys.length;
-      const newIndex = (presetIndex + delta + n) % n;
+      const newIndex = ((presetIndex ?? 0) + delta + n) % n;
       fetchPresetByIndex(newIndex).then(preset => {
         currentPresetRef.current = preset;
         visualizerRef.current?.loadPreset(preset, 2.7);
