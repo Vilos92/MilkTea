@@ -2,6 +2,7 @@ import type {RefObject} from 'preact';
 import {useEffect, useRef} from 'preact/hooks';
 
 import {Axis, useSwipe} from '../../hooks/useSwipe';
+import {supportsRequestFullscreen} from '../../lib/platform';
 import {useTranslate} from '../../providers/translation';
 import {controlBtn, controls, controlsPill, controlsPillHovered} from './controls.css';
 
@@ -63,15 +64,17 @@ export const Controls = ({
         >
           ‹
         </button>
-        <button
-          type="button"
-          onClick={toggleFullscreen}
-          class={controlBtn}
-          aria-label={isFullscreen ? t('controls.exitFullscreen') : t('controls.enterFullscreen')}
-          title={isFullscreen ? t('controls.exitFullscreen') : t('controls.enterFullscreen')}
-        >
-          {isFullscreen ? '✕' : '⛶'}
-        </button>
+        {supportsRequestFullscreen && (
+          <button
+            type="button"
+            onClick={toggleFullscreen}
+            class={controlBtn}
+            aria-label={isFullscreen ? t('controls.exitFullscreen') : t('controls.enterFullscreen')}
+            title={isFullscreen ? t('controls.exitFullscreen') : t('controls.enterFullscreen')}
+          >
+            {isFullscreen ? '✕' : '⛶'}
+          </button>
+        )}
         <button
           type="button"
           onClick={() => changePreset(1)}
@@ -130,7 +133,9 @@ function usePresetKeys(changePreset: (delta: number) => void, toggleFullscreen: 
         changePresetRef.current(1);
       } else if (key === 'f' || key === 'F') {
         event.preventDefault();
-        toggleFullscreenRef.current();
+        if (supportsRequestFullscreen) {
+          toggleFullscreenRef.current();
+        }
       }
     };
 

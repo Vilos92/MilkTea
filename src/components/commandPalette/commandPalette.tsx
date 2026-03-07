@@ -1,6 +1,7 @@
 import {useEffect, useMemo, useRef, useState} from 'preact/hooks';
 
 import {useHasFinePointer} from '../../hooks/useHasFinePointer';
+import {supportsRequestFullscreen} from '../../lib/platform';
 import {useLocaleContext} from '../../providers/locale';
 import {useSettingsContext} from '../../providers/settings';
 import {type Translate, useTranslate} from '../../providers/translation';
@@ -353,61 +354,64 @@ function usePaletteItems(
   } = useSettingsContext();
 
   return useMemo(
-    () => [
-      {
-        type: PaletteItemType.SETTINGS_SKIP_SPLASH_ON_LOAD,
-        label: t('settings.autoStart'),
-        checked: shouldSkipSplashOnLoad,
-        onChange: setShouldSkipSplashOnLoad
-      },
-      {
-        type: PaletteItemType.COMMAND_HELP,
-        label: t('help.openLabel'),
-        onSelect: onOpenHelp
-      },
-      {
-        type: PaletteItemType.COMMAND_PREV_PRESET,
-        label: t('controls.prevPreset'),
-        onSelect: onPrevPreset
-      },
-      {
-        type: PaletteItemType.COMMAND_NEXT_PRESET,
-        label: t('controls.nextPreset'),
-        onSelect: onNextPreset
-      },
-      {
-        type: PaletteItemType.COMMAND_FULL_SCREEN,
-        label: isFullscreen ? t('controls.exitFullscreen') : t('controls.enterFullscreen'),
-        onSelect: onFullScreen
-      },
-      {
-        type: PaletteItemType.AUDIO_INPUT_OSCILLATOR,
-        label: t('source.oscillator'),
-        onSelect: onSelectOscillator
-      },
-      {
-        type: PaletteItemType.AUDIO_INPUT_FILE,
-        label: t('source.file'),
-        onSelect: onOpenFilePicker
-      },
-      {
-        type: PaletteItemType.AUDIO_INPUT_MIC,
-        label: t('source.microphone'),
-        onSelect: onSelectMic
-      },
-      {
-        type: PaletteItemType.SETTINGS_SHOW_PRESET_ON_CHANGE,
-        label: t('settings.showPresetNameOnChange'),
-        checked: shouldShowPresetName,
-        onChange: setShouldShowPresetName
-      },
-      {
-        type: PaletteItemType.SETTINGS_SHOW_TRACK_ON_CHANGE,
-        label: t('settings.showTrackNameOnChange'),
-        checked: shouldShowTrackName,
-        onChange: setShouldShowTrackName
-      }
-    ],
+    () =>
+      [
+        {
+          type: PaletteItemType.SETTINGS_SKIP_SPLASH_ON_LOAD,
+          label: t('settings.autoStart'),
+          checked: shouldSkipSplashOnLoad,
+          onChange: setShouldSkipSplashOnLoad
+        },
+        {
+          type: PaletteItemType.COMMAND_HELP,
+          label: t('help.openLabel'),
+          onSelect: onOpenHelp
+        },
+        {
+          type: PaletteItemType.COMMAND_PREV_PRESET,
+          label: t('controls.prevPreset'),
+          onSelect: onPrevPreset
+        },
+        {
+          type: PaletteItemType.COMMAND_NEXT_PRESET,
+          label: t('controls.nextPreset'),
+          onSelect: onNextPreset
+        },
+        supportsRequestFullscreen
+          ? {
+              type: PaletteItemType.COMMAND_FULL_SCREEN,
+              label: isFullscreen ? t('controls.exitFullscreen') : t('controls.enterFullscreen'),
+              onSelect: onFullScreen
+            }
+          : undefined,
+        {
+          type: PaletteItemType.AUDIO_INPUT_OSCILLATOR,
+          label: t('source.oscillator'),
+          onSelect: onSelectOscillator
+        },
+        {
+          type: PaletteItemType.AUDIO_INPUT_FILE,
+          label: t('source.file'),
+          onSelect: onOpenFilePicker
+        },
+        {
+          type: PaletteItemType.AUDIO_INPUT_MIC,
+          label: t('source.microphone'),
+          onSelect: onSelectMic
+        },
+        {
+          type: PaletteItemType.SETTINGS_SHOW_PRESET_ON_CHANGE,
+          label: t('settings.showPresetNameOnChange'),
+          checked: shouldShowPresetName,
+          onChange: setShouldShowPresetName
+        },
+        {
+          type: PaletteItemType.SETTINGS_SHOW_TRACK_ON_CHANGE,
+          label: t('settings.showTrackNameOnChange'),
+          checked: shouldShowTrackName,
+          onChange: setShouldShowTrackName
+        }
+      ].filter(item => item !== undefined),
     [
       isFullscreen,
       onFullScreen,
