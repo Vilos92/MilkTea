@@ -55,7 +55,7 @@ type VideoMime = 'video/mp4' | 'video/quicktime' | 'video/x-matroska' | 'video/w
 type VideoFormatOption = {type: VideoFormatType; label: string; ext: VideoExtension; mime: VideoMime};
 
 /** This is the configuration that defines how the output video will be rendered. */
-type RenderConfig = Size & {fps: number; bpp: number; format: VideoFormatType};
+type RenderConfig = Size & {fps: number; bpp: number; formatType: VideoFormatType};
 
 type DemoStatus = 'idle' | 'loading' | 'playing' | 'done' | 'error';
 type RecordStatus = 'idle' | 'recording' | 'processing' | 'done';
@@ -131,7 +131,7 @@ function MediabunnyPlayer({renderSize}: {renderSize: RenderConfig}) {
     renderSize.height,
     renderSize.fps,
     renderSize.bpp,
-    renderSize.format
+    renderSize.formatType
   );
 
   return (
@@ -182,21 +182,30 @@ function MediabunnyPlayer({renderSize}: {renderSize: RenderConfig}) {
 }
 
 function SetupForm({onConfirm}: {onConfirm: (size: RenderConfig) => void}) {
-  const [width, setWidth] = useState<number>(DEFAULT_PRESET.width);
-  const [height, setHeight] = useState<number>(DEFAULT_PRESET.height);
-  const [fps, setFps] = useState<number>(DEFAULT_FPS);
-  const [bpp, setBpp] = useState<number>(DEFAULT_BPP);
-  const [format, setFormat] = useState<VideoFormatType>(DEFAULT_VIDEO_FORMAT);
+  const [rawWidth, setRawWidth] = useState<number>(DEFAULT_PRESET.width);
+  const [rawHeight, setRawHeight] = useState<number>(DEFAULT_PRESET.height);
+  const [rawFps, setRawFps] = useState<number>(DEFAULT_FPS);
+  const [bpp, setRawBpp] = useState<number>(DEFAULT_BPP);
+  const [formatType, setFormatType] = useState<VideoFormatType>(DEFAULT_VIDEO_FORMAT);
 
-  const w = clampDim(width);
-  const h = clampDim(height);
-  const f = clampFps(fps);
-  const previewBitrate = (w * h * f * bpp) / 1_000_000;
-  const activePreset = SIZE_PRESETS.find(p => p.width === w && p.height === h) ?? null;
+  const width = clampDimension(rawWidth);
+  const height = clampDimension(rawHeight);
+  const fps = clampFps(rawFps);
 
-  const handleSubmit = (e: Event) => {
-    e.preventDefault();
-    onConfirm({width: w, height: h, fps: f, bpp, format});
+  const previewBitrate = (width * height * fps * bpp) / 1_000_000;
+
+  const previewMbPerMin = (previewBitrate * 60) / 8; // Mb/s * 60 s/min / 8 bits/byte -> MB/min
+  const previewSizePerMin =
+    previewMbPerMin >= 1000
+      ? `${(previewMbPerMin / 1000).toFixed(2)} GB/min`
+      : `${previewMbPerMin.toFixed(0)} MB/min`;
+
+  const activePreset =
+    SIZE_PRESETS.find(sizePreset => sizePreset.width === width && sizePreset.height === height) ?? null;
+
+  const handleSubmit = (event: Event) => {
+    event.preventDefault();
+    onConfirm({width, height, fps, bpp, formatType});
   };
 
   return (
@@ -210,10 +219,10 @@ function SetupForm({onConfirm}: {onConfirm: (size: RenderConfig) => void}) {
             id="render-width"
             type="number"
             class={inputField}
-            value={width}
+            value={rawWidth}
             min={MIN_DIMENSION}
             max={MAX_DIMENSION}
-            onInput={e => setWidth(Number((e.target as HTMLInputElement).value))}
+            onInput={event => setRawWidth(Number((event.target as HTMLInputElement).value))}
           />
         </div>
         <div class={inputGroup}>
@@ -224,10 +233,10 @@ function SetupForm({onConfirm}: {onConfirm: (size: RenderConfig) => void}) {
             id="render-height"
             type="number"
             class={inputField}
-            value={height}
+            value={rawHeight}
             min={MIN_DIMENSION}
             max={MAX_DIMENSION}
-            onInput={e => setHeight(Number((e.target as HTMLInputElement).value))}
+            onInput={event => setRawHeight(Number((event.target as HTMLInputElement).value))}
           />
         </div>
         <div class={inputGroup}>
@@ -238,28 +247,28 @@ function SetupForm({onConfirm}: {onConfirm: (size: RenderConfig) => void}) {
             id="render-fps"
             type="number"
             class={inputField}
-            value={fps}
+            value={rawFps}
             min={MIN_FPS}
             max={MAX_FPS}
-            onInput={e => setFps(Number((e.target as HTMLInputElement).value))}
+            onInput={event => setRawFps(Number((event.target as HTMLInputElement).value))}
           />
         </div>
       </div>
       <div class={inputGroup}>
         <span class={inputLabel}>Preset</span>
         <div class={qualityRow} role="group" aria-label="Preset">
-          {SIZE_PRESETS.map(p => (
+          {SIZE_PRESETS.map(sizePreset => (
             <button
-              key={p.label}
+              key={sizePreset.label}
               type="button"
-              class={activePreset?.label === p.label ? qualityBtnActive : qualityBtn}
-              aria-pressed={activePreset?.label === p.label}
+              class={activePreset?.label === sizePreset.label ? qualityBtnActive : qualityBtn}
+              aria-pressed={activePreset?.label === sizePreset.label}
               onClick={() => {
-                setWidth(p.width);
-                setHeight(p.height);
+                setRawWidth(sizePreset.width);
+                setRawHeight(sizePreset.height);
               }}
             >
-              {p.label}
+              {sizePreset.label}
             </button>
           ))}
         </div>
@@ -267,15 +276,15 @@ function SetupForm({onConfirm}: {onConfirm: (size: RenderConfig) => void}) {
       <div class={inputGroup}>
         <span class={inputLabel}>Format</span>
         <div class={qualityRow} role="group" aria-label="Format">
-          {VIDEO_FORMAT_OPTIONS.map(opt => (
+          {VIDEO_FORMAT_OPTIONS.map(formatOption => (
             <button
-              key={opt.type}
+              key={formatOption.type}
               type="button"
-              class={format === opt.type ? qualityBtnActive : qualityBtn}
-              aria-pressed={format === opt.type}
-              onClick={() => setFormat(opt.type)}
+              class={formatType === formatOption.type ? qualityBtnActive : qualityBtn}
+              aria-pressed={formatType === formatOption.type}
+              onClick={() => setFormatType(formatOption.type)}
             >
-              {opt.label}
+              {formatOption.label}
             </button>
           ))}
         </div>
@@ -283,20 +292,22 @@ function SetupForm({onConfirm}: {onConfirm: (size: RenderConfig) => void}) {
       <div class={inputGroup}>
         <span class={inputLabel}>Quality</span>
         <div class={qualityRow} role="group" aria-label="Quality">
-          {QUALITY_PRESETS.map(opt => (
+          {QUALITY_PRESETS.map(qualityPreset => (
             <button
-              key={opt.label}
+              key={qualityPreset.label}
               type="button"
-              class={bpp === opt.bpp ? qualityBtnActive : qualityBtn}
-              aria-pressed={bpp === opt.bpp}
-              onClick={() => setBpp(opt.bpp)}
+              class={bpp === qualityPreset.bpp ? qualityBtnActive : qualityBtn}
+              aria-pressed={bpp === qualityPreset.bpp}
+              onClick={() => setRawBpp(qualityPreset.bpp)}
             >
-              {opt.label}
+              {qualityPreset.label}
             </button>
           ))}
         </div>
       </div>
-      <span class={statusLabel}>{previewBitrate.toFixed(1)} Mbps</span>
+      <span class={statusLabel}>
+        {previewBitrate.toFixed(1)} Mbps · {previewSizePerMin}
+      </span>
       <button type="submit" class={btn}>
         Confirm
       </button>
@@ -457,11 +468,6 @@ function useRecorder(
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
 
-  // Preload mediabunny WASM so the first conversion is instant.
-  useEffect(() => {
-    void import('mediabunny');
-  }, []);
-
   const startRecord = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) {
@@ -553,8 +559,8 @@ function clamp(v: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, Number.isNaN(v) ? min : Math.round(v)));
 }
 
-function clampDim(dim: number): number {
-  return clamp(dim, MIN_DIMENSION, MAX_DIMENSION);
+function clampDimension(dimension: number): number {
+  return clamp(dimension, MIN_DIMENSION, MAX_DIMENSION);
 }
 
 function clampFps(fps: number): number {
