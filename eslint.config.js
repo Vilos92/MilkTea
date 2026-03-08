@@ -40,7 +40,10 @@ export default defineConfig([
       'react-hooks/exhaustive-deps': 'error',
 
       // Require floating promises to be explicitly handled or voided.
-      '@typescript-eslint/no-floating-promises': 'error'
+      '@typescript-eslint/no-floating-promises': 'error',
+
+      // Require object shorthand: {param} instead of {param: param}.
+      'object-shorthand': 'error'
     }
   },
   {

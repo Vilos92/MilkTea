@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/preact-vite';
 
-import {MediabunnyDemo} from './mediabunny';
+import {MediabunnyDemo} from './mediabunnyDemo';
 
 /*
  * Meta.

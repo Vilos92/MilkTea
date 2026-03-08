@@ -102,44 +102,44 @@ const DEFAULT_VIDEO_FORMAT: VideoFormatType = 'mp4';
  */
 
 export function MediabunnyDemo() {
-  const [renderSize, setRenderSize] = useState<RenderConfig | null>(null);
+  const [renderConfig, setRenderConfig] = useState<RenderConfig | null>(null);
 
-  if (!renderSize) {
+  if (!renderConfig) {
     return (
       <div class={container}>
-        <SetupForm onConfirm={setRenderSize} />
+        <SetupForm onConfirm={setRenderConfig} />
       </div>
     );
   }
 
-  return <MediabunnyPlayer renderSize={renderSize} />;
+  return <MediabunnyPlayer renderConfig={renderConfig} />;
 }
 
-function MediabunnyPlayer({renderSize}: {renderSize: RenderConfig}) {
-  const {width: displayWidth, height: displayHeight} = scaleSizeToDisplay(renderSize);
+type MediabunnyPlayerProps = {
+  renderConfig: RenderConfig;
+};
+
+function MediabunnyPlayer({renderConfig}: MediabunnyPlayerProps) {
+  const {width: displayWidth, height: displayHeight} = scaleSizeToDisplay(renderConfig);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const {state, progress, errorMessage, start, stop, audioStreamRef} = useAudioVisualizer(
     canvasRef,
-    renderSize.width,
-    renderSize.height
+    renderConfig.width,
+    renderConfig.height
   );
   const {recordState, recordingUrl, recordingFilename, startRecord, stopRecord} = useRecorder(
     canvasRef,
     audioStreamRef,
-    renderSize.width,
-    renderSize.height,
-    renderSize.fps,
-    renderSize.bpp,
-    renderSize.formatType
+    renderConfig
   );
 
   return (
     <div class={container}>
       <canvas
         ref={canvasRef}
-        width={renderSize.width}
-        height={renderSize.height}
+        width={renderConfig.width}
+        height={renderConfig.height}
         class={canvasEl}
         style={{width: `${displayWidth}px`, height: `${displayHeight}px`}}
       />
@@ -181,7 +181,11 @@ function MediabunnyPlayer({renderSize}: {renderSize: RenderConfig}) {
   );
 }
 
-function SetupForm({onConfirm}: {onConfirm: (size: RenderConfig) => void}) {
+type SetupFormProps = {
+  onConfirm: (config: RenderConfig) => void;
+};
+
+function SetupForm({onConfirm}: SetupFormProps) {
   const [rawWidth, setRawWidth] = useState<number>(DEFAULT_PRESET.width);
   const [rawHeight, setRawHeight] = useState<number>(DEFAULT_PRESET.height);
   const [rawFps, setRawFps] = useState<number>(DEFAULT_FPS);
@@ -429,9 +433,9 @@ function useAudioVisualizer(
 
       rafId = requestAnimationFrame(loop);
       rafIdRef.current = rafId;
-    } catch (err) {
+    } catch (error) {
       stopped.value = true;
-      setErrorMessage(err instanceof Error ? err.message : 'An unexpected error occurred.');
+      setErrorMessage(error instanceof Error ? error.message : 'An unexpected error occurred.');
       setState('error');
     }
   }, [canvasRef, renderWidth, renderHeight]);
@@ -455,12 +459,10 @@ function useAudioVisualizer(
 function useRecorder(
   canvasRef: RefObject<HTMLCanvasElement>,
   audioStreamRef: RefObject<MediaStream | null>,
-  renderWidth: number,
-  renderHeight: number,
-  fps: number,
-  bpp: number,
-  outputFormat: VideoFormatType
+  renderConfig: RenderConfig
 ) {
+  const {width, height, fps, bpp, formatType} = renderConfig;
+
   const [recordState, setRecordState] = useState<RecordStatus>('idle');
   const [recordingUrl, setRecordingUrl] = useState<string | null>(null);
   const [recordingFilename, setRecordingFilename] = useState<string>('recording.mp4');
@@ -481,7 +483,7 @@ function useRecorder(
     setRecordingUrl(null);
     chunksRef.current = [];
 
-    const videoBitrate = Math.round(renderWidth * renderHeight * fps * bpp);
+    const videoBitrate = Math.round(width * height * fps * bpp);
 
     const canvasStream = canvas.captureStream(fps);
     const audioTracks = audioStreamRef.current?.getAudioTracks() ?? [];
@@ -500,11 +502,11 @@ function useRecorder(
 
         const webmBlob = new Blob(chunksRef.current, {type: 'video/webm'});
 
-        const formatOption = VIDEO_FORMAT_OPTIONS.find(f => f.type === outputFormat)!;
+        const formatOption = VIDEO_FORMAT_OPTIONS.find(f => f.type === formatType)!;
         const target = new BufferTarget();
         const conversion = await Conversion.init({
           input: new Input({formats: [WEBM], source: new BlobSource(webmBlob)}),
-          output: new Output({format: makeOutputFormat(outputFormat), target}),
+          output: new Output({format: makeOutputFormat(formatType), target}),
           video: {bitrate: videoBitrate},
           showWarnings: false
         });
@@ -524,7 +526,7 @@ function useRecorder(
     mediaRecorderRef.current = recorder;
     recorder.start();
     setRecordState('recording');
-  }, [canvasRef, audioStreamRef, renderWidth, renderHeight, fps, bpp, outputFormat]);
+  }, [canvasRef, audioStreamRef, width, height, fps, bpp, formatType]);
 
   const stopRecord = useCallback(() => {
     mediaRecorderRef.current?.stop();
