@@ -7,7 +7,7 @@ import {DragArea} from './components/dragArea/dragArea';
 import {Help} from './components/help/help';
 import {Hud} from './components/hud/hud';
 import {Splash} from './components/splash/splash';
-import {VisualizerStage} from './components/visualizer/visualizerStage';
+import {Visualizer} from './components/visualizer/visualizer';
 import {useButterchurn} from './hooks/useButterchurn';
 import {Axis, useSwipe} from './hooks/useSwipe';
 import {MilkTeaPanel, usePanelContext} from './providers/panel';
@@ -174,7 +174,7 @@ export function MilkTea() {
   return (
     <DragArea handleDrop={handleAudioFileDrop}>
       <div ref={containerRef} class={[container, started ? containerStarted : containerSplash].join(' ')}>
-        <VisualizerStage canvasRef={canvasRef} presetName={presetName} trackName={trackName} />
+        <Visualizer canvasRef={canvasRef} presetName={presetName} trackName={trackName} />
         {!started && <Splash start={start} />}
         <Hud
           started={started}

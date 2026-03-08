@@ -1,13 +1,14 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import preact from 'eslint-plugin-preact';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
+import storybook from 'eslint-plugin-storybook';
 import {defineConfig} from 'eslint/config';
 import tseslint from 'typescript-eslint';
 
 export default defineConfig([
   ...tseslint.configs.recommended,
-
   {
     files: ['**/*.{ts,tsx}'],
     plugins: {
@@ -40,8 +41,8 @@ export default defineConfig([
       'react-hooks/exhaustive-deps': 'error'
     }
   },
-
   {
     ignores: ['dist/**', 'node_modules/**']
-  }
+  },
+  ...storybook.configs['flat/recommended']
 ]);

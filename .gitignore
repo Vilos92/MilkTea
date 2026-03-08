@@ -25,3 +25,5 @@ dist-ssr
 
 # Auto-generated files
 public/butterchurn/
+*storybook.log
+storybook-static
