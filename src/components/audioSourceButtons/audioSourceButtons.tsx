@@ -22,7 +22,7 @@ export type AudioSource = (typeof AudioSource)[keyof typeof AudioSource];
 
 type AudioSourceButtonsProps = {
   class?: string;
-  fileInputRef: RefObject<HTMLInputElement>;
+  fileInputRef: RefObject<HTMLInputElement | null>;
   onFileChange: (event: Event) => void;
   audioSource: AudioSource;
   pendingAudioSource: AudioSource | undefined;

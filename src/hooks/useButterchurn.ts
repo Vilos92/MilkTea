@@ -1,3 +1,4 @@
+import type {RefObject} from 'preact';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'preact/hooks';
 
 import {
@@ -19,14 +20,31 @@ import {useReducedMotion} from './useReducedMotion';
 
 type Size = {width: number; height: number};
 
+type UseButterChurnResult = {
+  containerRef: RefObject<HTMLDivElement>;
+  canvasRef: RefObject<HTMLCanvasElement>;
+  started: boolean;
+  start: () => void;
+  presetName: string | undefined;
+  changePreset: (delta: number) => void;
+  presetIndex: number | undefined;
+  presetKeys: string[];
+  presetNameToIndex: Map<string, number>;
+  presetEntries: ReadonlyArray<readonly [string, number]>;
+  connectAudioBuffer: (arrayBuffer: ArrayBuffer) => Promise<void>;
+  connectOscillator: () => void;
+  connectMediaStream: (stream: MediaStream) => void;
+  isCanvasFullscreen: boolean;
+  toggleFullscreen: () => void;
+};
+
 /*
  * Hook.
  */
 
-export function useButterchurn() {
+export function useButterchurn(): UseButterChurnResult {
   const reducedMotion = useReducedMotion();
 
-  // Refs.
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const visualizerRef = useRef<Visualizer | null>(null);
@@ -39,9 +57,7 @@ export function useButterchurn() {
   const currentPresetRef = useRef<unknown>(null);
   const createVisualizerRef = useRef<((size: Size) => void) | null>(null);
 
-  // States.
   const [started, setStarted] = useState(false);
-  const [isCanvasFullscreen, setIsCanvasFullscreen] = useState(false);
 
   const [presetIndex, setPresetIndex] = useState<number | undefined>(undefined);
   const [presetKeys, setPresetKeys] = useState<string[]>([]);
@@ -52,14 +68,9 @@ export function useButterchurn() {
     () => presetKeys.map((name, i) => [name, i] as const),
     [presetKeys]
   );
-
   const presetName: string | undefined = presetIndex !== undefined ? presetKeys[presetIndex] : undefined;
 
-  const toggleFullscreen = useCallback(() => {
-    if (containerRef.current) {
-      toggleContainerFullscreen(containerRef.current);
-    }
-  }, []);
+  const [isCanvasFullscreen, setIsCanvasFullscreen] = useState(false);
 
   const changePreset = useCallback(
     (delta: number) => {
@@ -249,6 +260,12 @@ export function useButterchurn() {
     [stopCurrentSource]
   );
 
+  const toggleFullscreen = useCallback(() => {
+    if (containerRef.current) {
+      toggleContainerFullscreen(containerRef.current);
+    }
+  }, []);
+
   // On mount: initialize visualizer for a splash preview.
   // Do NOT signal as started. Only call `start` to exit splash
   // (manual or auto-start only).
@@ -289,8 +306,6 @@ export function useButterchurn() {
   return {
     containerRef,
     canvasRef,
-    isCanvasFullscreen,
-    toggleFullscreen,
     started,
     start,
     presetName,
@@ -299,10 +314,11 @@ export function useButterchurn() {
     presetKeys,
     presetNameToIndex,
     presetEntries,
-    getPresetByIndex: fetchPresetByIndex,
     connectAudioBuffer,
     connectOscillator,
-    connectMediaStream
+    connectMediaStream,
+    isCanvasFullscreen,
+    toggleFullscreen
   };
 }
 

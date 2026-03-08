@@ -23,7 +23,9 @@ dist-ssr
 *.sln
 *.sw?
 
-# Auto-generated files
-public/butterchurn/
+# Storybook
 *storybook.log
 storybook-static
+
+# Auto-generated files
+public/butterchurn/

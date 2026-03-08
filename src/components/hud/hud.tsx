@@ -24,7 +24,7 @@ type HudProps = {
   isCanvasFullscreen: boolean;
   toggleFullscreen: () => void;
   changePreset: (delta: number) => void;
-  fileInputRef: RefObject<HTMLInputElement>;
+  fileInputRef: RefObject<HTMLInputElement | null>;
   onFileChange: (event: Event) => void;
   audioSource: AudioSource;
   pendingAudioSource: AudioSource | undefined;
