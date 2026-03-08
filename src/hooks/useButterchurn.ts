@@ -80,12 +80,14 @@ export function useButterchurn(): UseButterChurnResult {
 
       const n = keys.length;
       const newIndex = ((presetIndex ?? 0) + delta + n) % n;
-      fetchPresetByIndex(newIndex).then(preset => {
-        currentPresetRef.current = preset;
-        visualizerRef.current?.loadPreset(preset, 2.7);
-        setPresetIndex(newIndex);
-        prefetchNeighborPresets(newIndex, n);
-      });
+      fetchPresetByIndex(newIndex)
+        .then(preset => {
+          currentPresetRef.current = preset;
+          visualizerRef.current?.loadPreset(preset, 2.7);
+          setPresetIndex(newIndex);
+          prefetchNeighborPresets(newIndex, n);
+        })
+        .catch(console.error);
     },
     [presetKeys, presetIndex]
   );
@@ -283,7 +285,7 @@ export function useButterchurn(): UseButterChurnResult {
       } finally {
         isInitializingRef.current = false;
       }
-    })();
+    })().catch(console.error);
   }, [reducedMotion, initVisualizer]);
 
   // Sync visualizer canvas to the current viewport size.
@@ -329,12 +331,12 @@ function toggleContainerFullscreen(container: HTMLDivElement): void {
   const fullscreenElement = document.fullscreenElement;
 
   if (fullscreenElement && document.exitFullscreen) {
-    document.exitFullscreen();
+    document.exitFullscreen().catch(console.warn);
     return;
   }
 
   if (container.requestFullscreen) {
-    container.requestFullscreen().catch(console.error);
+    container.requestFullscreen().catch(console.warn);
   }
 }
 

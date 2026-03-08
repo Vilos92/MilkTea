@@ -198,7 +198,7 @@ export async function fetchTranslations(locale: Locale): Promise<Translations> {
   })();
 
   inFlight.set(locale, translationsPromise);
-  translationsPromise.finally(() => inFlight.delete(locale));
+  void translationsPromise.finally(() => inFlight.delete(locale));
 
   return translationsPromise;
 }
