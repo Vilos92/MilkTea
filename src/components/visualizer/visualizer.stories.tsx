@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/preact';
+import type {Meta, StoryObj} from '@storybook/preact-vite';
 
 import {useButterchurn} from '../../hooks/useButterchurn';
 import {Visualizer} from './visualizer';
