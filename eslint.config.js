@@ -1,4 +1,3 @@
-// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import preact from 'eslint-plugin-preact';
 import react from 'eslint-plugin-react';
@@ -30,15 +29,18 @@ export default defineConfig([
     rules: {
       ...jsxA11y.configs.recommended.rules,
 
-      // Require braces for all control flow statements
+      // Require braces for all control flow statements.
       curly: ['error', 'all'],
 
-      // Preact uses 'class' instead of 'className'
+      // Preact uses 'class' instead of 'className'.
       'react/no-unknown-property': ['error', {ignore: ['class']}],
 
-      // Rules of Hooks (same as React; applies to Preact hooks)
+      // Rules of Hooks (same as React; applies to Preact hooks).
       'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'error'
+      'react-hooks/exhaustive-deps': 'error',
+
+      // Require floating promises to be explicitly handled or voided.
+      '@typescript-eslint/no-floating-promises': 'error'
     }
   },
   {
