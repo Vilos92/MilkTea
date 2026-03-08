@@ -16,6 +16,7 @@ import {useCallback, useEffect, useRef, useState} from 'preact/hooks';
 import demoMp3 from '../../assets/needle-the-thread.mp3';
 import {createVisualizer} from '../../lib/butterchurn/butterchurn';
 import {fetchPresetByIndex, getPresetKeys} from '../../lib/butterchurn/butterchurnPresets';
+import type {Size} from '../../types/geometry';
 import {
   actionRow,
   btn,
@@ -42,48 +43,66 @@ import {
  * Types.
  */
 
-type DemoState = 'idle' | 'loading' | 'playing' | 'done' | 'error';
-type RecordState = 'idle' | 'recording' | 'processing' | 'done';
-type OutputFormatId = 'mp4' | 'mov' | 'mkv' | 'webm';
-type RenderSize = {width: number; height: number; fps: number; bpp: number; format: OutputFormatId};
+type QualityLabel = 'Low' | 'Medium' | 'High' | 'Ultra';
+type QualityPreset = {label: QualityLabel; bpp: number};
+
+type SizeLabel = '1080p' | '4K' | 'Square' | 'Vertical';
+type SizePreset = {label: SizeLabel; width: number; height: number};
+
+type VideoFormatType = 'mp4' | 'mov' | 'mkv' | 'webm';
+type VideoExtension = 'mp4' | 'mov' | 'mkv' | 'webm';
+type VideoMime = 'video/mp4' | 'video/quicktime' | 'video/x-matroska' | 'video/webm';
+type VideoFormatOption = {type: VideoFormatType; label: string; ext: VideoExtension; mime: VideoMime};
+
+/** This is the configuration that defines how the output video will be rendered. */
+type RenderConfig = Size & {fps: number; bpp: number; format: VideoFormatType};
+
+type DemoStatus = 'idle' | 'loading' | 'playing' | 'done' | 'error';
+type RecordStatus = 'idle' | 'recording' | 'processing' | 'done';
 
 /*
  * Constants.
  */
 
-const MAX_DIM = 3840;
-const MIN_DIM = 1;
-const MAX_DISPLAY = 480;
-const MAX_FPS = 120;
-const MIN_FPS = 1;
+const MIN_DIMENSION = 1;
+const MAX_DIMENSION = 3840; // We do not allow more than 3840x3840.
+const MAX_DISPLAY = 480; // The canvas used to preview the video is scaled down below this size.
 
-const QUALITY_OPTIONS = [
+const MIN_FPS = 1;
+const MAX_FPS = 120;
+const DEFAULT_FPS = 60;
+
+const QUALITY_PRESETS: readonly QualityPreset[] = [
   {label: 'Low', bpp: 0.05},
   {label: 'Medium', bpp: 0.1},
   {label: 'High', bpp: 0.15},
   {label: 'Ultra', bpp: 0.2}
 ] as const;
 
-const PRESET_OPTIONS = [
+const SIZE_PRESETS: readonly SizePreset[] = [
   {label: '1080p', width: 1920, height: 1080},
   {label: '4K', width: 3840, height: 2160},
   {label: 'Square', width: 1080, height: 1080},
   {label: 'Vertical', width: 1080, height: 1920}
 ] as const;
 
-const FORMAT_OPTIONS: {id: OutputFormatId; label: string; ext: string; mime: string}[] = [
-  {id: 'mp4', label: 'MP4', ext: 'mp4', mime: 'video/mp4'},
-  {id: 'mov', label: 'MOV', ext: 'mov', mime: 'video/quicktime'},
-  {id: 'mkv', label: 'MKV', ext: 'mkv', mime: 'video/x-matroska'},
-  {id: 'webm', label: 'WebM', ext: 'webm', mime: 'video/webm'}
+const VIDEO_FORMAT_OPTIONS: readonly VideoFormatOption[] = [
+  {type: 'mp4', label: 'MP4', ext: 'mp4', mime: 'video/mp4'},
+  {type: 'mov', label: 'MOV', ext: 'mov', mime: 'video/quicktime'},
+  {type: 'mkv', label: 'MKV', ext: 'mkv', mime: 'video/x-matroska'},
+  {type: 'webm', label: 'WebM', ext: 'webm', mime: 'video/webm'}
 ];
 
+const DEFAULT_PRESET: SizePreset = SIZE_PRESETS[0];
+const DEFAULT_BPP: number = QUALITY_PRESETS[QUALITY_PRESETS.length - 1].bpp;
+const DEFAULT_VIDEO_FORMAT: VideoFormatType = 'mp4';
+
 /*
- * Component.
+ * Components.
  */
 
 export function MediabunnyDemo() {
-  const [renderSize, setRenderSize] = useState<RenderSize | null>(null);
+  const [renderSize, setRenderSize] = useState<RenderConfig | null>(null);
 
   if (!renderSize) {
     return (
@@ -96,10 +115,8 @@ export function MediabunnyDemo() {
   return <MediabunnyPlayer renderSize={renderSize} />;
 }
 
-function MediabunnyPlayer({renderSize}: {renderSize: RenderSize}) {
-  const scale = Math.min(MAX_DISPLAY / renderSize.width, MAX_DISPLAY / renderSize.height, 1);
-  const displayWidth = Math.round(renderSize.width * scale);
-  const displayHeight = Math.round(renderSize.height * scale);
+function MediabunnyPlayer({renderSize}: {renderSize: RenderConfig}) {
+  const {width: displayWidth, height: displayHeight} = scaleSizeToDisplay(renderSize);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const {state, progress, errorMessage, start, stop, audioStreamRef} = useAudioVisualizer(
@@ -164,21 +181,18 @@ function MediabunnyPlayer({renderSize}: {renderSize: RenderSize}) {
   );
 }
 
-function SetupForm({onConfirm}: {onConfirm: (size: RenderSize) => void}) {
-  const [width, setWidth] = useState(1080);
-  const [height, setHeight] = useState(720);
-  const [fps, setFps] = useState(60);
-  const [bpp, setBpp] = useState<number>(0.2);
-  const [format, setFormat] = useState<OutputFormatId>('mp4');
-
-  const clampDim = (v: number) => Math.max(MIN_DIM, Math.min(MAX_DIM, Math.round(v) || MIN_DIM));
-  const clampFps = (v: number) => Math.max(MIN_FPS, Math.min(MAX_FPS, Math.round(v) || MIN_FPS));
+function SetupForm({onConfirm}: {onConfirm: (size: RenderConfig) => void}) {
+  const [width, setWidth] = useState<number>(DEFAULT_PRESET.width);
+  const [height, setHeight] = useState<number>(DEFAULT_PRESET.height);
+  const [fps, setFps] = useState<number>(DEFAULT_FPS);
+  const [bpp, setBpp] = useState<number>(DEFAULT_BPP);
+  const [format, setFormat] = useState<VideoFormatType>(DEFAULT_VIDEO_FORMAT);
 
   const w = clampDim(width);
   const h = clampDim(height);
   const f = clampFps(fps);
   const previewBitrate = (w * h * f * bpp) / 1_000_000;
-  const activePreset = PRESET_OPTIONS.find(p => p.width === w && p.height === h) ?? null;
+  const activePreset = SIZE_PRESETS.find(p => p.width === w && p.height === h) ?? null;
 
   const handleSubmit = (e: Event) => {
     e.preventDefault();
@@ -197,8 +211,8 @@ function SetupForm({onConfirm}: {onConfirm: (size: RenderSize) => void}) {
             type="number"
             class={inputField}
             value={width}
-            min={MIN_DIM}
-            max={MAX_DIM}
+            min={MIN_DIMENSION}
+            max={MAX_DIMENSION}
             onInput={e => setWidth(Number((e.target as HTMLInputElement).value))}
           />
         </div>
@@ -211,8 +225,8 @@ function SetupForm({onConfirm}: {onConfirm: (size: RenderSize) => void}) {
             type="number"
             class={inputField}
             value={height}
-            min={MIN_DIM}
-            max={MAX_DIM}
+            min={MIN_DIMENSION}
+            max={MAX_DIMENSION}
             onInput={e => setHeight(Number((e.target as HTMLInputElement).value))}
           />
         </div>
@@ -234,7 +248,7 @@ function SetupForm({onConfirm}: {onConfirm: (size: RenderSize) => void}) {
       <div class={inputGroup}>
         <span class={inputLabel}>Preset</span>
         <div class={qualityRow} role="group" aria-label="Preset">
-          {PRESET_OPTIONS.map(p => (
+          {SIZE_PRESETS.map(p => (
             <button
               key={p.label}
               type="button"
@@ -253,13 +267,13 @@ function SetupForm({onConfirm}: {onConfirm: (size: RenderSize) => void}) {
       <div class={inputGroup}>
         <span class={inputLabel}>Format</span>
         <div class={qualityRow} role="group" aria-label="Format">
-          {FORMAT_OPTIONS.map(opt => (
+          {VIDEO_FORMAT_OPTIONS.map(opt => (
             <button
-              key={opt.id}
+              key={opt.type}
               type="button"
-              class={format === opt.id ? qualityBtnActive : qualityBtn}
-              aria-pressed={format === opt.id}
-              onClick={() => setFormat(opt.id)}
+              class={format === opt.type ? qualityBtnActive : qualityBtn}
+              aria-pressed={format === opt.type}
+              onClick={() => setFormat(opt.type)}
             >
               {opt.label}
             </button>
@@ -269,7 +283,7 @@ function SetupForm({onConfirm}: {onConfirm: (size: RenderSize) => void}) {
       <div class={inputGroup}>
         <span class={inputLabel}>Quality</span>
         <div class={qualityRow} role="group" aria-label="Quality">
-          {QUALITY_OPTIONS.map(opt => (
+          {QUALITY_PRESETS.map(opt => (
             <button
               key={opt.label}
               type="button"
@@ -299,7 +313,7 @@ function useAudioVisualizer(
   renderWidth: number,
   renderHeight: number
 ) {
-  const [state, setState] = useState<DemoState>('idle');
+  const [state, setState] = useState<DemoStatus>('idle');
   const [progress, setProgress] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -423,18 +437,9 @@ function useAudioVisualizer(
   return {state, progress, errorMessage, start, stop, audioStreamRef};
 }
 
-function makeOutputFormat(id: OutputFormatId) {
-  if (id === 'mov') {
-    return new MovOutputFormat();
-  }
-  if (id === 'mkv') {
-    return new MkvOutputFormat();
-  }
-  if (id === 'webm') {
-    return new WebMOutputFormat();
-  }
-  return new Mp4OutputFormat();
-}
+/*
+ * Hooks.
+ */
 
 function useRecorder(
   canvasRef: RefObject<HTMLCanvasElement>,
@@ -443,9 +448,9 @@ function useRecorder(
   renderHeight: number,
   fps: number,
   bpp: number,
-  outputFormat: OutputFormatId
+  outputFormat: VideoFormatType
 ) {
-  const [recordState, setRecordState] = useState<RecordState>('idle');
+  const [recordState, setRecordState] = useState<RecordStatus>('idle');
   const [recordingUrl, setRecordingUrl] = useState<string | null>(null);
   const [recordingFilename, setRecordingFilename] = useState<string>('recording.mp4');
   const prevUrlRef = useRef<string | null>(null);
@@ -489,7 +494,7 @@ function useRecorder(
 
         const webmBlob = new Blob(chunksRef.current, {type: 'video/webm'});
 
-        const formatOption = FORMAT_OPTIONS.find(f => f.id === outputFormat)!;
+        const formatOption = VIDEO_FORMAT_OPTIONS.find(f => f.type === outputFormat)!;
         const target = new BufferTarget();
         const conversion = await Conversion.init({
           input: new Input({formats: [WEBM], source: new BlobSource(webmBlob)}),
@@ -503,15 +508,7 @@ function useRecorder(
         const url = URL.createObjectURL(blob);
         prevUrlRef.current = url;
 
-        const base =
-          demoMp3
-            .split('/')
-            .pop()
-            ?.replace(/\.[^.]+$/, '') ?? 'recording';
-        const now = new Date();
-        const pad = (n: number) => String(n).padStart(2, '0');
-        const stamp = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}_${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}`;
-        setRecordingFilename(`${base}_${stamp}.${formatOption.ext}`);
+        setRecordingFilename(formatAssetName(demoMp3, formatOption.ext));
 
         setRecordingUrl(url);
         setRecordState('done');
@@ -538,4 +535,75 @@ function useRecorder(
   }, []);
 
   return {recordState, recordingUrl, recordingFilename, startRecord, stopRecord};
+}
+
+/*
+ * Helpers.
+ */
+
+/**
+ * Clamps a value between a minimum and maximum.
+ *
+ * @example
+ * clamp(0, -50, 50) // 0
+ * clamp(-50, 0, 100) // 0
+ * clamp(50, -100, 0) // 0
+ */
+function clamp(v: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, Number.isNaN(v) ? min : Math.round(v)));
+}
+
+function clampDim(dim: number): number {
+  return clamp(dim, MIN_DIMENSION, MAX_DIMENSION);
+}
+
+function clampFps(fps: number): number {
+  return clamp(fps, MIN_FPS, MAX_FPS);
+}
+
+/**
+ * Scales the input size to fit the bounds of the display. Neither dimension will exceed the display size,
+ * but one (or both, if the input is square) will equal it exactly, and the other will be less.
+ *
+ * This allows us to scale a canvas being rendered at a higher resolution (i.e. for rendering to video) at a
+ * smaller resolution (i.e. for previewing the render in the browser) without double-rendering the canvas.
+ */
+function scaleSizeToDisplay(size: Size): Size {
+  const scale = Math.min(MAX_DISPLAY / size.width, MAX_DISPLAY / size.height, 1);
+  return {width: Math.round(size.width * scale), height: Math.round(size.height * scale)};
+}
+
+function formatAssetName(path: string, ext: string): string {
+  // File name without the extension (e.g. /path/to/file.mp3 -> file).
+  const baseName = path
+    .split('/')
+    .pop()!
+    .replace(/\.[^.]+$/, '');
+  const stamp = formatCompactIso(new Date());
+  return `${baseName}_${stamp}.${ext}`;
+}
+
+/**
+ * Formats a date in compact ISO format (YYYYMMDD_HHMMSS).
+ *
+ * @example
+ * formatCompactIso(new Date()) // 20260308_123456
+ */
+function formatCompactIso(date: Date): string {
+  // Keep each field fixed-width to ensure lexicographic sorting.
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}_${pad(date.getHours())}${pad(date.getMinutes())}${pad(date.getSeconds())}`;
+}
+
+function makeOutputFormat(type: VideoFormatType) {
+  if (type === 'mov') {
+    return new MovOutputFormat();
+  }
+  if (type === 'mkv') {
+    return new MkvOutputFormat();
+  }
+  if (type === 'webm') {
+    return new WebMOutputFormat();
+  }
+  return new Mp4OutputFormat();
 }

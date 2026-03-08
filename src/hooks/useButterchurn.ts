@@ -12,13 +12,12 @@ import {
   getPresetKeys,
   prefetchNeighborPresets
 } from '../lib/butterchurn/butterchurnPresets';
+import type {Size} from '../types/geometry';
 import {useReducedMotion} from './useReducedMotion';
 
 /*
  * Types.
  */
-
-type Size = {width: number; height: number};
 
 type UseButterChurnResult = {
   containerRef: RefObject<HTMLDivElement>;
