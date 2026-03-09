@@ -1,21 +1,11 @@
-import {
-  BlobSource,
-  BufferTarget,
-  Conversion,
-  Input,
-  MkvOutputFormat,
-  MovOutputFormat,
-  Mp4OutputFormat,
-  Output,
-  WEBM,
-  WebMOutputFormat
-} from 'mediabunny';
 import type {RefObject} from 'preact';
 import {useCallback, useEffect, useRef, useState} from 'preact/hooks';
 
 import demoMp3 from '../../assets/needle-the-thread.mp3';
+import {type RenderConfig, useRecorder} from '../../hooks/useRecorder';
 import {createVisualizer} from '../../lib/butterchurn/butterchurn';
 import {fetchPresetByIndex, getPresetKeys} from '../../lib/butterchurn/butterchurnPresets';
+import {VIDEO_FORMAT_OPTIONS, type VideoFormatOption} from '../../lib/mediabunny';
 import type {Size} from '../../types/geometry';
 import {
   actionRow,
@@ -49,16 +39,7 @@ type QualityPreset = {label: QualityLabel; bpp: number};
 type SizeLabel = '1080p' | '4K' | 'Square' | 'Vertical';
 type SizePreset = {label: SizeLabel; width: number; height: number};
 
-type VideoFormatType = 'mp4' | 'mov' | 'mkv' | 'webm';
-type VideoExtension = 'mp4' | 'mov' | 'mkv' | 'webm';
-type VideoMime = 'video/mp4' | 'video/quicktime' | 'video/x-matroska' | 'video/webm';
-type VideoFormatOption = {type: VideoFormatType; label: string; ext: VideoExtension; mime: VideoMime};
-
-/** This is the configuration that defines how the output video will be rendered. */
-type RenderConfig = Size & {fps: number; bpp: number; formatType: VideoFormatType};
-
 type DemoStatus = 'idle' | 'loading' | 'playing' | 'done' | 'error';
-type RecordStatus = 'idle' | 'recording' | 'processing' | 'done';
 
 /*
  * Constants.
@@ -86,16 +67,14 @@ const SIZE_PRESETS: readonly SizePreset[] = [
   {label: 'Vertical', width: 1080, height: 1920}
 ] as const;
 
-const VIDEO_FORMAT_OPTIONS: readonly VideoFormatOption[] = [
-  {type: 'mp4', label: 'MP4', ext: 'mp4', mime: 'video/mp4'},
-  {type: 'mov', label: 'MOV', ext: 'mov', mime: 'video/quicktime'},
-  {type: 'mkv', label: 'MKV', ext: 'mkv', mime: 'video/x-matroska'},
-  {type: 'webm', label: 'WebM', ext: 'webm', mime: 'video/webm'}
-];
-
 const DEFAULT_PRESET: SizePreset = SIZE_PRESETS[0];
-const DEFAULT_BPP: number = QUALITY_PRESETS[QUALITY_PRESETS.length - 1].bpp;
-const DEFAULT_VIDEO_FORMAT: VideoFormatType = 'mp4';
+const DEFAULT_BPP: number = QUALITY_PRESETS.find(preset => preset.label === 'Ultra')!.bpp;
+const DEFAULT_VIDEO_FORMAT_OPTION: VideoFormatOption = VIDEO_FORMAT_OPTIONS[0];
+
+const DEMO_TRACK_BASENAME = demoMp3
+  .split('/')
+  .pop()!
+  .replace(/\.[^.]+$/, '');
 
 /*
  * Components.
@@ -123,15 +102,15 @@ function MediabunnyPlayer({renderConfig}: MediabunnyPlayerProps) {
   const {width: displayWidth, height: displayHeight} = scaleSizeToDisplay(renderConfig);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const {state, progress, errorMessage, start, stop, audioStreamRef} = useAudioVisualizer(
+  const {state, progress, errorMessage, start, stop, getAudioStream} = useAudioVisualizer(
     canvasRef,
     renderConfig.width,
     renderConfig.height
   );
-  const {recordState, recordingUrl, recordingFilename, startRecord, stopRecord} = useRecorder(
+  const {recordState, recordError, recordingUrl, recordingFilename, startRecord, stopRecord} = useRecorder(
     canvasRef,
-    audioStreamRef,
-    renderConfig
+    renderConfig,
+    getAudioStream
   );
 
   return (
@@ -158,7 +137,7 @@ function MediabunnyPlayer({renderConfig}: MediabunnyPlayerProps) {
           </button>
         )}
         {state === 'loading' && <span class={statusLabel}>Loading…</span>}
-        {(recordState === 'idle' || recordState === 'done') && (
+        {(recordState === 'idle' || recordState === 'done' || recordState === 'error') && (
           <button type="button" class={btnRecord} onClick={startRecord}>
             Record
           </button>
@@ -177,6 +156,7 @@ function MediabunnyPlayer({renderConfig}: MediabunnyPlayerProps) {
         )}
       </div>
       {errorMessage && <p class={errorLabel}>{errorMessage}</p>}
+      {recordError && <p class={errorLabel}>{recordError}</p>}
     </div>
   );
 }
@@ -190,7 +170,7 @@ function SetupForm({onConfirm}: SetupFormProps) {
   const [rawHeight, setRawHeight] = useState<number>(DEFAULT_PRESET.height);
   const [rawFps, setRawFps] = useState<number>(DEFAULT_FPS);
   const [bpp, setRawBpp] = useState<number>(DEFAULT_BPP);
-  const [formatType, setFormatType] = useState<VideoFormatType>(DEFAULT_VIDEO_FORMAT);
+  const [formatOption, setFormatOption] = useState<VideoFormatOption>(DEFAULT_VIDEO_FORMAT_OPTION);
 
   const width = clampDimension(rawWidth);
   const height = clampDimension(rawHeight);
@@ -209,7 +189,7 @@ function SetupForm({onConfirm}: SetupFormProps) {
 
   const handleSubmit = (event: Event) => {
     event.preventDefault();
-    onConfirm({width, height, fps, bpp, formatType});
+    onConfirm({width, height, fps, bpp, format: formatOption.format, baseName: DEMO_TRACK_BASENAME});
   };
 
   return (
@@ -280,15 +260,15 @@ function SetupForm({onConfirm}: SetupFormProps) {
       <div class={inputGroup}>
         <span class={inputLabel}>Format</span>
         <div class={qualityRow} role="group" aria-label="Format">
-          {VIDEO_FORMAT_OPTIONS.map(formatOption => (
+          {VIDEO_FORMAT_OPTIONS.map(option => (
             <button
-              key={formatOption.type}
+              key={option.label}
               type="button"
-              class={formatType === formatOption.type ? qualityBtnActive : qualityBtn}
-              aria-pressed={formatType === formatOption.type}
-              onClick={() => setFormatType(formatOption.type)}
+              class={formatOption === option ? qualityBtnActive : qualityBtn}
+              aria-pressed={formatOption === option}
+              onClick={() => setFormatOption(option)}
             >
-              {formatOption.label}
+              {option.label}
             </button>
           ))}
         </div>
@@ -330,11 +310,11 @@ function useAudioVisualizer(
 ) {
   const [state, setState] = useState<DemoStatus>('idle');
   const [progress, setProgress] = useState(0);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
-  const stopCallbackRef = useRef<(() => void) | null>(null);
-  const rafIdRef = useRef<number | null>(null);
-  const audioStreamRef = useRef<MediaStream | null>(null);
+  const stopCallbackRef = useRef<(() => void) | undefined>(undefined);
+  const rafIdRef = useRef<number | undefined>(undefined);
+  const audioStreamRef = useRef<MediaStream | undefined>(undefined);
 
   const stop = useCallback(() => {
     stopCallbackRef.current?.();
@@ -348,13 +328,13 @@ function useAudioVisualizer(
 
     stopCallbackRef.current?.();
     setProgress(0);
-    setErrorMessage(null);
+    setErrorMessage(undefined);
     setState('loading');
 
     const stopped = {value: false};
-    let rafId: number | null = null;
-    let audioCtx: AudioContext | null = null;
-    let sourceNode: AudioBufferSourceNode | null = null;
+    let rafId: number | undefined = undefined;
+    let audioCtx: AudioContext | undefined = undefined;
+    let sourceNode: AudioBufferSourceNode | undefined = undefined;
 
     const doStop = () => {
       if (stopped.value) {
@@ -362,10 +342,10 @@ function useAudioVisualizer(
       }
       stopped.value = true;
 
-      if (rafId !== null) {
+      if (rafId !== undefined) {
         cancelAnimationFrame(rafId);
-        rafId = null;
-        rafIdRef.current = null;
+        rafId = undefined;
+        rafIdRef.current = undefined;
       }
 
       try {
@@ -373,11 +353,11 @@ function useAudioVisualizer(
       } catch {}
 
       void audioCtx?.close();
-      audioStreamRef.current = null;
+      audioStreamRef.current = undefined;
       setState('done');
 
       if (stopCallbackRef.current === doStop) {
-        stopCallbackRef.current = null;
+        stopCallbackRef.current = undefined;
       }
     };
 
@@ -442,107 +422,16 @@ function useAudioVisualizer(
 
   useEffect(() => {
     return () => {
-      if (rafIdRef.current !== null) {
+      if (rafIdRef.current !== undefined) {
         cancelAnimationFrame(rafIdRef.current);
       }
-      stopCallbackRef.current = null;
+      stopCallbackRef.current = undefined;
     };
   }, []);
 
-  return {state, progress, errorMessage, start, stop, audioStreamRef};
-}
+  const getAudioStream = useCallback(() => audioStreamRef.current, []);
 
-/*
- * Hooks.
- */
-
-function useRecorder(
-  canvasRef: RefObject<HTMLCanvasElement>,
-  audioStreamRef: RefObject<MediaStream | null>,
-  renderConfig: RenderConfig
-) {
-  const {width, height, fps, bpp, formatType} = renderConfig;
-
-  const [recordState, setRecordState] = useState<RecordStatus>('idle');
-  const [recordingUrl, setRecordingUrl] = useState<string | null>(null);
-  const [recordingFilename, setRecordingFilename] = useState<string>('recording.mp4');
-  const prevUrlRef = useRef<string | null>(null);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const chunksRef = useRef<Blob[]>([]);
-
-  const startRecord = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) {
-      return;
-    }
-
-    if (prevUrlRef.current) {
-      URL.revokeObjectURL(prevUrlRef.current);
-      prevUrlRef.current = null;
-    }
-    setRecordingUrl(null);
-    chunksRef.current = [];
-
-    const videoBitrate = Math.round(width * height * fps * bpp);
-
-    const canvasStream = canvas.captureStream(fps);
-    const audioTracks = audioStreamRef.current?.getAudioTracks() ?? [];
-    const stream = new MediaStream([...canvasStream.getVideoTracks(), ...audioTracks]);
-    const recorder = new MediaRecorder(stream, {mimeType: 'video/webm', videoBitsPerSecond: videoBitrate});
-
-    recorder.ondataavailable = e => {
-      if (e.data.size > 0) {
-        chunksRef.current.push(e.data);
-      }
-    };
-
-    recorder.onstop = () => {
-      void (async () => {
-        setRecordState('processing');
-
-        const webmBlob = new Blob(chunksRef.current, {type: 'video/webm'});
-
-        const formatOption = VIDEO_FORMAT_OPTIONS.find(f => f.type === formatType)!;
-        const target = new BufferTarget();
-        const conversion = await Conversion.init({
-          input: new Input({formats: [WEBM], source: new BlobSource(webmBlob)}),
-          output: new Output({format: makeOutputFormat(formatType), target}),
-          video: {bitrate: videoBitrate},
-          showWarnings: false
-        });
-        await conversion.execute();
-
-        const blob = new Blob([target.buffer!], {type: formatOption.mime});
-        const url = URL.createObjectURL(blob);
-        prevUrlRef.current = url;
-
-        setRecordingFilename(formatAssetName(demoMp3, formatOption.ext));
-
-        setRecordingUrl(url);
-        setRecordState('done');
-      })();
-    };
-
-    mediaRecorderRef.current = recorder;
-    recorder.start();
-    setRecordState('recording');
-  }, [canvasRef, audioStreamRef, width, height, fps, bpp, formatType]);
-
-  const stopRecord = useCallback(() => {
-    mediaRecorderRef.current?.stop();
-    mediaRecorderRef.current = null;
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      mediaRecorderRef.current?.stop();
-      if (prevUrlRef.current) {
-        URL.revokeObjectURL(prevUrlRef.current);
-      }
-    };
-  }, []);
-
-  return {recordState, recordingUrl, recordingFilename, startRecord, stopRecord};
+  return {state, progress, errorMessage, start, stop, getAudioStream};
 }
 
 /*
@@ -579,39 +468,4 @@ function clampFps(fps: number): number {
 function scaleSizeToDisplay(size: Size): Size {
   const scale = Math.min(MAX_DISPLAY / size.width, MAX_DISPLAY / size.height, 1);
   return {width: Math.round(size.width * scale), height: Math.round(size.height * scale)};
-}
-
-function formatAssetName(path: string, ext: string): string {
-  // File name without the extension (e.g. /path/to/file.mp3 -> file).
-  const baseName = path
-    .split('/')
-    .pop()!
-    .replace(/\.[^.]+$/, '');
-  const stamp = formatCompactIso(new Date());
-  return `${baseName}_${stamp}.${ext}`;
-}
-
-/**
- * Formats a date in compact ISO format (YYYYMMDD_HHMMSS).
- *
- * @example
- * formatCompactIso(new Date()) // 20260308_123456
- */
-function formatCompactIso(date: Date): string {
-  // Keep each field fixed-width to ensure lexicographic sorting.
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}_${pad(date.getHours())}${pad(date.getMinutes())}${pad(date.getSeconds())}`;
-}
-
-function makeOutputFormat(type: VideoFormatType) {
-  if (type === 'mov') {
-    return new MovOutputFormat();
-  }
-  if (type === 'mkv') {
-    return new MkvOutputFormat();
-  }
-  if (type === 'webm') {
-    return new WebMOutputFormat();
-  }
-  return new Mp4OutputFormat();
 }
