@@ -27,7 +27,7 @@ import {
   recordingDot,
   setupForm,
   statusLabel
-} from './mediabunny.css';
+} from './mediabunnyDemo.css';
 
 /*
  * Types.
