@@ -18,7 +18,7 @@ type UseAudioSourceResult = {
   audioSource: AudioSource;
   pendingAudioSource: AudioSource | undefined;
   trackName: string | undefined;
-  fileInputRef: RefObject<HTMLInputElement | null>;
+  fileInputRef: RefObject<HTMLInputElement>;
   onAudioFileChange: (event: Event) => void;
   handleAudioFileDrop: (event: DragEvent) => void;
   handleSourceChange: (source: AudioSource) => void;
