@@ -19,7 +19,7 @@
     "sort-package-json:check": "sort-package-json --check",
     "sort-package-json:fix": "sort-package-json",
     "storybook": "storybook dev -p 6006",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc -b"
   },
   "overrides": {
     "vite": "^8.0.0-beta.13"
@@ -28,6 +28,7 @@
     "@vanilla-extract/vite-plugin": "^5.1.4",
     "butterchurn": "^2.6.7",
     "butterchurn-presets": "^2.4.7",
+    "mediabunny": "^1.38.1",
     "preact": "^10.27.2"
   },
   "devDependencies": {

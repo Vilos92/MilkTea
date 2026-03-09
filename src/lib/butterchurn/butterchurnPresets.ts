@@ -84,7 +84,7 @@ export async function fetchPresetByIndex(index: number): Promise<ButterchurnPres
   })();
 
   inFlight.set(index, promise);
-  promise.finally(() => inFlight.delete(index));
+  void promise.finally(() => inFlight.delete(index));
 
   return promise;
 }
@@ -99,6 +99,6 @@ export function prefetchNeighborPresets(index: number, count: number): void {
   const n = count;
   const indices = [(index - 1 + n) % n, index, (index + 1) % n];
   for (const i of indices) {
-    fetchPresetByIndex(i);
+    fetchPresetByIndex(i).catch(console.warn);
   }
 }
