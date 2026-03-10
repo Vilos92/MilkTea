@@ -1,31 +1,21 @@
 import {useEffect, useMemo, useRef, useState} from 'preact/hooks';
 
 import {useHasFinePointer} from '../../hooks/useHasFinePointer';
+import {useSearchableList} from '../../hooks/useSearchableList';
 import {supportsRequestFullscreen} from '../../lib/platform';
 import {useLocaleContext} from '../../providers/locale';
 import {useSettingsContext} from '../../providers/settings';
 import {type Translate, useTranslate} from '../../providers/translation';
+import {Picker} from '../picker/picker';
 import {Switch} from '../switch/switch';
 import {
-  closeBtnCorner,
-  closeBtnCornerSplash,
   commandButton,
   commandButtonActive,
   commandButtonActiveSplash,
   commandButtonSplash,
-  content,
   groupHeading,
   groupHeadingSplash,
-  header,
-  heading,
-  headingRow,
-  headingSplash,
-  overlayActive,
-  overlaySplash,
   paletteGroup,
-  scrollArea,
-  searchInput,
-  searchInputSplash,
   switchRow,
   switchRowActive,
   switchRowActiveSplash
@@ -114,14 +104,9 @@ export function CommandPalette({
   const hasFinePointer = useHasFinePointer();
 
   const [query, setQuery] = useState('');
-  const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
 
-  const overlayClass = visualizerActive ? overlayActive : overlaySplash;
-  const headingClass = visualizerActive ? heading : headingSplash;
-  const closeBtnCornerClass = visualizerActive ? closeBtnCorner : closeBtnCornerSplash;
-  const searchInputClass = visualizerActive ? searchInput : searchInputSplash;
   const groupHeadingClass = visualizerActive ? groupHeading : groupHeadingSplash;
   const commandButtonClass = visualizerActive ? commandButton : commandButtonSplash;
   const commandButtonActiveClass = visualizerActive ? commandButtonActive : commandButtonActiveSplash;
@@ -187,12 +172,11 @@ export function CommandPalette({
     return {itemsByGroup: grouped, orderedItems: ordered};
   }, [filteredItems]);
 
-  const activeItem = orderedItems[activeIndex];
+  const {activeIndex, setActiveIndex, resetActiveIndex, moveUp, moveDown} = useSearchableList(
+    orderedItems.length
+  );
 
-  // Clamp `activeIndex` when list shrinks.
-  useEffect(() => {
-    setActiveIndex(currentIndex => Math.min(currentIndex, Math.max(0, orderedItems.length - 1)));
-  }, [orderedItems.length]);
+  const activeItem = orderedItems[activeIndex];
 
   useEffect(() => {
     if (!hasFinePointer) {
@@ -215,7 +199,7 @@ export function CommandPalette({
   const handleSearchKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'ArrowDown' || (event.key === 'Tab' && !event.shiftKey)) {
       event.preventDefault();
-      setActiveIndex(currentIndex => Math.min(currentIndex + 1, orderedItems.length - 1));
+      moveDown();
       return;
     }
     if (event.key === 'ArrowUp' || (event.key === 'Tab' && event.shiftKey)) {
@@ -223,7 +207,7 @@ export function CommandPalette({
       if (event.key === 'Tab' && activeIndex === 0) {
         closeBtnRef.current?.focus();
       } else {
-        setActiveIndex(i => Math.max(0, i - 1));
+        moveUp();
       }
       return;
     }
@@ -276,56 +260,31 @@ export function CommandPalette({
   };
 
   return (
-    <div class={overlayClass} role="dialog" aria-modal="true" aria-labelledby="command-palette-title">
-      <div class={content}>
-        <div class={header}>
-          <div class={headingRow}>
-            <h2 id="command-palette-title" class={headingClass}>
-              {t('help.keyCommandPaletteAction')}
-            </h2>
-            <button
-              ref={closeBtnRef}
-              type="button"
-              class={closeBtnCornerClass}
-              onClick={onClose}
-              aria-label={t('settings.close')}
-              onKeyDown={event => {
-                if (event.key === 'Tab' && !event.shiftKey) {
-                  event.preventDefault();
-                  inputRef.current?.focus();
-                }
-              }}
-            >
-              ✕
-            </button>
-          </div>
-          <input
-            ref={inputRef}
-            type="search"
-            class={searchInputClass}
-            value={query}
-            onInput={event => {
-              setQuery((event.target as HTMLInputElement).value);
-              setActiveIndex(0);
-            }}
-            onKeyDown={handleSearchKeyDown}
-            placeholder={t('commandPalette.searchPlaceholder')}
-            aria-label={t('commandPalette.searchPlaceholder')}
-          />
-        </div>
-        <div class={scrollArea}>
-          {groupOrder.map(
-            group =>
-              itemsByGroup[group].length > 0 && (
-                <div key={group} class={paletteGroup}>
-                  <h3 class={groupHeadingClass}>{formatGroupHeading(t, group)}</h3>
-                  {itemsByGroup[group].map(item => renderPaletteItem(item, item === activeItem))}
-                </div>
-              )
-          )}
-        </div>
-      </div>
-    </div>
+    <Picker
+      variant={visualizerActive ? 'active' : 'splash'}
+      titleId="command-palette-title"
+      title={t('help.keyCommandPaletteAction')}
+      onClose={onClose}
+      inputRef={inputRef}
+      closeBtnRef={closeBtnRef}
+      searchValue={query}
+      onSearchInput={value => {
+        setQuery(value);
+        resetActiveIndex();
+      }}
+      onSearchKeyDown={handleSearchKeyDown}
+      searchPlaceholder={t('commandPalette.searchPlaceholder')}
+    >
+      {groupOrder.map(
+        group =>
+          itemsByGroup[group].length > 0 && (
+            <div key={group} class={paletteGroup}>
+              <h3 class={groupHeadingClass}>{formatGroupHeading(t, group)}</h3>
+              {itemsByGroup[group].map(item => renderPaletteItem(item, item === activeItem))}
+            </div>
+          )
+      )}
+    </Picker>
   );
 }
 

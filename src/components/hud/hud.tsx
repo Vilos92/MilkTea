@@ -54,8 +54,7 @@ export function Hud({
   onSourceChange
 }: HudProps) {
   const {openPanel, togglePanel} = usePanelContext();
-  const {hudVisible, controlsHovered, handleControlsEnter, handleControlsLeave, forceVisible} =
-    useHudVisibility();
+  const {hudVisible, handleControlsEnter, handleControlsLeave, forceVisible} = useHudVisibility();
 
   useEffect(() => {
     if (openPanel !== MilkTeaPanel.NONE) {
@@ -106,7 +105,6 @@ export function Hud({
         toggleFullscreen={toggleFullscreen}
         changePreset={changePreset}
         controlsVisible={hudVisible}
-        controlsHovered={controlsHovered}
         onControlsEnter={handleControlsEnter}
         onControlsLeave={handleControlsLeave}
       />
@@ -120,7 +118,6 @@ export function Hud({
 
 function useHudVisibility() {
   const [hudVisible, setHudVisible] = useState(true);
-  const [controlsHovered, setControlsHovered] = useState(false);
   const fadeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const scheduleFadeOutRef = useRef<(() => void) | null>(null);
 
@@ -153,7 +150,6 @@ function useHudVisibility() {
   }, []);
 
   const handleControlsEnter = () => {
-    setControlsHovered(true);
     if (fadeTimeoutRef.current) {
       clearTimeout(fadeTimeoutRef.current);
       fadeTimeoutRef.current = null;
@@ -163,7 +159,6 @@ function useHudVisibility() {
   };
 
   const handleControlsLeave = () => {
-    setControlsHovered(false);
     scheduleFadeOutRef.current?.();
   };
 
@@ -175,5 +170,5 @@ function useHudVisibility() {
     }
   }, []);
 
-  return {hudVisible, controlsHovered, handleControlsEnter, handleControlsLeave, forceVisible};
+  return {hudVisible, handleControlsEnter, handleControlsLeave, forceVisible};
 }

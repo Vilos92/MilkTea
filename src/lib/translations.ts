@@ -10,8 +10,20 @@ export type TranslationKey =
   | 'splash.ariaStart'
   | 'splash.disclaimer1'
   | 'splash.disclaimer2'
+  | 'controls.rowPlayback'
+  | 'controls.rowPresets'
+  | 'controls.play'
+  | 'controls.pause'
+  | 'controls.prevTrack'
+  | 'controls.nextTrack'
+  | 'controls.record'
+  | 'controls.stopRecord'
   | 'controls.prevPreset'
   | 'controls.nextPreset'
+  | 'controls.stagePreset'
+  | 'controls.firePreset'
+  | 'controls.presets'
+  | 'controls.searchPresets'
   | 'controls.enterFullscreen'
   | 'controls.exitFullscreen'
   | 'locale.label'
@@ -67,8 +79,20 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'splash.disclaimer1':
     'Given its unconventional interactions, this exhibit may not fully adhere to common accessibility expectations. Thank you for your understanding.',
   'splash.disclaimer2': 'Click the button above to load the visual demonstration.',
+  'controls.rowPlayback': 'Playback',
+  'controls.rowPresets': 'Presets',
+  'controls.play': 'Play',
+  'controls.pause': 'Pause',
+  'controls.prevTrack': 'Previous track',
+  'controls.nextTrack': 'Next track',
+  'controls.record': 'Record',
+  'controls.stopRecord': 'Stop recording',
   'controls.prevPreset': 'Previous preset',
   'controls.nextPreset': 'Next preset',
+  'controls.stagePreset': 'Stage a preset',
+  'controls.firePreset': 'Apply staged preset',
+  'controls.presets': 'Presets',
+  'controls.searchPresets': 'Search presets\u2026',
   'controls.enterFullscreen': 'Enter fullscreen',
   'controls.exitFullscreen': 'Exit fullscreen',
   'locale.label': 'Language',

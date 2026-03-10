@@ -1,0 +1,221 @@
+import type {Meta, StoryObj} from '@storybook/preact-vite';
+import {useEffect, useState} from 'preact/hooks';
+import {useRef} from 'preact/hooks';
+
+import {getPresetKeys} from '../../lib/butterchurn/butterchurnPresets';
+import {Controls} from './controls';
+import {controlsStatic} from './controls.css';
+
+type WrapperProps = {
+  controlsVisible: boolean;
+  isPlaying: boolean;
+  isRecording: boolean;
+  isFullscreen: boolean;
+  showProgress: boolean;
+  showTrackInfo: boolean;
+  showRecord: boolean;
+  showStage: boolean;
+  hasStagedPreset: boolean;
+};
+
+const ControlsWrapper = ({
+  controlsVisible,
+  isPlaying: initialIsPlaying,
+  isRecording: initialIsRecording,
+  isFullscreen: initialIsFullscreen,
+  showProgress,
+  showTrackInfo,
+  showRecord,
+  showStage,
+  hasStagedPreset: initialHasStagedPreset
+}: WrapperProps) => {
+  const swipeRef = useRef<HTMLDivElement>(null);
+  const [presetNames, setPresetNames] = useState<string[]>([]);
+  const [isPlaying, setIsPlaying] = useState(initialIsPlaying);
+  const [isRecording, setIsRecording] = useState(initialIsRecording);
+  const [isFullscreen, setIsFullscreen] = useState(initialIsFullscreen);
+  const [currentTime, setCurrentTime] = useState(84); // 1:24
+  const [stagedPresetName, setStagedPresetName] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    getPresetKeys()
+      .then(keys => {
+        setPresetNames(keys);
+        if (initialHasStagedPreset) {
+          setStagedPresetName(keys[0]);
+        }
+      })
+      .catch(console.error);
+  }, [initialHasStagedPreset]);
+
+  return (
+    <div
+      ref={swipeRef}
+      style={{
+        width: '100vw',
+        height: '100vh',
+        display: 'flex',
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+        paddingBottom: '40px',
+        background: 'linear-gradient(135deg, #0a0a14 0%, #0d1a0d 100%)',
+        position: 'relative',
+        boxSizing: 'border-box'
+      }}
+    >
+      <Controls
+        class={controlsStatic}
+        swipeRef={swipeRef}
+        controlsVisible={controlsVisible}
+        onControlsEnter={() => {}}
+        onControlsLeave={() => {}}
+        isFullscreen={isFullscreen}
+        toggleFullscreen={() => setIsFullscreen(v => !v)}
+        changePreset={() => {}}
+        trackName={showTrackInfo ? 'Clair de Lune — Claude Debussy' : undefined}
+        presetName={showTrackInfo ? 'electric_sheep_23' : undefined}
+        currentTime={showProgress ? currentTime : undefined}
+        duration={showProgress ? 222 : undefined}
+        onSeek={showProgress ? setCurrentTime : undefined}
+        isPlaying={isPlaying}
+        onPlayPause={() => setIsPlaying(v => !v)}
+        onPrevTrack={() => {}}
+        onNextTrack={() => {}}
+        isRecording={isRecording}
+        onRecord={showRecord ? () => setIsRecording(v => !v) : undefined}
+        presetNames={showStage ? presetNames : undefined}
+        stagedPresetName={stagedPresetName}
+        onStagePreset={setStagedPresetName}
+        onFireStagedPreset={() => setStagedPresetName(undefined)}
+      />
+    </div>
+  );
+};
+
+const meta = {
+  title: 'Components/Controls',
+  component: Controls,
+  parameters: {
+    layout: 'fullscreen'
+  }
+} satisfies Meta<typeof Controls>;
+
+export default meta;
+
+/*
+ * Stories.
+ */
+
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
+  render: () => (
+    <ControlsWrapper
+      controlsVisible={true}
+      isPlaying={false}
+      isRecording={false}
+      isFullscreen={false}
+      showProgress={true}
+      showTrackInfo={true}
+      showRecord={true}
+      showStage={true}
+      hasStagedPreset={false}
+    />
+  )
+};
+
+export const Playing: Story = {
+  render: () => (
+    <ControlsWrapper
+      controlsVisible={true}
+      isPlaying={true}
+      isRecording={false}
+      isFullscreen={false}
+      showProgress={true}
+      showTrackInfo={true}
+      showRecord={true}
+      showStage={true}
+      hasStagedPreset={false}
+    />
+  )
+};
+
+export const Recording: Story = {
+  render: () => (
+    <ControlsWrapper
+      controlsVisible={true}
+      isPlaying={true}
+      isRecording={true}
+      isFullscreen={false}
+      showProgress={true}
+      showTrackInfo={true}
+      showRecord={true}
+      showStage={true}
+      hasStagedPreset={false}
+    />
+  )
+};
+
+export const StagedPreset: Story = {
+  render: () => (
+    <ControlsWrapper
+      controlsVisible={true}
+      isPlaying={true}
+      isRecording={false}
+      isFullscreen={false}
+      showProgress={true}
+      showTrackInfo={true}
+      showRecord={true}
+      showStage={true}
+      hasStagedPreset={true}
+    />
+  )
+};
+
+export const Fullscreen: Story = {
+  render: () => (
+    <ControlsWrapper
+      controlsVisible={true}
+      isPlaying={true}
+      isRecording={false}
+      isFullscreen={true}
+      showProgress={true}
+      showTrackInfo={true}
+      showRecord={false}
+      showStage={true}
+      hasStagedPreset={false}
+    />
+  )
+};
+
+export const Minimal: Story = {
+  render: () => (
+    <ControlsWrapper
+      controlsVisible={true}
+      isPlaying={false}
+      isRecording={false}
+      isFullscreen={false}
+      showProgress={false}
+      showTrackInfo={false}
+      showRecord={false}
+      showStage={false}
+      hasStagedPreset={false}
+    />
+  )
+};
+
+export const Hidden: Story = {
+  render: () => (
+    <ControlsWrapper
+      controlsVisible={false}
+      isPlaying={false}
+      isRecording={false}
+      isFullscreen={false}
+      showProgress={true}
+      showTrackInfo={true}
+      showRecord={true}
+      showStage={true}
+      hasStagedPreset={false}
+    />
+  )
+};

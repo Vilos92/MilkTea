@@ -8,6 +8,7 @@ const config: StorybookConfig = {
     '@storybook/addon-a11y',
     '@storybook/addon-docs'
   ],
-  framework: '@storybook/preact-vite'
+  framework: '@storybook/preact-vite',
+  staticDirs: ['../public']
 };
 export default config;
