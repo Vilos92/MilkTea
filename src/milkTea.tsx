@@ -10,7 +10,6 @@ import {Splash} from './components/splash/splash';
 import {Visualizer} from './components/visualizer/visualizer';
 import {useAudioSource} from './hooks/useAudioSource';
 import {useButterchurn} from './hooks/useButterchurn';
-import {Axis, useSwipe} from './hooks/useSwipe';
 import {MilkTeaPanel, usePanelContext} from './providers/panel';
 import {AudioSource} from './types/audio';
 
@@ -101,17 +100,6 @@ export function MilkTea() {
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [started, audioFilePlayback]);
-
-  useSwipe(containerRef, {
-    axis: Axis.VERTICAL,
-    onSwipeUp: undefined,
-    onSwipeDown: () => {
-      if (openPanel === MilkTeaPanel.HELP) {
-        return;
-      }
-      setOpenPanel(MilkTeaPanel.COMMAND_PALETTE);
-    }
-  });
 
   const renderPanel = () => {
     switch (openPanel) {

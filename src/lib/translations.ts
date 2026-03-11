@@ -53,8 +53,6 @@ export type TranslationKey =
   | 'help.swipePrevAction'
   | 'help.swipeNextKeys'
   | 'help.swipeNextAction'
-  | 'help.swipeDownKeys'
-  | 'help.swipeDownAction'
   | 'help.trackName'
   | 'help.presetName'
   | 'settings.title'
@@ -127,8 +125,6 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'help.swipePrevAction': 'Previous preset',
   'help.swipeNextKeys': 'Swipe right',
   'help.swipeNextAction': 'Next preset',
-  'help.swipeDownKeys': 'Swipe down',
-  'help.swipeDownAction': 'Command Palette',
   'help.trackName': 'Now playing',
   'help.presetName': 'Preset',
   'settings.title': 'Settings',

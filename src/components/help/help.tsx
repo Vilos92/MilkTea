@@ -122,10 +122,6 @@ function renderMobileHotkeys(t: Translate): preact.VNode[] {
     <li class={hotkeyRow}>
       <span class={keyCell}>{t('help.swipeNextKeys')}</span>
       <span class={actionCell}>{t('help.swipeNextAction')}</span>
-    </li>,
-    <li class={hotkeyRow}>
-      <span class={keyCell}>{t('help.swipeDownKeys')}</span>
-      <span class={actionCell}>{t('help.swipeDownAction')}</span>
     </li>
   ];
 }
