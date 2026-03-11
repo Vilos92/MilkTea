@@ -83,6 +83,25 @@ export function MilkTea() {
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [started, start]);
 
+  useEffect(() => {
+    if (!started || !audioFilePlayback) {
+      return;
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== ' ') {
+        return;
+      }
+      const el = event.target as HTMLElement;
+      if (el?.closest?.('input, textarea') || el?.isContentEditable) {
+        return;
+      }
+      event.preventDefault();
+      audioFilePlayback.onPlayPause();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [started, audioFilePlayback]);
+
   useSwipe(containerRef, {
     axis: Axis.VERTICAL,
     onSwipeUp: undefined,

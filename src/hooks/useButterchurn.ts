@@ -245,8 +245,8 @@ export function useButterchurn(): UseButterChurnResult {
         return;
       }
       sourceNodeRef.current = null;
-      bufferPausedAtRef.current = buffer.duration;
-      setFilePlaybackCurrentTime(buffer.duration);
+      bufferPausedAtRef.current = 0;
+      setFilePlaybackCurrentTime(0);
       setFilePlaybackIsPlaying(false);
     };
 

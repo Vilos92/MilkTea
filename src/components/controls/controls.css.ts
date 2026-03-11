@@ -23,6 +23,7 @@ export const controls = style({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
+  minWidth: '280px',
   transition: 'opacity 0.35s ease',
   selectors: {
     '&:has(:focus-visible)': {

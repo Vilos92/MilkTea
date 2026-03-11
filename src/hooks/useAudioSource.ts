@@ -99,6 +99,10 @@ export function useAudioSource({
   const handleSourceChange = useCallback(
     (newSource: AudioSource) => {
       if (newSource === audioSource) {
+        // The user should be able to change the file if the source is already set to file.
+        if (newSource === AudioSource.FILE) {
+          fileInputRef.current?.click();
+        }
         return;
       }
 

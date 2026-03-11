@@ -96,7 +96,6 @@ export const Controls = ({
     onSwipeLeft: () => changePreset(1),
     onSwipeRight: () => changePreset(-1)
   });
-  usePresetKeys(changePreset, toggleFullscreen);
 
   const handleStageClick = () => {
     if (stagedPresetName) {
@@ -105,6 +104,10 @@ export const Controls = ({
       togglePanel(MilkTeaPanel.PRESET_PICKER);
     }
   };
+  usePresetKeys(changePreset, toggleFullscreen, {
+    onStageKey: handleStageClick,
+    presetPickerOpen: pickerOpen
+  });
 
   const progressTrackRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -352,11 +355,24 @@ export const Controls = ({
  * Hooks.
  */
 
-function usePresetKeys(changePreset: (delta: number) => void, toggleFullscreen: () => void) {
+type PresetStageKeyOptions = {
+  onStageKey: () => void;
+  presetPickerOpen: boolean;
+};
+
+function usePresetKeys(
+  changePreset: (delta: number) => void,
+  toggleFullscreen: () => void,
+  stageKeyOptions?: PresetStageKeyOptions
+) {
   const changePresetRef = useRef(changePreset);
   changePresetRef.current = changePreset;
   const toggleFullscreenRef = useRef(toggleFullscreen);
   toggleFullscreenRef.current = toggleFullscreen;
+  const onStageKeyRef = useRef(stageKeyOptions?.onStageKey);
+  onStageKeyRef.current = stageKeyOptions?.onStageKey;
+  const presetPickerOpenRef = useRef(stageKeyOptions?.presetPickerOpen);
+  presetPickerOpenRef.current = stageKeyOptions?.presetPickerOpen;
 
   useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
@@ -390,6 +406,11 @@ function usePresetKeys(changePreset: (delta: number) => void, toggleFullscreen: 
       } else if (isNext) {
         event.preventDefault();
         changePresetRef.current(1);
+      } else if (key === ';') {
+        if (!presetPickerOpenRef.current && onStageKeyRef.current) {
+          event.preventDefault();
+          onStageKeyRef.current();
+        }
       } else if (key === 'f' || key === 'F') {
         event.preventDefault();
         if (supportsRequestFullscreen) {
