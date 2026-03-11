@@ -1,4 +1,19 @@
-import {style} from '@vanilla-extract/css';
+import {globalStyle, keyframes, style} from '@vanilla-extract/css';
+
+const pulseRing = keyframes({
+  '0%': {boxShadow: '0 0 0 0 rgba(255, 195, 80, 0.5)'},
+  '70%': {boxShadow: '0 0 0 6px rgba(255, 195, 80, 0)'},
+  '100%': {boxShadow: '0 0 0 0 rgba(255, 195, 80, 0)'}
+});
+
+const recordPulse = keyframes({
+  '0%, 100%': {opacity: 1},
+  '50%': {opacity: 0.45}
+});
+
+/*
+ * Shell.
+ */
 
 export const controls = style({
   position: 'fixed',
@@ -6,10 +21,11 @@ export const controls = style({
   left: '50%',
   transform: 'translateX(-50%)',
   display: 'flex',
+  flexDirection: 'column',
   alignItems: 'center',
-  justifyContent: 'center',
+  width: '280px',
+  minWidth: '280px',
   transition: 'opacity 0.35s ease',
-  // When a control has keyboard focus, keep the bar visible and interactive (overrides fade behavior)
   selectors: {
     '&:has(:focus-visible)': {
       opacity: '1 !important',
@@ -18,53 +34,306 @@ export const controls = style({
   }
 });
 
-export const controlsPill = style({
+export const controlsStatic = style({
+  position: 'relative',
+  bottom: 'auto',
+  left: 'auto',
+  transform: 'none'
+});
+
+/*
+ * Track info.
+ */
+
+export const trackInfo = style({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  textAlign: 'center',
+  marginBottom: '12px',
+  opacity: 0.95
+});
+
+export const trackTitle = style({
+  fontSize: '11px',
+  color: '#fff',
+  letterSpacing: '0.12em',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  maxWidth: '280px'
+});
+
+export const trackPresetLabel = style({
+  fontSize: '10px',
+  color: 'rgba(255, 255, 255, 0.85)',
+  letterSpacing: '0.08em',
+  marginTop: '2px'
+});
+
+/*
+ * Progress bar.
+ */
+
+export const progressWrap = style({
+  width: '100%',
+  marginBottom: '10px',
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center',
-  gap: '12px',
-  padding: '12px 16px',
-  borderRadius: '9999px',
-  background: '#0a0a0a',
-  transition: 'background 0.2s ease',
+  gap: '8px'
+});
+
+export const timeLabel = style({
+  fontSize: '9px',
+  color: 'rgba(255, 255, 255, 0.8)',
+  letterSpacing: '0.05em',
+  minWidth: '28px',
+  userSelect: 'none'
+});
+
+export const timeLabelRight = style({
+  textAlign: 'right'
+});
+
+export const progressTrack = style({
+  flex: 1,
+  height: '20px',
+  background: 'transparent',
+  position: 'relative',
+  cursor: 'grab',
+  userSelect: 'none',
+  touchAction: 'none',
   '@media': {
-    '(pointer: fine)': {
-      gap: '8px',
-      padding: '8px 12px'
+    '(pointer: coarse)': {height: '28px'}
+  }
+});
+
+export const progressBarInner = style({
+  position: 'absolute',
+  left: 0,
+  right: 0,
+  top: '50%',
+  transform: 'translateY(-50%)',
+  height: '3px',
+  background: 'rgba(255, 255, 255, 0.22)',
+  borderRadius: '2px',
+  transition: 'height 0.15s, background 0.15s'
+});
+
+export const progressFill = style({
+  height: '100%',
+  background: 'rgba(255, 255, 255, 0.88)',
+  borderRadius: '2px',
+  position: 'relative',
+  pointerEvents: 'none',
+  selectors: {
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      right: '-4px',
+      top: '50%',
+      transform: 'translateY(-50%)',
+      width: '8px',
+      height: '8px',
+      background: '#fff',
+      borderRadius: '50%',
+      opacity: 0,
+      transition: 'opacity 0.15s'
     }
   }
 });
 
-export const controlsPillHovered = style({
-  background: '#1a1a1a'
+globalStyle(`${progressTrack}:hover ${progressBarInner}`, {
+  height: '5px',
+  background: 'rgba(255, 255, 255, 0.35)'
 });
 
-export const controlBtn = style({
-  minWidth: '48px',
-  minHeight: '48px',
-  padding: 0,
-  border: 'none',
+globalStyle(`${progressTrack}:hover ${progressFill}::after`, {
+  opacity: 1
+});
+
+export const progressTrackDragging = style({
+  cursor: 'grabbing'
+});
+
+globalStyle(`${progressTrackDragging} ${progressBarInner}`, {
+  height: '5px',
+  background: 'rgba(255, 255, 255, 0.35)'
+});
+
+globalStyle(`${progressTrackDragging} ${progressFill}::after`, {
+  opacity: 1
+});
+
+/*
+ * Row labels.
+ */
+
+export const rowLabel = style({
+  fontSize: '8px',
+  color: 'rgba(255, 255, 255, 0.6)',
+  letterSpacing: '0.15em',
+  textTransform: 'uppercase',
+  textAlign: 'center',
+  marginBottom: '4px',
+  marginTop: '8px',
+  userSelect: 'none',
+  selectors: {
+    '&:first-of-type': {marginTop: 0}
+  }
+});
+
+/*
+ * Control rows.
+ */
+
+export const controlsRow = style({
+  display: 'flex',
+  alignItems: 'center',
+  background: 'rgba(22, 22, 22, 0.94)',
+  backdropFilter: 'blur(12px)',
+  border: '1px solid rgba(255, 255, 255, 0.12)',
+  borderRadius: '60px',
+  padding: '6px 10px',
+  transition: 'background 0.15s',
+  '@media': {
+    '(hover: hover)': {':hover': {background: 'rgba(30, 30, 30, 0.97)'}}
+  }
+});
+
+/*
+ * Button variants.
+ */
+
+const btnShared: Parameters<typeof style>[0] = {
   borderRadius: '50%',
-  background: 'rgba(255, 255, 255, 0.12)',
-  color: '#fff',
+  border: 'none',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  ':active': {
-    background: 'rgba(255, 255, 255, 0.25)'
-  },
-  ':focus-visible': {
-    background: 'rgba(255, 255, 255, 0.25)'
-  },
+  padding: 0,
+  transition: 'background 0.15s, color 0.15s, transform 0.1s',
+  ':active': {transform: 'scale(0.92)'},
+  ':focus-visible': {outline: '2px solid rgba(255, 255, 255, 0.4)', outlineOffset: '2px'}
+};
+
+/** Brief "pressed" state on mobile after tap; use with useMobilePressFeedback. */
+export const mobileBtnActive = style({
   '@media': {
-    '(pointer: fine)': {
-      minWidth: '44px',
-      minHeight: '44px'
-    },
-    // Only use :hover on devices that support it (avoids stuck hover after tap on touch)
+    '(pointer: coarse)': {
+      background: 'rgba(255, 255, 255, 0.2) !important',
+      color: '#fff !important',
+      transform: 'scale(0.96)'
+    }
+  }
+});
+
+export const controlBtn = style({
+  ...btnShared,
+  width: '44px',
+  height: '44px',
+  background: 'transparent',
+  color: 'rgba(255, 255, 255, 0.92)',
+  '@media': {
+    '(hover: hover)': {':hover': {background: 'rgba(255, 255, 255, 0.15)', color: '#fff'}},
+    '(pointer: coarse)': {width: '52px', height: '52px'}
+  }
+});
+
+export const accentBtn = style({
+  ...btnShared,
+  width: '44px',
+  height: '44px',
+  background: 'rgba(255, 255, 255, 0.12)',
+  color: '#fff',
+  '@media': {
+    '(hover: hover)': {':hover': {background: 'rgba(255, 255, 255, 0.2)'}},
+    '(pointer: coarse)': {width: '52px', height: '52px'}
+  }
+});
+
+export const recordBtn = style({
+  ...btnShared,
+  width: '44px',
+  height: '44px',
+  background: 'transparent',
+  color: 'rgba(255, 255, 255, 0.7)',
+  '@media': {
+    '(hover: hover)': {':hover': {color: 'rgba(255, 90, 90, 0.95)', background: 'rgba(255, 90, 90, 0.15)'}},
+    '(pointer: coarse)': {width: '52px', height: '52px'}
+  }
+});
+
+export const recordBtnActive = style({
+  color: '#ff3333',
+  animation: `${recordPulse} 1.4s ease-in-out infinite`
+});
+
+export const smallBtn = style({
+  ...btnShared,
+  width: '36px',
+  height: '36px',
+  background: 'transparent',
+  color: 'rgba(255, 255, 255, 0.92)',
+  '@media': {
+    '(hover: hover)': {':hover': {background: 'rgba(255, 255, 255, 0.15)', color: '#fff'}},
+    '(pointer: coarse)': {width: '44px', height: '44px'}
+  }
+});
+
+/*
+ * Divider.
+ */
+
+export const divider = style({
+  width: '1px',
+  height: '20px',
+  background: 'rgba(255, 255, 255, 0.08)',
+  margin: '0 2px',
+  flexShrink: 0
+});
+
+/*
+ * Stage button.
+ */
+
+export const stageWrap = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center'
+});
+
+export const stageBtn = style({
+  ...btnShared,
+  width: '36px',
+  height: '36px',
+  border: '1px solid rgba(255, 255, 255, 0.15)',
+  background: 'transparent',
+  color: 'rgba(255, 255, 255, 0.6)',
+  transition: 'background 0.15s, color 0.15s, transform 0.1s, border-color 0.2s',
+  '@media': {
     '(hover: hover)': {
       ':hover': {
-        background: 'rgba(255, 255, 255, 0.25)'
+        background: 'rgba(255, 255, 255, 0.1)',
+        color: '#fff',
+        borderColor: 'rgba(255, 255, 255, 0.3)'
+      }
+    },
+    '(pointer: coarse)': {width: '44px', height: '44px'}
+  }
+});
+
+export const stageBtnLoaded = style({
+  borderColor: 'rgba(255, 195, 80, 0.6)',
+  color: 'rgba(255, 195, 80, 0.9)',
+  background: 'rgba(255, 195, 80, 0.08)',
+  animation: `${pulseRing} 2s ease-out infinite`,
+  '@media': {
+    '(hover: hover)': {
+      ':hover': {
+        background: 'rgba(255, 195, 80, 0.15)',
+        borderColor: 'rgba(255, 195, 80, 0.9)',
+        color: '#ffc350'
       }
     }
   }

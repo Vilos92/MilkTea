@@ -8,8 +8,8 @@ import {Visualizer} from './visualizer';
  */
 
 const VisualizerWrapper = () => {
-  const {canvasRef, presetName} = useButterchurn();
-  return <Visualizer canvasRef={canvasRef} presetName={presetName} trackName={undefined} />;
+  const {canvasRef} = useButterchurn();
+  return <Visualizer canvasRef={canvasRef} />;
 };
 
 const meta = {

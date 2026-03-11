@@ -145,7 +145,6 @@ export const hotkeyRow = style({
 });
 
 export const keyCell = style({
-  fontFamily: 'ui-monospace, monospace',
   fontSize: '14px',
   flexShrink: 0
 });

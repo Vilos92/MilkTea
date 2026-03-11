@@ -12,6 +12,8 @@ import {
   getPresetKeys,
   prefetchNeighborPresets
 } from '../lib/butterchurn/butterchurnPresets';
+import {clamp} from '../lib/number';
+import type {AudioFilePlayback} from '../types/audio';
 import type {Size} from '../types/geometry';
 import {useReducedMotion} from './useReducedMotion';
 
@@ -26,6 +28,7 @@ type UseButterChurnResult = {
   start: () => void;
   presetName: string | undefined;
   changePreset: (delta: number) => void;
+  goToPreset: (index: number) => void;
   presetIndex: number | undefined;
   presetKeys: string[];
   presetNameToIndex: Map<string, number>;
@@ -33,6 +36,7 @@ type UseButterChurnResult = {
   connectAudioBuffer: (arrayBuffer: ArrayBuffer) => Promise<void>;
   connectOscillator: () => void;
   connectMediaStream: (stream: MediaStream) => void;
+  filePlayback: AudioFilePlayback | undefined;
   isCanvasFullscreen: boolean;
   toggleFullscreen: () => void;
 };
@@ -53,10 +57,19 @@ export function useButterchurn(): UseButterChurnResult {
     null
   );
 
+  const audioBufferRef = useRef<AudioBuffer | null>(null);
+  const bufferStartTimeRef = useRef<number>(0);
+  const bufferPausedAtRef = useRef<number | null>(null);
+  /** True when we paused via UI so onended does not overwrite bufferPausedAtRef. */
+  const isPausingRef = useRef(false);
+
   const currentPresetRef = useRef<unknown>(null);
   const createVisualizerRef = useRef<((size: Size) => void) | null>(null);
 
   const [started, setStarted] = useState(false);
+  const [filePlaybackCurrentTime, setFilePlaybackCurrentTime] = useState(0);
+  const [filePlaybackDuration, setFilePlaybackDuration] = useState(0);
+  const [filePlaybackIsPlaying, setFilePlaybackIsPlaying] = useState(false);
 
   const [presetIndex, setPresetIndex] = useState<number | undefined>(undefined);
   const [presetKeys, setPresetKeys] = useState<string[]>([]);
@@ -71,25 +84,29 @@ export function useButterchurn(): UseButterChurnResult {
 
   const [isCanvasFullscreen, setIsCanvasFullscreen] = useState(false);
 
-  const changePreset = useCallback(
-    (delta: number) => {
-      const keys = presetKeys;
-      if (!keys.length || !visualizerRef.current) {
+  const goToPreset = useCallback(
+    (index: number) => {
+      if (!presetKeys.length || !visualizerRef.current) {
         return;
       }
-
-      const n = keys.length;
-      const newIndex = ((presetIndex ?? 0) + delta + n) % n;
+      const newIndex = ((index % presetKeys.length) + presetKeys.length) % presetKeys.length;
       fetchPresetByIndex(newIndex)
         .then(preset => {
           currentPresetRef.current = preset;
           visualizerRef.current?.loadPreset(preset, 2.7);
           setPresetIndex(newIndex);
-          prefetchNeighborPresets(newIndex, n);
+          prefetchNeighborPresets(newIndex, presetKeys.length);
         })
         .catch(console.error);
     },
-    [presetKeys, presetIndex]
+    [presetKeys]
+  );
+
+  const changePreset = useCallback(
+    (delta: number) => {
+      goToPreset((presetIndex ?? 0) + delta);
+    },
+    [goToPreset, presetIndex]
   );
 
   const setupVisualizer = useCallback(
@@ -136,9 +153,13 @@ export function useButterchurn(): UseButterChurnResult {
     }
     node.disconnect();
     if ('stop' in node) {
-      node.stop();
+      (node as AudioBufferSourceNode).stop();
     }
     sourceNodeRef.current = null;
+    audioBufferRef.current = null;
+    bufferPausedAtRef.current = null;
+    setFilePlaybackDuration(0);
+    setFilePlaybackIsPlaying(false);
   }, []);
 
   const isInitializingRef = useRef(false);
@@ -196,6 +217,42 @@ export function useButterchurn(): UseButterChurnResult {
     }
   }, [started, initVisualizer]);
 
+  const startBufferSourceAt = useCallback((offsetSeconds: number) => {
+    const ctx = audioContextRef.current;
+    const gainNode = gainNodeRef.current;
+    const buffer = audioBufferRef.current;
+    if (!ctx || !gainNode || !buffer) {
+      return;
+    }
+
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(gainNode);
+    source.connect(ctx.destination);
+    source.start(0, offsetSeconds);
+
+    const startTime = ctx.currentTime - offsetSeconds;
+    bufferStartTimeRef.current = startTime;
+    bufferPausedAtRef.current = null;
+    setFilePlaybackIsPlaying(true);
+
+    source.onended = () => {
+      if (isPausingRef.current) {
+        isPausingRef.current = false;
+        return;
+      }
+      if (sourceNodeRef.current !== source) {
+        return;
+      }
+      sourceNodeRef.current = null;
+      bufferPausedAtRef.current = 0;
+      setFilePlaybackCurrentTime(0);
+      setFilePlaybackIsPlaying(false);
+    };
+
+    sourceNodeRef.current = source;
+  }, []);
+
   const connectAudioBuffer = useCallback(
     async (arrayBuffer: ArrayBuffer): Promise<void> => {
       const ctx = audioContextRef.current;
@@ -208,17 +265,15 @@ export function useButterchurn(): UseButterChurnResult {
 
       stopCurrentSource();
 
+      audioBufferRef.current = audioBuffer;
+      setFilePlaybackDuration(audioBuffer.duration);
+      setFilePlaybackCurrentTime(0);
+
       gainNode.gain.setTargetAtTime(1.0, ctx.currentTime, 0.01);
 
-      const source = ctx.createBufferSource();
-      source.buffer = audioBuffer;
-      source.connect(gainNode);
-      source.connect(ctx.destination);
-      source.start(0);
-
-      sourceNodeRef.current = source;
+      startBufferSourceAt(0);
     },
-    [stopCurrentSource]
+    [stopCurrentSource, startBufferSourceAt]
   );
 
   const connectOscillator = useCallback((): void => {
@@ -259,6 +314,50 @@ export function useButterchurn(): UseButterChurnResult {
       sourceNodeRef.current = source;
     },
     [stopCurrentSource]
+  );
+
+  const filePlaybackOnPlayPause = useCallback(() => {
+    const ctx = audioContextRef.current;
+    const node = sourceNodeRef.current;
+    if (!ctx || !audioBufferRef.current) {
+      return;
+    }
+    if (node && 'buffer' in node) {
+      const elapsedTime = ctx.currentTime - bufferStartTimeRef.current;
+      const clampedTime = clamp(elapsedTime, 0, audioBufferRef.current.duration);
+      bufferPausedAtRef.current = clampedTime;
+      setFilePlaybackCurrentTime(clampedTime);
+      setFilePlaybackIsPlaying(false);
+      isPausingRef.current = true;
+      node.disconnect();
+      (node as AudioBufferSourceNode).stop();
+      sourceNodeRef.current = null;
+    } else {
+      const startFrom = bufferPausedAtRef.current ?? 0;
+      setFilePlaybackCurrentTime(startFrom);
+      startBufferSourceAt(startFrom);
+    }
+  }, [startBufferSourceAt]);
+
+  const filePlaybackOnSeek = useCallback(
+    (time: number) => {
+      const ctx = audioContextRef.current;
+      const buffer = audioBufferRef.current;
+      if (!ctx || !buffer) {
+        return;
+      }
+      const node = sourceNodeRef.current;
+      if (node && 'stop' in node) {
+        node.disconnect();
+        (node as AudioBufferSourceNode).stop();
+        sourceNodeRef.current = null;
+      }
+      const clamped = clamp(time, 0, buffer.duration);
+      bufferPausedAtRef.current = null;
+      setFilePlaybackCurrentTime(clamped);
+      startBufferSourceAt(clamped);
+    },
+    [startBufferSourceAt]
   );
 
   const toggleFullscreen = useCallback(() => {
@@ -304,6 +403,37 @@ export function useButterchurn(): UseButterChurnResult {
     };
   }, []);
 
+  // Tick file playback current time while playing.
+  useEffect(() => {
+    if (!filePlaybackIsPlaying || filePlaybackDuration <= 0) {
+      return;
+    }
+    const ctx = audioContextRef.current;
+    if (!ctx) {
+      return;
+    }
+    let rafId: number;
+    const tick = () => {
+      const elapsed = ctx.currentTime - bufferStartTimeRef.current;
+      const clamped = clamp(elapsed, 0, filePlaybackDuration);
+      setFilePlaybackCurrentTime(clamped);
+      rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, [filePlaybackIsPlaying, filePlaybackDuration]);
+
+  const filePlayback: AudioFilePlayback | undefined =
+    filePlaybackDuration > 0
+      ? {
+          currentTime: filePlaybackCurrentTime,
+          duration: filePlaybackDuration,
+          isPlaying: filePlaybackIsPlaying,
+          onPlayPause: filePlaybackOnPlayPause,
+          onSeek: filePlaybackOnSeek
+        }
+      : undefined;
+
   return {
     containerRef,
     canvasRef,
@@ -311,6 +441,7 @@ export function useButterchurn(): UseButterChurnResult {
     start,
     presetName,
     changePreset,
+    goToPreset,
     presetIndex,
     presetKeys,
     presetNameToIndex,
@@ -318,6 +449,7 @@ export function useButterchurn(): UseButterChurnResult {
     connectAudioBuffer,
     connectOscillator,
     connectMediaStream,
+    filePlayback,
     isCanvasFullscreen,
     toggleFullscreen
   };

@@ -8,12 +8,13 @@ export const splashOverlay = style({
   width: '100%',
   height: '100%',
   display: 'flex',
+  flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
   color: '#fff'
 });
 
-/** Transparent cutout sized to the button. The black is done via box-shadow so the hole is the button area. */
+/** Transparent cutout sized to the button only. The dark overlay is box-shadow, the hole is the button area. */
 export const splashCutout = style({
   boxShadow: '0 0 0 100vmax #000',
   '@media': {
@@ -87,6 +88,13 @@ export const btnSolid = style({
   }
 });
 
+/** Wrapper for disclaimer block in reduced-motion layout. */
+export const splashDisclaimerBlock = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '12px'
+});
+
 export const splashDisclaimer = style({
   margin: '0 20px',
   padding: '14px 18px',
@@ -117,6 +125,16 @@ export const splashSubtext = style({
   fontSize: '0.65em',
   fontWeight: 500,
   opacity: 0.9
+});
+
+/** Wrapper for the language picker below the start button. */
+export const splashLocaleWrap = style({
+  marginTop: '24px'
+});
+
+/** Extra space above disclaimer when it sits below the language switcher (default splash). */
+export const splashDisclaimerBelowLocale = style({
+  marginTop: '32px'
 });
 
 export const btn = style({

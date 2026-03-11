@@ -2,7 +2,9 @@ import type {RefObject} from 'preact';
 import {useCallback, useEffect, useRef, useState} from 'preact/hooks';
 
 import {MilkTeaPanel, usePanelContext} from '../../providers/panel';
-import {AudioSource, AudioSourceButtons} from '../audioSourceButtons/audioSourceButtons';
+import type {AudioFilePlayback} from '../../types/audio';
+import {AudioSource} from '../../types/audio';
+import {AudioSourceButtons} from '../audioSourceButtons/audioSourceButtons';
 import {CommandPaletteButton} from '../commandPalette/commandPaletteButton';
 import {Controls} from '../controls/controls';
 import {HelpButton} from '../help/helpButton';
@@ -19,16 +21,27 @@ import {
  */
 
 type HudProps = {
-  started: boolean;
+  // Layout and controls.
   swipeRef: RefObject<HTMLElement>;
+  started: boolean;
   isCanvasFullscreen: boolean;
   toggleFullscreen: () => void;
   changePreset: (delta: number) => void;
+  // Audio source.
   fileInputRef: RefObject<HTMLInputElement>;
   onFileChange: (event: Event) => void;
   audioSource: AudioSource;
   pendingAudioSource: AudioSource | undefined;
   onSourceChange: (source: AudioSource) => void;
+  // Track info.
+  trackName: string | undefined;
+  presetName: string | undefined;
+  // File playback (progress, play/pause). Only shown if audio source is file.
+  filePlayback: AudioFilePlayback | undefined;
+  // Preset staging.
+  hasPresets: boolean;
+  stagedPresetName: string | undefined;
+  onFireStagedPreset: () => void;
 };
 
 /*
@@ -42,8 +55,8 @@ const CONTROLS_FADE_DELAY_MS = 2500;
  */
 
 export function Hud({
-  started,
   swipeRef,
+  started,
   isCanvasFullscreen,
   toggleFullscreen,
   changePreset,
@@ -51,11 +64,16 @@ export function Hud({
   onFileChange,
   audioSource,
   pendingAudioSource,
-  onSourceChange
+  onSourceChange,
+  trackName,
+  presetName,
+  filePlayback,
+  hasPresets,
+  stagedPresetName,
+  onFireStagedPreset
 }: HudProps) {
   const {openPanel, togglePanel} = usePanelContext();
-  const {hudVisible, controlsHovered, handleControlsEnter, handleControlsLeave, forceVisible} =
-    useHudVisibility();
+  const {hudVisible, handleControlsEnter, handleControlsLeave, forceVisible} = useHudVisibility();
 
   useEffect(() => {
     if (openPanel !== MilkTeaPanel.NONE) {
@@ -106,9 +124,18 @@ export function Hud({
         toggleFullscreen={toggleFullscreen}
         changePreset={changePreset}
         controlsVisible={hudVisible}
-        controlsHovered={controlsHovered}
         onControlsEnter={handleControlsEnter}
         onControlsLeave={handleControlsLeave}
+        trackName={trackName}
+        presetName={presetName}
+        filePlayback={filePlayback}
+        onPrevTrack={undefined}
+        onNextTrack={undefined}
+        isRecording={undefined}
+        onRecord={undefined}
+        hasPresets={hasPresets}
+        stagedPresetName={stagedPresetName}
+        onFireStagedPreset={onFireStagedPreset}
       />
     </>
   );
@@ -120,7 +147,6 @@ export function Hud({
 
 function useHudVisibility() {
   const [hudVisible, setHudVisible] = useState(true);
-  const [controlsHovered, setControlsHovered] = useState(false);
   const fadeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const scheduleFadeOutRef = useRef<(() => void) | null>(null);
 
@@ -153,7 +179,6 @@ function useHudVisibility() {
   }, []);
 
   const handleControlsEnter = () => {
-    setControlsHovered(true);
     if (fadeTimeoutRef.current) {
       clearTimeout(fadeTimeoutRef.current);
       fadeTimeoutRef.current = null;
@@ -163,7 +188,6 @@ function useHudVisibility() {
   };
 
   const handleControlsLeave = () => {
-    setControlsHovered(false);
     scheduleFadeOutRef.current?.();
   };
 
@@ -175,5 +199,5 @@ function useHudVisibility() {
     }
   }, []);
 
-  return {hudVisible, controlsHovered, handleControlsEnter, handleControlsLeave, forceVisible};
+  return {hudVisible, handleControlsEnter, handleControlsLeave, forceVisible};
 }

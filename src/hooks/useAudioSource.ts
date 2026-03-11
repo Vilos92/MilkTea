@@ -1,7 +1,8 @@
 import type {RefObject} from 'preact';
 import {useCallback, useRef, useState} from 'preact/hooks';
 
-import {AudioSource} from '../components/audioSourceButtons/audioSourceButtons';
+import {AudioSource} from '../types/audio';
+import type {AudioFilePlayback} from '../types/audio';
 
 /*
  * Types.
@@ -12,12 +13,15 @@ type UseAudioSourceOptions = {
   connectOscillator: () => void;
   connectMediaStream: (stream: MediaStream) => void;
   onAudioFile: () => void;
+  filePlayback: AudioFilePlayback | undefined;
 };
 
 type UseAudioSourceResult = {
   audioSource: AudioSource;
   pendingAudioSource: AudioSource | undefined;
   trackName: string | undefined;
+  /** Set when audio source is file. */
+  audioFilePlayback: AudioFilePlayback | undefined;
   fileInputRef: RefObject<HTMLInputElement>;
   onAudioFileChange: (event: Event) => void;
   handleAudioFileDrop: (event: DragEvent) => void;
@@ -32,7 +36,8 @@ export function useAudioSource({
   connectAudioBuffer,
   connectOscillator,
   connectMediaStream,
-  onAudioFile
+  onAudioFile,
+  filePlayback
 }: UseAudioSourceOptions): UseAudioSourceResult {
   const [audioSource, setAudioSource] = useState<AudioSource>(AudioSource.OSCILLATOR);
   const [pendingAudioSource, setPendingAudioSource] = useState<AudioSource | undefined>(undefined);
@@ -94,6 +99,10 @@ export function useAudioSource({
   const handleSourceChange = useCallback(
     (newSource: AudioSource) => {
       if (newSource === audioSource) {
+        // The user should be able to change the file if the source is already set to file.
+        if (newSource === AudioSource.FILE) {
+          fileInputRef.current?.click();
+        }
         return;
       }
 
@@ -127,6 +136,7 @@ export function useAudioSource({
     audioSource,
     pendingAudioSource,
     trackName,
+    audioFilePlayback: audioSource === AudioSource.FILE ? filePlayback : undefined,
     fileInputRef,
     onAudioFileChange,
     handleAudioFileDrop,

@@ -1,0 +1,235 @@
+import {style} from '@vanilla-extract/css';
+
+/*
+ * Overlay variants.
+ */
+
+const baseOverlay = style({
+  position: 'fixed',
+  inset: 0,
+  zIndex: 200,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'flex-start',
+  padding: '24px',
+  boxSizing: 'border-box'
+});
+
+/** Always dark (e.g. over a dark canvas). */
+export const overlayDark = style([
+  baseOverlay,
+  {
+    background: 'rgba(0,0,0,0.72)',
+    color: '#fff'
+  }
+]);
+
+/** Theme-aware (follows prefers-color-scheme). */
+export const overlayAdaptive = style([
+  baseOverlay,
+  {
+    background: '#0a0a0a',
+    color: '#fff',
+    '@media': {
+      '(prefers-color-scheme: light)': {
+        background: '#fff',
+        color: '#213547'
+      }
+    }
+  }
+]);
+
+/*
+ * Panel.
+ */
+
+export const content = style({
+  display: 'flex',
+  flexDirection: 'column',
+  flex: 1,
+  minHeight: 0,
+  maxWidth: '420px',
+  width: '100%',
+  marginTop: '40px',
+  padding: '0 24px',
+  boxSizing: 'border-box'
+});
+
+export const header = style({
+  flexShrink: 0,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '12px',
+  paddingTop: '16px',
+  paddingBottom: '16px'
+});
+
+export const headingRow = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: '8px'
+});
+
+const headingBase = {
+  margin: 0,
+  fontSize: '14px',
+  fontWeight: 600,
+  textTransform: 'uppercase' as const,
+  letterSpacing: '0.06em'
+};
+
+export const headingDark = style({
+  ...headingBase,
+  color: 'rgba(255,255,255,0.6)'
+});
+
+export const headingAdaptive = style({
+  ...headingBase,
+  color: 'rgba(255,255,255,0.6)',
+  '@media': {
+    '(prefers-color-scheme: light)': {
+      color: 'rgba(0,0,0,0.65)'
+    }
+  }
+});
+
+/*
+ * Search input.
+ */
+
+export const searchInputDark = style({
+  width: '100%',
+  padding: '10px 12px',
+  fontSize: '14px',
+  lineHeight: 1.4,
+  color: 'inherit',
+  background: 'rgba(255,255,255,0.08)',
+  border: '1px solid rgba(255,255,255,0.2)',
+  borderRadius: '4px',
+  boxSizing: 'border-box',
+  '::placeholder': {
+    color: 'rgba(255,255,255,0.5)'
+  },
+  ':focus': {
+    outline: 'none',
+    borderColor: 'rgba(255,255,255,0.4)'
+  }
+});
+
+export const searchInputAdaptive = style({
+  width: '100%',
+  padding: '10px 12px',
+  fontSize: '14px',
+  lineHeight: 1.4,
+  color: 'inherit',
+  background: 'rgba(255,255,255,0.08)',
+  border: '1px solid rgba(255,255,255,0.2)',
+  borderRadius: '4px',
+  boxSizing: 'border-box',
+  '::placeholder': {
+    color: 'rgba(255,255,255,0.5)'
+  },
+  ':focus': {
+    outline: 'none',
+    borderColor: 'rgba(255,255,255,0.4)'
+  },
+  '@media': {
+    '(prefers-color-scheme: light)': {
+      background: 'rgba(0,0,0,0.06)',
+      borderColor: 'rgba(0,0,0,0.15)',
+      '::placeholder': {
+        color: 'rgba(0,0,0,0.45)'
+      },
+      ':focus': {
+        borderColor: 'rgba(0,0,0,0.35)'
+      }
+    }
+  }
+});
+
+/*
+ * Scroll area.
+ */
+
+export const scrollArea = style({
+  flex: 1,
+  minHeight: 0,
+  overflowY: 'auto',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '24px',
+  paddingBottom: '16px'
+});
+
+/*
+ * Close button.
+ */
+
+const closeBtnCornerBase = {
+  flexShrink: 0,
+  marginRight: '-12px',
+  width: '32px',
+  height: '32px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  appearance: 'none' as const,
+  background: 'transparent',
+  border: 'none',
+  borderRadius: '4px',
+  color: 'rgba(255,255,255,0.45)',
+  fontSize: '16px',
+  lineHeight: 1,
+  ':focus-visible': {
+    outline: '2px solid rgba(255,255,255,0.5)',
+    outlineOffset: 2
+  }
+};
+
+export const closeBtnDark = style({
+  ...closeBtnCornerBase,
+  '@media': {
+    '(pointer: coarse)': {
+      width: '44px',
+      height: '44px',
+      color: 'rgba(255,255,255,0.65)',
+      marginRight: '-16px'
+    },
+    '(hover: hover)': {
+      ':hover': {
+        background: 'rgba(255,255,255,0.1)',
+        color: 'rgba(255,255,255,0.9)'
+      }
+    }
+  }
+});
+
+export const closeBtnAdaptive = style({
+  ...closeBtnCornerBase,
+  '@media': {
+    '(pointer: coarse)': {
+      width: '44px',
+      height: '44px',
+      color: 'rgba(255,255,255,0.65)',
+      marginRight: '-16px'
+    },
+    '(hover: hover)': {
+      ':hover': {
+        background: 'rgba(255,255,255,0.1)',
+        color: 'rgba(255,255,255,0.9)'
+      }
+    },
+    '(prefers-color-scheme: light)': {
+      color: 'rgba(0,0,0,0.4)',
+      ':focus-visible': {
+        outlineColor: 'rgba(0,0,0,0.4)'
+      },
+      ':hover': {
+        background: 'rgba(0,0,0,0.06)',
+        color: 'rgba(0,0,0,0.8)'
+      }
+    }
+  }
+});

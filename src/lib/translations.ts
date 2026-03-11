@@ -10,8 +10,20 @@ export type TranslationKey =
   | 'splash.ariaStart'
   | 'splash.disclaimer1'
   | 'splash.disclaimer2'
+  | 'controls.rowPlayback'
+  | 'controls.rowPresets'
+  | 'controls.play'
+  | 'controls.pause'
+  | 'controls.prevTrack'
+  | 'controls.nextTrack'
+  | 'controls.record'
+  | 'controls.stopRecord'
   | 'controls.prevPreset'
   | 'controls.nextPreset'
+  | 'controls.stagePreset'
+  | 'controls.firePreset'
+  | 'controls.presets'
+  | 'controls.searchPresets'
   | 'controls.enterFullscreen'
   | 'controls.exitFullscreen'
   | 'locale.label'
@@ -19,6 +31,7 @@ export type TranslationKey =
   | 'help.about'
   | 'help.aboutText'
   | 'help.hotkeys'
+  | 'help.gestures'
   | 'help.openLabel'
   | 'help.close'
   | 'help.keyHelpKeys'
@@ -32,6 +45,10 @@ export type TranslationKey =
   | 'help.keyCommandPaletteKeysMac'
   | 'help.keyCommandPaletteKeysWindows'
   | 'help.keyCommandPaletteAction'
+  | 'help.keySpaceKeys'
+  | 'help.keySpaceAction'
+  | 'help.keySemicolonKeys'
+  | 'help.keySemicolonAction'
   | 'help.swipePrevKeys'
   | 'help.swipePrevAction'
   | 'help.swipeNextKeys'
@@ -67,8 +84,20 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'splash.disclaimer1':
     'Given its unconventional interactions, this exhibit may not fully adhere to common accessibility expectations. Thank you for your understanding.',
   'splash.disclaimer2': 'Click the button above to load the visual demonstration.',
+  'controls.rowPlayback': 'Playback',
+  'controls.rowPresets': 'Presets',
+  'controls.play': 'Play',
+  'controls.pause': 'Pause',
+  'controls.prevTrack': 'Previous track',
+  'controls.nextTrack': 'Next track',
+  'controls.record': 'Record',
+  'controls.stopRecord': 'Stop recording',
   'controls.prevPreset': 'Previous preset',
   'controls.nextPreset': 'Next preset',
+  'controls.stagePreset': 'Stage preset',
+  'controls.firePreset': 'Launch preset',
+  'controls.presets': 'Presets',
+  'controls.searchPresets': 'Search presets\u2026',
   'controls.enterFullscreen': 'Enter fullscreen',
   'controls.exitFullscreen': 'Exit fullscreen',
   'locale.label': 'Language',
@@ -76,6 +105,7 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'help.about': 'About',
   'help.aboutText': 'MilkTea. A browser visualizer for MilkDrop',
   'help.hotkeys': 'Hotkeys',
+  'help.gestures': 'Gestures',
   'help.openLabel': 'Help',
   'help.close': 'Close',
   'help.keyHelpKeys': '?',
@@ -89,6 +119,10 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'help.keyCommandPaletteKeysMac': '⌘K',
   'help.keyCommandPaletteKeysWindows': 'Ctrl+K',
   'help.keyCommandPaletteAction': 'Command Palette',
+  'help.keySpaceKeys': 'Space',
+  'help.keySpaceAction': 'Pause / Play',
+  'help.keySemicolonKeys': ';',
+  'help.keySemicolonAction': 'Stage preset and launch preset',
   'help.swipePrevKeys': 'Swipe left',
   'help.swipePrevAction': 'Previous preset',
   'help.swipeNextKeys': 'Swipe right',

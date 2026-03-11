@@ -74,9 +74,9 @@ export function Help({visualizerActive, presetName, trackName, onClose}: HelpPro
             </h2>
             <p class={paragraphClass}>{t('help.aboutText')}</p>
           </section>
-          <section class={section} aria-labelledby="help-hotkeys">
-            <h2 id="help-hotkeys" class={headingClass}>
-              {t('help.hotkeys')}
+          <section class={section} aria-labelledby={hasFinePointer ? 'help-hotkeys' : 'help-gestures'}>
+            <h2 id={hasFinePointer ? 'help-hotkeys' : 'help-gestures'} class={headingClass}>
+              {hasFinePointer ? t('help.hotkeys') : t('help.gestures')}
             </h2>
             <ul class={listClass}>
               {hasFinePointer ? renderDesktopHotkeys(t, isMac) : renderMobileHotkeys(t)}
@@ -143,6 +143,14 @@ function renderDesktopHotkeys(t: Translate, isMac: boolean): preact.VNode[] {
     <li class={hotkeyRow}>
       <span class={keyCell}>{t('help.keyNextKeys')}</span>
       <span class={actionCell}>{t('help.keyNextAction')}</span>
+    </li>,
+    <li class={hotkeyRow}>
+      <span class={keyCell}>{t('help.keySemicolonKeys')}</span>
+      <span class={actionCell}>{t('help.keySemicolonAction')}</span>
+    </li>,
+    <li class={hotkeyRow}>
+      <span class={keyCell}>{t('help.keySpaceKeys')}</span>
+      <span class={actionCell}>{t('help.keySpaceAction')}</span>
     </li>,
     <li class={hotkeyRow}>
       <span class={keyCell}>{t('help.keyFullscreenKeys')}</span>

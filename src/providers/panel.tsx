@@ -9,6 +9,7 @@ import {useCallback, useContext, useEffect, useState} from 'preact/hooks';
 export const MilkTeaPanel = {
   COMMAND_PALETTE: 'COMMAND_PALETTE',
   HELP: 'HELP',
+  PRESET_PICKER: 'PRESET_PICKER',
   NONE: 'NONE'
 } as const;
 export type MilkTeaPanel = (typeof MilkTeaPanel)[keyof typeof MilkTeaPanel];

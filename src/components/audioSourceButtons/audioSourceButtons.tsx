@@ -1,6 +1,7 @@
 import type {RefObject} from 'preact';
 
 import {useTranslate} from '../../providers/translation';
+import {AudioSource} from '../../types/audio';
 import {
   audioSourceButton,
   audioSourceButtonActive,
@@ -12,13 +13,6 @@ import {
 /*
  * Types.
  */
-
-export const AudioSource = {
-  OSCILLATOR: 'oscillator',
-  FILE: 'file',
-  MICROPHONE: 'microphone'
-} as const;
-export type AudioSource = (typeof AudioSource)[keyof typeof AudioSource];
 
 type AudioSourceButtonsProps = {
   class?: string;

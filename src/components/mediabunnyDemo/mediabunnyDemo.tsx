@@ -6,6 +6,7 @@ import {type RenderConfig, useRecorder} from '../../hooks/useRecorder';
 import {createVisualizer} from '../../lib/butterchurn/butterchurn';
 import {fetchPresetByIndex, getPresetKeys} from '../../lib/butterchurn/butterchurnPresets';
 import {VIDEO_FORMAT_OPTIONS, type VideoFormatOption} from '../../lib/mediabunny';
+import {clamp} from '../../lib/number';
 import type {Size} from '../../types/geometry';
 import {
   actionRow,
@@ -438,24 +439,14 @@ function useAudioVisualizer(
  * Helpers.
  */
 
-/**
- * Clamps a value between a minimum and maximum.
- *
- * @example
- * clamp(0, -50, 50) // 0
- * clamp(-50, 0, 100) // 0
- * clamp(50, -100, 0) // 0
- */
-function clamp(v: number, min: number, max: number): number {
-  return Math.max(min, Math.min(max, Number.isNaN(v) ? min : Math.round(v)));
-}
-
 function clampDimension(dimension: number): number {
-  return clamp(dimension, MIN_DIMENSION, MAX_DIMENSION);
+  const v = Number.isNaN(dimension) ? MIN_DIMENSION : Math.round(dimension);
+  return clamp(v, MIN_DIMENSION, MAX_DIMENSION);
 }
 
 function clampFps(fps: number): number {
-  return clamp(fps, MIN_FPS, MAX_FPS);
+  const v = Number.isNaN(fps) ? MIN_FPS : Math.round(fps);
+  return clamp(v, MIN_FPS, MAX_FPS);
 }
 
 /**

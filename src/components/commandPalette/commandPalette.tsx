@@ -1,31 +1,20 @@
-import {useEffect, useMemo, useRef, useState} from 'preact/hooks';
+import {useCallback, useEffect, useMemo, useRef} from 'preact/hooks';
 
 import {useHasFinePointer} from '../../hooks/useHasFinePointer';
+import {type GetSearchTerms, useSearchableList} from '../../hooks/useSearchableList';
 import {supportsRequestFullscreen} from '../../lib/platform';
-import {useLocaleContext} from '../../providers/locale';
 import {useSettingsContext} from '../../providers/settings';
 import {type Translate, useTranslate} from '../../providers/translation';
+import {Picker} from '../picker/picker';
 import {Switch} from '../switch/switch';
 import {
-  closeBtnCorner,
-  closeBtnCornerSplash,
   commandButton,
   commandButtonActive,
   commandButtonActiveSplash,
   commandButtonSplash,
-  content,
   groupHeading,
   groupHeadingSplash,
-  header,
-  heading,
-  headingRow,
-  headingSplash,
-  overlayActive,
-  overlaySplash,
   paletteGroup,
-  scrollArea,
-  searchInput,
-  searchInputSplash,
   switchRow,
   switchRowActive,
   switchRowActiveSplash
@@ -110,18 +99,11 @@ export function CommandPalette({
   onSelectMic
 }: CommandPaletteProps) {
   const t = useTranslate();
-  const {locale} = useLocaleContext();
   const hasFinePointer = useHasFinePointer();
 
-  const [query, setQuery] = useState('');
-  const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
 
-  const overlayClass = visualizerActive ? overlayActive : overlaySplash;
-  const headingClass = visualizerActive ? heading : headingSplash;
-  const closeBtnCornerClass = visualizerActive ? closeBtnCorner : closeBtnCornerSplash;
-  const searchInputClass = visualizerActive ? searchInput : searchInputSplash;
   const groupHeadingClass = visualizerActive ? groupHeading : groupHeadingSplash;
   const commandButtonClass = visualizerActive ? commandButton : commandButtonSplash;
   const commandButtonActiveClass = visualizerActive ? commandButtonActive : commandButtonActiveSplash;
@@ -138,61 +120,30 @@ export function CommandPalette({
     onOpenFilePicker
   );
 
-  const filteredItems: readonly PaletteItem[] = useMemo(() => {
-    const rawQuery = query.trim();
-    if (!rawQuery) {
-      return allItems;
-    }
-
-    const searchQuery = normalizeForSearch(rawQuery).toLocaleLowerCase(locale);
-
-    return allItems.filter(item => {
-      // Match against the item label.
-      const normalizedLabel = normalizeForSearch(item.label).toLocaleLowerCase(locale);
-      if (normalizedLabel.includes(searchQuery)) {
-        return true;
-      }
-
-      // Also match against the group's localized heading (e.g., "Command", "Audio", "Settings").
-      const group = parsePaletteGroup(item.type);
-      const groupHeading = formatGroupHeading(t, group);
-      const normalizedGroupHeading = normalizeForSearch(groupHeading).toLocaleLowerCase(locale);
-      return normalizedGroupHeading.includes(searchQuery);
-    });
-  }, [allItems, query, locale, t]);
+  const getSearchTerms = useCallback<GetSearchTerms<PaletteItem>>(
+    (item: PaletteItem) => [item.label, formatGroupHeading(t, parsePaletteGroup(item.type))],
+    [t]
+  );
 
   const {
-    itemsByGroup,
-    orderedItems
-  }: {
-    itemsByGroup: Record<PaletteGroup, readonly PaletteItem[]>;
-    orderedItems: readonly PaletteItem[];
-  } = useMemo(() => {
-    const grouped: Record<PaletteGroup, PaletteItem[]> = {
-      command: [],
-      audio: [],
-      settings: []
-    };
+    query,
+    setQuery,
+    filteredItems: orderedItems,
+    activeIndex,
+    setActiveIndex,
+    moveUp,
+    moveDown
+  } = useSearchableList(allItems, getSearchTerms);
 
-    for (const item of filteredItems) {
-      const group = parsePaletteGroup(item.type);
-      grouped[group].push(item);
+  const itemsByGroup = useMemo(() => {
+    const grouped: Record<PaletteGroup, PaletteItem[]> = {command: [], audio: [], settings: []};
+    for (const item of orderedItems) {
+      grouped[parsePaletteGroup(item.type)].push(item);
     }
-
-    const ordered: PaletteItem[] = [];
-    for (const group of groupOrder) {
-      ordered.push(...grouped[group]);
-    }
-
-    return {itemsByGroup: grouped, orderedItems: ordered};
-  }, [filteredItems]);
+    return grouped as Record<PaletteGroup, readonly PaletteItem[]>;
+  }, [orderedItems]);
 
   const activeItem = orderedItems[activeIndex];
-
-  // Clamp `activeIndex` when list shrinks.
-  useEffect(() => {
-    setActiveIndex(currentIndex => Math.min(currentIndex, Math.max(0, orderedItems.length - 1)));
-  }, [orderedItems.length]);
 
   useEffect(() => {
     if (!hasFinePointer) {
@@ -215,7 +166,7 @@ export function CommandPalette({
   const handleSearchKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'ArrowDown' || (event.key === 'Tab' && !event.shiftKey)) {
       event.preventDefault();
-      setActiveIndex(currentIndex => Math.min(currentIndex + 1, orderedItems.length - 1));
+      moveDown();
       return;
     }
     if (event.key === 'ArrowUp' || (event.key === 'Tab' && event.shiftKey)) {
@@ -223,7 +174,7 @@ export function CommandPalette({
       if (event.key === 'Tab' && activeIndex === 0) {
         closeBtnRef.current?.focus();
       } else {
-        setActiveIndex(i => Math.max(0, i - 1));
+        moveUp();
       }
       return;
     }
@@ -276,56 +227,27 @@ export function CommandPalette({
   };
 
   return (
-    <div class={overlayClass} role="dialog" aria-modal="true" aria-labelledby="command-palette-title">
-      <div class={content}>
-        <div class={header}>
-          <div class={headingRow}>
-            <h2 id="command-palette-title" class={headingClass}>
-              {t('help.keyCommandPaletteAction')}
-            </h2>
-            <button
-              ref={closeBtnRef}
-              type="button"
-              class={closeBtnCornerClass}
-              onClick={onClose}
-              aria-label={t('settings.close')}
-              onKeyDown={event => {
-                if (event.key === 'Tab' && !event.shiftKey) {
-                  event.preventDefault();
-                  inputRef.current?.focus();
-                }
-              }}
-            >
-              ✕
-            </button>
-          </div>
-          <input
-            ref={inputRef}
-            type="search"
-            class={searchInputClass}
-            value={query}
-            onInput={event => {
-              setQuery((event.target as HTMLInputElement).value);
-              setActiveIndex(0);
-            }}
-            onKeyDown={handleSearchKeyDown}
-            placeholder={t('commandPalette.searchPlaceholder')}
-            aria-label={t('commandPalette.searchPlaceholder')}
-          />
-        </div>
-        <div class={scrollArea}>
-          {groupOrder.map(
-            group =>
-              itemsByGroup[group].length > 0 && (
-                <div key={group} class={paletteGroup}>
-                  <h3 class={groupHeadingClass}>{formatGroupHeading(t, group)}</h3>
-                  {itemsByGroup[group].map(item => renderPaletteItem(item, item === activeItem))}
-                </div>
-              )
-          )}
-        </div>
-      </div>
-    </div>
+    <Picker
+      children={groupOrder.map(
+        group =>
+          itemsByGroup[group].length > 0 && (
+            <div key={group} class={paletteGroup}>
+              <h3 class={groupHeadingClass}>{formatGroupHeading(t, group)}</h3>
+              {itemsByGroup[group].map(item => renderPaletteItem(item, item === activeItem))}
+            </div>
+          )
+      )}
+      variant={visualizerActive ? 'dark' : 'adaptive'}
+      id="command-palette-title"
+      title={t('help.keyCommandPaletteAction')}
+      onClose={onClose}
+      inputRef={inputRef}
+      closeBtnRef={closeBtnRef}
+      searchValue={query}
+      onSearchInput={setQuery}
+      onSearchKeyDown={handleSearchKeyDown}
+      searchPlaceholder={t('commandPalette.searchPlaceholder')}
+    />
   );
 }
 
@@ -356,12 +278,26 @@ function usePaletteItems(
   return useMemo(
     () =>
       [
+        // Settings
         {
           type: PaletteItemType.SETTINGS_SKIP_SPLASH_ON_LOAD,
           label: t('settings.autoStart'),
           checked: shouldSkipSplashOnLoad,
           onChange: setShouldSkipSplashOnLoad
         },
+        {
+          type: PaletteItemType.SETTINGS_SHOW_PRESET_ON_CHANGE,
+          label: t('settings.showPresetNameOnChange'),
+          checked: shouldShowPresetName,
+          onChange: setShouldShowPresetName
+        },
+        {
+          type: PaletteItemType.SETTINGS_SHOW_TRACK_ON_CHANGE,
+          label: t('settings.showTrackNameOnChange'),
+          checked: shouldShowTrackName,
+          onChange: setShouldShowTrackName
+        },
+        // Commands
         {
           type: PaletteItemType.COMMAND_HELP,
           label: t('help.openLabel'),
@@ -384,6 +320,7 @@ function usePaletteItems(
               onSelect: onFullScreen
             }
           : undefined,
+        // Audio
         {
           type: PaletteItemType.AUDIO_INPUT_OSCILLATOR,
           label: t('source.oscillator'),
@@ -398,18 +335,6 @@ function usePaletteItems(
           type: PaletteItemType.AUDIO_INPUT_MIC,
           label: t('source.microphone'),
           onSelect: onSelectMic
-        },
-        {
-          type: PaletteItemType.SETTINGS_SHOW_PRESET_ON_CHANGE,
-          label: t('settings.showPresetNameOnChange'),
-          checked: shouldShowPresetName,
-          onChange: setShouldShowPresetName
-        },
-        {
-          type: PaletteItemType.SETTINGS_SHOW_TRACK_ON_CHANGE,
-          label: t('settings.showTrackNameOnChange'),
-          checked: shouldShowTrackName,
-          onChange: setShouldShowTrackName
         }
       ].filter(item => item !== undefined),
     [
@@ -468,16 +393,4 @@ function parsePaletteGroup(type: PaletteItemType): PaletteGroup {
     return 'audio';
   }
   return 'settings';
-}
-
-/**
- * Normalize string for accent-insensitive search.
- *
- * @example
- * - 'Hello' → 'Hello'
- * - 'Héllo' → 'Hello'
- * - 'Héllo' → 'Hello'
- */
-function normalizeForSearch(str: string): string {
-  return str.normalize('NFD').replace(/\p{Mark}/gu, '');
 }
