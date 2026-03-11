@@ -29,6 +29,10 @@ type HudProps = {
   audioSource: AudioSource;
   pendingAudioSource: AudioSource | undefined;
   onSourceChange: (source: AudioSource) => void;
+  // Preset staging
+  hasPresets?: boolean;
+  stagedPresetName?: string;
+  onFireStagedPreset?: () => void;
 };
 
 /*
@@ -51,7 +55,10 @@ export function Hud({
   onFileChange,
   audioSource,
   pendingAudioSource,
-  onSourceChange
+  onSourceChange,
+  hasPresets,
+  stagedPresetName,
+  onFireStagedPreset
 }: HudProps) {
   const {openPanel, togglePanel} = usePanelContext();
   const {hudVisible, handleControlsEnter, handleControlsLeave, forceVisible} = useHudVisibility();
@@ -107,6 +114,9 @@ export function Hud({
         controlsVisible={hudVisible}
         onControlsEnter={handleControlsEnter}
         onControlsLeave={handleControlsLeave}
+        hasPresets={hasPresets}
+        stagedPresetName={stagedPresetName}
+        onFireStagedPreset={onFireStagedPreset}
       />
     </>
   );

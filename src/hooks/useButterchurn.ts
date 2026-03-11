@@ -26,6 +26,7 @@ type UseButterChurnResult = {
   start: () => void;
   presetName: string | undefined;
   changePreset: (delta: number) => void;
+  goToPreset: (index: number) => void;
   presetIndex: number | undefined;
   presetKeys: string[];
   presetNameToIndex: Map<string, number>;
@@ -71,25 +72,29 @@ export function useButterchurn(): UseButterChurnResult {
 
   const [isCanvasFullscreen, setIsCanvasFullscreen] = useState(false);
 
-  const changePreset = useCallback(
-    (delta: number) => {
-      const keys = presetKeys;
-      if (!keys.length || !visualizerRef.current) {
+  const goToPreset = useCallback(
+    (index: number) => {
+      if (!presetKeys.length || !visualizerRef.current) {
         return;
       }
-
-      const n = keys.length;
-      const newIndex = ((presetIndex ?? 0) + delta + n) % n;
+      const newIndex = ((index % presetKeys.length) + presetKeys.length) % presetKeys.length;
       fetchPresetByIndex(newIndex)
         .then(preset => {
           currentPresetRef.current = preset;
           visualizerRef.current?.loadPreset(preset, 2.7);
           setPresetIndex(newIndex);
-          prefetchNeighborPresets(newIndex, n);
+          prefetchNeighborPresets(newIndex, presetKeys.length);
         })
         .catch(console.error);
     },
-    [presetKeys, presetIndex]
+    [presetKeys]
+  );
+
+  const changePreset = useCallback(
+    (delta: number) => {
+      goToPreset((presetIndex ?? 0) + delta);
+    },
+    [goToPreset, presetIndex]
   );
 
   const setupVisualizer = useCallback(
@@ -311,6 +316,7 @@ export function useButterchurn(): UseButterChurnResult {
     start,
     presetName,
     changePreset,
+    goToPreset,
     presetIndex,
     presetKeys,
     presetNameToIndex,

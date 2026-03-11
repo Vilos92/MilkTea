@@ -1,8 +1,8 @@
-import {createPortal} from 'preact/compat';
-import {useEffect, useMemo, useRef, useState} from 'preact/hooks';
+import {useEffect, useRef} from 'preact/hooks';
 
 import {useHasFinePointer} from '../../hooks/useHasFinePointer';
-import {useSearchableList} from '../../hooks/useSearchableList';
+import {type GetSearchTerms, useSearchableList} from '../../hooks/useSearchableList';
+import {useTranslate} from '../../providers/translation';
 import {commandButton, commandButtonActive} from '../commandPalette/commandPalette.css';
 import {Picker} from '../picker/picker';
 import {selectedItem as selectedItemClass} from './presetPicker.css';
@@ -16,39 +16,22 @@ type PresetPickerProps = {
   selectedItem?: string;
   onSelect: (item: string) => void;
   onClose: () => void;
-  title: string;
-  placeholder: string;
 };
 
 /*
  * Component.
  */
 
-export function PresetPicker({
-  items,
-  selectedItem,
-  onSelect,
-  onClose,
-  title,
-  placeholder
-}: PresetPickerProps) {
+export function PresetPicker({items, selectedItem, onSelect, onClose}: PresetPickerProps) {
+  const t = useTranslate();
   const hasFinePointer = useHasFinePointer();
   const inputRef = useRef<HTMLInputElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   const activeItemRef = useRef<HTMLButtonElement>(null);
 
-  const [query, setQuery] = useState('');
-
-  const filteredItems = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) {
-      return items;
-    }
-    return items.filter(item => item.toLowerCase().includes(q));
-  }, [items, query]);
-
-  const {activeIndex, setActiveIndex, resetActiveIndex, moveUp, moveDown} = useSearchableList(
-    filteredItems.length
+  const {query, setQuery, filteredItems, activeIndex, setActiveIndex, moveUp, moveDown} = useSearchableList(
+    items,
+    getSearchTerm
   );
 
   useEffect(() => {
@@ -98,27 +81,22 @@ export function PresetPicker({
     }
   };
 
-  const portalTarget = document.getElementById('app') ?? document.body;
-
-  return createPortal(
+  return (
     <Picker
-      variant="active"
-      titleId="preset-picker-title"
-      title={title}
+      variant="dark"
+      id="preset-picker-title"
+      title={t('controls.presets')}
       onClose={onClose}
       inputRef={inputRef}
       closeBtnRef={closeBtnRef}
       searchValue={query}
-      onSearchInput={value => {
-        setQuery(value);
-        resetActiveIndex();
-      }}
+      onSearchInput={setQuery}
       onSearchKeyDown={handleSearchKeyDown}
-      searchPlaceholder={placeholder}
+      searchPlaceholder={t('controls.searchPresets')}
     >
-      <div role="listbox" aria-label={title}>
-        {filteredItems.map((item, i) => {
-          const isActive = i === activeIndex;
+      <div role="listbox" aria-label={t('controls.presets')}>
+        {filteredItems.map((item, index) => {
+          const isActive = index === activeIndex;
           const isSelected = item === selectedItem;
           return (
             <button
@@ -130,7 +108,7 @@ export function PresetPicker({
                 .join(' ')}
               role="option"
               aria-selected={isSelected}
-              onMouseEnter={() => setActiveIndex(i)}
+              onMouseEnter={() => setActiveIndex(index)}
               onClick={() => {
                 onSelect(item);
                 onClose();
@@ -141,7 +119,12 @@ export function PresetPicker({
           );
         })}
       </div>
-    </Picker>,
-    portalTarget
+    </Picker>
   );
 }
+
+/*
+ * Helpers.
+ */
+
+const getSearchTerm: GetSearchTerms<string> = (item: string) => item;

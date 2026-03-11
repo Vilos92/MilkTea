@@ -1,4 +1,4 @@
-import {useEffect} from 'preact/hooks';
+import {useEffect, useState} from 'preact/hooks';
 
 import {container, containerSplash, containerStarted} from './app.css.ts';
 import {AudioSource} from './components/audioSourceButtons/audioSourceButtons';
@@ -6,6 +6,7 @@ import {CommandPalette} from './components/commandPalette/commandPalette';
 import {DragArea} from './components/dragArea/dragArea';
 import {Help} from './components/help/help';
 import {Hud} from './components/hud/hud';
+import {PresetPicker} from './components/presetPicker/presetPicker';
 import {Splash} from './components/splash/splash';
 import {Visualizer} from './components/visualizer/visualizer';
 import {useAudioSource} from './hooks/useAudioSource';
@@ -26,6 +27,9 @@ export function MilkTea() {
     started,
     start,
     presetName,
+    presetKeys,
+    presetNameToIndex,
+    goToPreset,
     changePreset,
     connectAudioBuffer,
     connectOscillator,
@@ -33,6 +37,19 @@ export function MilkTea() {
     isCanvasFullscreen,
     toggleFullscreen
   } = useButterchurn();
+
+  const [stagedPreset, setStagedPreset] = useState<string | undefined>(undefined);
+
+  const handleFireStagedPreset = () => {
+    if (!stagedPreset) {
+      return;
+    }
+    const targetIndex = presetNameToIndex.get(stagedPreset);
+    if (targetIndex !== undefined) {
+      goToPreset(targetIndex);
+    }
+    setStagedPreset(undefined);
+  };
 
   const {
     audioSource,
@@ -99,6 +116,15 @@ export function MilkTea() {
             onClose={() => setOpenPanel(MilkTeaPanel.NONE)}
           />
         );
+      case MilkTeaPanel.PRESET_PICKER:
+        return (
+          <PresetPicker
+            items={presetKeys}
+            selectedItem={stagedPreset}
+            onSelect={setStagedPreset}
+            onClose={() => setOpenPanel(MilkTeaPanel.NONE)}
+          />
+        );
       case MilkTeaPanel.NONE:
       default:
         return null;
@@ -121,6 +147,9 @@ export function MilkTea() {
           audioSource={audioSource}
           pendingAudioSource={pendingAudioSource}
           onSourceChange={handleSourceChange}
+          hasPresets={presetKeys.length > 0}
+          stagedPresetName={stagedPreset}
+          onFireStagedPreset={handleFireStagedPreset}
         />
         {renderPanel()}
       </div>

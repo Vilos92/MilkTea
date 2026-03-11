@@ -16,7 +16,8 @@ const baseOverlay = style({
   boxSizing: 'border-box'
 });
 
-export const overlayActive = style([
+/** Always dark (e.g. over a dark canvas). */
+export const overlayDark = style([
   baseOverlay,
   {
     background: 'rgba(0,0,0,0.72)',
@@ -24,7 +25,8 @@ export const overlayActive = style([
   }
 ]);
 
-export const overlaySplash = style([
+/** Theme-aware (follows prefers-color-scheme). */
+export const overlayAdaptive = style([
   baseOverlay,
   {
     background: '#0a0a0a',
@@ -78,12 +80,12 @@ const headingBase = {
   letterSpacing: '0.06em'
 };
 
-export const heading = style({
+export const headingDark = style({
   ...headingBase,
   color: 'rgba(255,255,255,0.6)'
 });
 
-export const headingSplash = style({
+export const headingAdaptive = style({
   ...headingBase,
   color: 'rgba(255,255,255,0.6)',
   '@media': {
@@ -97,7 +99,7 @@ export const headingSplash = style({
  * Search input.
  */
 
-export const searchInput = style({
+export const searchInputDark = style({
   width: '100%',
   padding: '10px 12px',
   fontSize: '14px',
@@ -116,7 +118,7 @@ export const searchInput = style({
   }
 });
 
-export const searchInputSplash = style({
+export const searchInputAdaptive = style({
   width: '100%',
   padding: '10px 12px',
   fontSize: '14px',
@@ -186,7 +188,7 @@ const closeBtnCornerBase = {
   }
 };
 
-export const closeBtnCorner = style({
+export const closeBtnDark = style({
   ...closeBtnCornerBase,
   '@media': {
     '(pointer: coarse)': {
@@ -204,7 +206,7 @@ export const closeBtnCorner = style({
   }
 });
 
-export const closeBtnCornerSplash = style({
+export const closeBtnAdaptive = style({
   ...closeBtnCornerBase,
   '@media': {
     '(pointer: coarse)': {

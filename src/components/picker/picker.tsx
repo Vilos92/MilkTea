@@ -1,18 +1,18 @@
 import type {ComponentChildren, RefObject} from 'preact';
 
 import {
-  closeBtnCorner,
-  closeBtnCornerSplash,
+  closeBtnAdaptive,
+  closeBtnDark,
   content,
   header,
-  heading,
+  headingAdaptive,
+  headingDark,
   headingRow,
-  headingSplash,
-  overlayActive,
-  overlaySplash,
+  overlayAdaptive,
+  overlayDark,
   scrollArea,
-  searchInput,
-  searchInputSplash
+  searchInputAdaptive,
+  searchInputDark
 } from './picker.css';
 
 /*
@@ -20,8 +20,9 @@ import {
  */
 
 type PickerProps = {
-  variant: 'active' | 'splash';
-  titleId: string;
+  children: ComponentChildren;
+  variant: 'dark' | 'adaptive';
+  id: string;
   title: string;
   onClose: () => void;
   inputRef: RefObject<HTMLInputElement>;
@@ -30,7 +31,6 @@ type PickerProps = {
   onSearchInput: (value: string) => void;
   onSearchKeyDown: (event: KeyboardEvent) => void;
   searchPlaceholder: string;
-  children: ComponentChildren;
 };
 
 /*
@@ -38,8 +38,9 @@ type PickerProps = {
  */
 
 export function Picker({
+  children,
   variant,
-  titleId,
+  id,
   title,
   onClose,
   inputRef,
@@ -47,28 +48,27 @@ export function Picker({
   searchValue,
   onSearchInput,
   onSearchKeyDown,
-  searchPlaceholder,
-  children
+  searchPlaceholder
 }: PickerProps) {
-  const isSplash = variant === 'splash';
+  const isAdaptive = variant === 'adaptive';
 
   return (
     <div
-      class={isSplash ? overlaySplash : overlayActive}
+      class={isAdaptive ? overlayAdaptive : overlayDark}
       role="dialog"
       aria-modal="true"
-      aria-labelledby={titleId}
+      aria-labelledby={id}
     >
       <div class={content}>
         <div class={header}>
           <div class={headingRow}>
-            <h2 id={titleId} class={isSplash ? headingSplash : heading}>
+            <h2 id={id} class={isAdaptive ? headingAdaptive : headingDark}>
               {title}
             </h2>
             <button
               ref={closeBtnRef}
               type="button"
-              class={isSplash ? closeBtnCornerSplash : closeBtnCorner}
+              class={isAdaptive ? closeBtnAdaptive : closeBtnDark}
               onClick={onClose}
               aria-label="Close"
               onKeyDown={event => {
@@ -84,7 +84,7 @@ export function Picker({
           <input
             ref={inputRef}
             type="search"
-            class={isSplash ? searchInputSplash : searchInput}
+            class={isAdaptive ? searchInputAdaptive : searchInputDark}
             value={searchValue}
             onInput={event => onSearchInput((event.target as HTMLInputElement).value)}
             onKeyDown={onSearchKeyDown}

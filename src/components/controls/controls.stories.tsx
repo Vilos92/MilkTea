@@ -1,4 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/preact-vite';
+import type {ComponentProps} from 'preact';
 import {useEffect, useState} from 'preact/hooks';
 import {useRef} from 'preact/hooks';
 
@@ -6,17 +7,24 @@ import {getPresetKeys} from '../../lib/butterchurn/butterchurnPresets';
 import {Controls} from './controls';
 import {controlsStatic} from './controls.css';
 
-type WrapperProps = {
-  controlsVisible: boolean;
-  isPlaying: boolean;
-  isRecording: boolean;
-  isFullscreen: boolean;
+/*
+ * Types.
+ */
+
+type WrapperProps = Pick<
+  ComponentProps<typeof Controls>,
+  'controlsVisible' | 'isPlaying' | 'isRecording' | 'isFullscreen'
+> & {
   showProgress: boolean;
   showTrackInfo: boolean;
   showRecord: boolean;
   showStage: boolean;
   hasStagedPreset: boolean;
 };
+
+/*
+ * Meta.
+ */
 
 const ControlsWrapper = ({
   controlsVisible,
@@ -83,9 +91,8 @@ const ControlsWrapper = ({
         onNextTrack={() => {}}
         isRecording={isRecording}
         onRecord={showRecord ? () => setIsRecording(v => !v) : undefined}
-        presetNames={showStage ? presetNames : undefined}
+        hasPresets={showStage && presetNames.length > 0}
         stagedPresetName={stagedPresetName}
-        onStagePreset={setStagedPresetName}
         onFireStagedPreset={() => setStagedPresetName(undefined)}
       />
     </div>

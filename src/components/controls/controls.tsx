@@ -3,9 +3,9 @@ import {useEffect, useRef, useState} from 'preact/hooks';
 
 import {Axis, useSwipe} from '../../hooks/useSwipe';
 import {supportsRequestFullscreen} from '../../lib/platform';
+import {MilkTeaPanel, usePanelContext} from '../../providers/panel';
 import {useTranslate} from '../../providers/translation';
 import {Icon} from '../icon/icon';
-import {PresetPicker} from '../presetPicker/presetPicker';
 import {
   accentBtn,
   controlBtn,
@@ -60,9 +60,8 @@ type ControlsProps = {
   isRecording?: boolean;
   onRecord?: () => void;
   // Preset staging
-  presetNames?: string[];
+  hasPresets?: boolean;
   stagedPresetName?: string;
-  onStagePreset?: (name: string) => void;
   onFireStagedPreset?: () => void;
 };
 
@@ -90,14 +89,14 @@ export const Controls = ({
   onNextTrack,
   isRecording,
   onRecord,
-  presetNames,
+  hasPresets,
   stagedPresetName,
-  onStagePreset,
   onFireStagedPreset
 }: ControlsProps) => {
   const t = useTranslate();
+  const {openPanel, togglePanel} = usePanelContext();
 
-  const [popoverOpen, setPopoverOpen] = useState(false);
+  const pickerOpen = openPanel === MilkTeaPanel.PRESET_PICKER;
   const stageBtnRef = useRef<HTMLButtonElement>(null);
 
   useSwipe(swipeRef, {
@@ -110,10 +109,8 @@ export const Controls = ({
   const handleStageClick = () => {
     if (stagedPresetName) {
       onFireStagedPreset?.();
-    } else if (popoverOpen) {
-      setPopoverOpen(false);
     } else {
-      setPopoverOpen(true);
+      togglePanel(MilkTeaPanel.PRESET_PICKER);
     }
   };
 
@@ -196,8 +193,8 @@ export const Controls = ({
       <div
         class={[controls, className].filter(Boolean).join(' ')}
         style={{
-          opacity: controlsVisible || isDragging || popoverOpen ? 1 : 0,
-          pointerEvents: controlsVisible || isDragging || popoverOpen ? 'auto' : 'none'
+          opacity: controlsVisible || isDragging || pickerOpen ? 1 : 0,
+          pointerEvents: controlsVisible || isDragging || pickerOpen ? 'auto' : 'none'
         }}
         onMouseEnter={onControlsEnter}
         onMouseLeave={onControlsLeave}
@@ -307,7 +304,7 @@ export const Controls = ({
             <Icon type="chevron-left" size="sm" />
           </button>
 
-          {presetNames !== undefined && (
+          {hasPresets && (
             <div class={stageWrap}>
               <button
                 ref={stageBtnRef}
@@ -345,17 +342,6 @@ export const Controls = ({
           )}
         </div>
       </div>
-
-      {popoverOpen && presetNames !== undefined && (
-        <PresetPicker
-          items={presetNames}
-          selectedItem={stagedPresetName}
-          onSelect={name => onStagePreset?.(name)}
-          onClose={() => setPopoverOpen(false)}
-          title={t('controls.presets')}
-          placeholder={t('controls.searchPresets')}
-        />
-      )}
     </>
   );
 };

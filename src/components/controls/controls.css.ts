@@ -181,7 +181,7 @@ export const rowLabel = style({
 });
 
 /*
- * Pill rows.
+ * Control rows.
  */
 
 export const controlsRow = style({
@@ -266,6 +266,10 @@ export const smallBtn = style({
     '(pointer: coarse)': {width: '44px', height: '44px'}
   }
 });
+
+/*
+ * Divider.
+ */
 
 export const divider = style({
   width: '1px',

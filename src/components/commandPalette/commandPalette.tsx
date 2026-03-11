@@ -1,9 +1,8 @@
-import {useEffect, useMemo, useRef, useState} from 'preact/hooks';
+import {useCallback, useEffect, useMemo, useRef} from 'preact/hooks';
 
 import {useHasFinePointer} from '../../hooks/useHasFinePointer';
-import {useSearchableList} from '../../hooks/useSearchableList';
+import {type GetSearchTerms, useSearchableList} from '../../hooks/useSearchableList';
 import {supportsRequestFullscreen} from '../../lib/platform';
-import {useLocaleContext} from '../../providers/locale';
 import {useSettingsContext} from '../../providers/settings';
 import {type Translate, useTranslate} from '../../providers/translation';
 import {Picker} from '../picker/picker';
@@ -100,10 +99,8 @@ export function CommandPalette({
   onSelectMic
 }: CommandPaletteProps) {
   const t = useTranslate();
-  const {locale} = useLocaleContext();
   const hasFinePointer = useHasFinePointer();
 
-  const [query, setQuery] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
 
@@ -123,58 +120,28 @@ export function CommandPalette({
     onOpenFilePicker
   );
 
-  const filteredItems: readonly PaletteItem[] = useMemo(() => {
-    const rawQuery = query.trim();
-    if (!rawQuery) {
-      return allItems;
-    }
-
-    const searchQuery = normalizeForSearch(rawQuery).toLocaleLowerCase(locale);
-
-    return allItems.filter(item => {
-      // Match against the item label.
-      const normalizedLabel = normalizeForSearch(item.label).toLocaleLowerCase(locale);
-      if (normalizedLabel.includes(searchQuery)) {
-        return true;
-      }
-
-      // Also match against the group's localized heading (e.g., "Command", "Audio", "Settings").
-      const group = parsePaletteGroup(item.type);
-      const groupHeading = formatGroupHeading(t, group);
-      const normalizedGroupHeading = normalizeForSearch(groupHeading).toLocaleLowerCase(locale);
-      return normalizedGroupHeading.includes(searchQuery);
-    });
-  }, [allItems, query, locale, t]);
+  const getSearchTerms = useCallback<GetSearchTerms<PaletteItem>>(
+    (item: PaletteItem) => [item.label, formatGroupHeading(t, parsePaletteGroup(item.type))],
+    [t]
+  );
 
   const {
-    itemsByGroup,
-    orderedItems
-  }: {
-    itemsByGroup: Record<PaletteGroup, readonly PaletteItem[]>;
-    orderedItems: readonly PaletteItem[];
-  } = useMemo(() => {
-    const grouped: Record<PaletteGroup, PaletteItem[]> = {
-      command: [],
-      audio: [],
-      settings: []
-    };
+    query,
+    setQuery,
+    filteredItems: orderedItems,
+    activeIndex,
+    setActiveIndex,
+    moveUp,
+    moveDown
+  } = useSearchableList(allItems, getSearchTerms);
 
-    for (const item of filteredItems) {
-      const group = parsePaletteGroup(item.type);
-      grouped[group].push(item);
+  const itemsByGroup = useMemo(() => {
+    const grouped: Record<PaletteGroup, PaletteItem[]> = {command: [], audio: [], settings: []};
+    for (const item of orderedItems) {
+      grouped[parsePaletteGroup(item.type)].push(item);
     }
-
-    const ordered: PaletteItem[] = [];
-    for (const group of groupOrder) {
-      ordered.push(...grouped[group]);
-    }
-
-    return {itemsByGroup: grouped, orderedItems: ordered};
-  }, [filteredItems]);
-
-  const {activeIndex, setActiveIndex, resetActiveIndex, moveUp, moveDown} = useSearchableList(
-    orderedItems.length
-  );
+    return grouped as Record<PaletteGroup, readonly PaletteItem[]>;
+  }, [orderedItems]);
 
   const activeItem = orderedItems[activeIndex];
 
@@ -261,17 +228,14 @@ export function CommandPalette({
 
   return (
     <Picker
-      variant={visualizerActive ? 'active' : 'splash'}
-      titleId="command-palette-title"
+      variant={visualizerActive ? 'dark' : 'adaptive'}
+      id="command-palette-title"
       title={t('help.keyCommandPaletteAction')}
       onClose={onClose}
       inputRef={inputRef}
       closeBtnRef={closeBtnRef}
       searchValue={query}
-      onSearchInput={value => {
-        setQuery(value);
-        resetActiveIndex();
-      }}
+      onSearchInput={setQuery}
       onSearchKeyDown={handleSearchKeyDown}
       searchPlaceholder={t('commandPalette.searchPlaceholder')}
     >
@@ -315,12 +279,26 @@ function usePaletteItems(
   return useMemo(
     () =>
       [
+        // Settings
         {
           type: PaletteItemType.SETTINGS_SKIP_SPLASH_ON_LOAD,
           label: t('settings.autoStart'),
           checked: shouldSkipSplashOnLoad,
           onChange: setShouldSkipSplashOnLoad
         },
+        {
+          type: PaletteItemType.SETTINGS_SHOW_PRESET_ON_CHANGE,
+          label: t('settings.showPresetNameOnChange'),
+          checked: shouldShowPresetName,
+          onChange: setShouldShowPresetName
+        },
+        {
+          type: PaletteItemType.SETTINGS_SHOW_TRACK_ON_CHANGE,
+          label: t('settings.showTrackNameOnChange'),
+          checked: shouldShowTrackName,
+          onChange: setShouldShowTrackName
+        },
+        // Commands
         {
           type: PaletteItemType.COMMAND_HELP,
           label: t('help.openLabel'),
@@ -343,6 +321,7 @@ function usePaletteItems(
               onSelect: onFullScreen
             }
           : undefined,
+        // Audio
         {
           type: PaletteItemType.AUDIO_INPUT_OSCILLATOR,
           label: t('source.oscillator'),
@@ -357,18 +336,6 @@ function usePaletteItems(
           type: PaletteItemType.AUDIO_INPUT_MIC,
           label: t('source.microphone'),
           onSelect: onSelectMic
-        },
-        {
-          type: PaletteItemType.SETTINGS_SHOW_PRESET_ON_CHANGE,
-          label: t('settings.showPresetNameOnChange'),
-          checked: shouldShowPresetName,
-          onChange: setShouldShowPresetName
-        },
-        {
-          type: PaletteItemType.SETTINGS_SHOW_TRACK_ON_CHANGE,
-          label: t('settings.showTrackNameOnChange'),
-          checked: shouldShowTrackName,
-          onChange: setShouldShowTrackName
         }
       ].filter(item => item !== undefined),
     [
@@ -427,16 +394,4 @@ function parsePaletteGroup(type: PaletteItemType): PaletteGroup {
     return 'audio';
   }
   return 'settings';
-}
-
-/**
- * Normalize string for accent-insensitive search.
- *
- * @example
- * - 'Hello' → 'Hello'
- * - 'Héllo' → 'Hello'
- * - 'Héllo' → 'Hello'
- */
-function normalizeForSearch(str: string): string {
-  return str.normalize('NFD').replace(/\p{Mark}/gu, '');
 }
