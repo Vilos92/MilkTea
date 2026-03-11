@@ -40,3 +40,12 @@ jobs:
       - uses: ./.github/actions/install-bun-and-dependencies
       - name: Typecheck
         run: bun run typecheck
+
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-bun-and-dependencies
+      - name: Test
+        run: bun run test
