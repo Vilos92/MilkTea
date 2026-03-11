@@ -2,6 +2,7 @@ import {Bookmark} from './paths/bookmark';
 import {BookmarkCheck} from './paths/bookmarkCheck';
 import {ChevronLeft} from './paths/chevronLeft';
 import {ChevronRight} from './paths/chevronRight';
+import {Close} from './paths/close';
 import {EnterFullscreen} from './paths/enterFullscreen';
 import {ExitFullscreen} from './paths/exitFullscreen';
 import {NextTrack} from './paths/nextTrack';
@@ -24,6 +25,7 @@ export type IconType =
   | 'chevron-right'
   | 'bookmark'
   | 'bookmark-check'
+  | 'close'
   | 'enter-fullscreen'
   | 'exit-fullscreen';
 
@@ -81,6 +83,8 @@ function renderPaths(type: IconType) {
       return <Bookmark />;
     case 'bookmark-check':
       return <BookmarkCheck />;
+    case 'close':
+      return <Close />;
     case 'enter-fullscreen':
       return <EnterFullscreen />;
     case 'exit-fullscreen':

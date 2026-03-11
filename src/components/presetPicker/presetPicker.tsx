@@ -83,6 +83,33 @@ export function PresetPicker({items, selectedItem, onSelect, onClose}: PresetPic
 
   return (
     <Picker
+      children={
+        <div role="listbox" aria-label={t('controls.presets')}>
+          {filteredItems.map((item, index) => {
+            const isActive = index === activeIndex;
+            const isSelected = item === selectedItem;
+            return (
+              <button
+                ref={isActive ? activeItemRef : undefined}
+                key={item}
+                type="button"
+                class={[commandButton, isActive && commandButtonActive, isSelected && selectedItemClass]
+                  .filter(Boolean)
+                  .join(' ')}
+                role="option"
+                aria-selected={isSelected}
+                onMouseEnter={() => setActiveIndex(index)}
+                onClick={() => {
+                  onSelect(item);
+                  onClose();
+                }}
+              >
+                {item}
+              </button>
+            );
+          })}
+        </div>
+      }
       variant="dark"
       id="preset-picker-title"
       title={t('controls.presets')}
@@ -93,33 +120,7 @@ export function PresetPicker({items, selectedItem, onSelect, onClose}: PresetPic
       onSearchInput={setQuery}
       onSearchKeyDown={handleSearchKeyDown}
       searchPlaceholder={t('controls.searchPresets')}
-    >
-      <div role="listbox" aria-label={t('controls.presets')}>
-        {filteredItems.map((item, index) => {
-          const isActive = index === activeIndex;
-          const isSelected = item === selectedItem;
-          return (
-            <button
-              ref={isActive ? activeItemRef : undefined}
-              key={item}
-              type="button"
-              class={[commandButton, isActive && commandButtonActive, isSelected && selectedItemClass]
-                .filter(Boolean)
-                .join(' ')}
-              role="option"
-              aria-selected={isSelected}
-              onMouseEnter={() => setActiveIndex(index)}
-              onClick={() => {
-                onSelect(item);
-                onClose();
-              }}
-            >
-              {item}
-            </button>
-          );
-        })}
-      </div>
-    </Picker>
+    />
   );
 }
 

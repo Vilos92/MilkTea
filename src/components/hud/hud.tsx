@@ -19,20 +19,25 @@ import {
  */
 
 type HudProps = {
-  started: boolean;
+  // Layout and controls.
   swipeRef: RefObject<HTMLElement>;
+  started: boolean;
   isCanvasFullscreen: boolean;
   toggleFullscreen: () => void;
   changePreset: (delta: number) => void;
+  // Audio source.
   fileInputRef: RefObject<HTMLInputElement>;
   onFileChange: (event: Event) => void;
   audioSource: AudioSource;
   pendingAudioSource: AudioSource | undefined;
   onSourceChange: (source: AudioSource) => void;
-  // Preset staging
-  hasPresets?: boolean;
-  stagedPresetName?: string;
-  onFireStagedPreset?: () => void;
+  // Track info.
+  trackName: string | undefined;
+  presetName: string | undefined;
+  // Preset staging.
+  hasPresets: boolean;
+  stagedPresetName: string | undefined;
+  onFireStagedPreset: () => void;
 };
 
 /*
@@ -46,8 +51,8 @@ const CONTROLS_FADE_DELAY_MS = 2500;
  */
 
 export function Hud({
-  started,
   swipeRef,
+  started,
   isCanvasFullscreen,
   toggleFullscreen,
   changePreset,
@@ -56,6 +61,8 @@ export function Hud({
   audioSource,
   pendingAudioSource,
   onSourceChange,
+  trackName,
+  presetName,
   hasPresets,
   stagedPresetName,
   onFireStagedPreset
@@ -114,6 +121,17 @@ export function Hud({
         controlsVisible={hudVisible}
         onControlsEnter={handleControlsEnter}
         onControlsLeave={handleControlsLeave}
+        trackName={trackName}
+        presetName={presetName}
+        currentTime={undefined}
+        duration={undefined}
+        onSeek={undefined}
+        isPlaying={undefined}
+        onPlayPause={undefined}
+        onPrevTrack={undefined}
+        onNextTrack={undefined}
+        isRecording={undefined}
+        onRecord={undefined}
         hasPresets={hasPresets}
         stagedPresetName={stagedPresetName}
         onFireStagedPreset={onFireStagedPreset}

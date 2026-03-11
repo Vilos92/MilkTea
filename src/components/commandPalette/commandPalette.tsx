@@ -228,6 +228,15 @@ export function CommandPalette({
 
   return (
     <Picker
+      children={groupOrder.map(
+        group =>
+          itemsByGroup[group].length > 0 && (
+            <div key={group} class={paletteGroup}>
+              <h3 class={groupHeadingClass}>{formatGroupHeading(t, group)}</h3>
+              {itemsByGroup[group].map(item => renderPaletteItem(item, item === activeItem))}
+            </div>
+          )
+      )}
       variant={visualizerActive ? 'dark' : 'adaptive'}
       id="command-palette-title"
       title={t('help.keyCommandPaletteAction')}
@@ -238,17 +247,7 @@ export function CommandPalette({
       onSearchInput={setQuery}
       onSearchKeyDown={handleSearchKeyDown}
       searchPlaceholder={t('commandPalette.searchPlaceholder')}
-    >
-      {groupOrder.map(
-        group =>
-          itemsByGroup[group].length > 0 && (
-            <div key={group} class={paletteGroup}>
-              <h3 class={groupHeadingClass}>{formatGroupHeading(t, group)}</h3>
-              {itemsByGroup[group].map(item => renderPaletteItem(item, item === activeItem))}
-            </div>
-          )
-      )}
-    </Picker>
+    />
   );
 }
 

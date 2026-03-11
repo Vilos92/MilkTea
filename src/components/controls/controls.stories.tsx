@@ -72,14 +72,14 @@ const ControlsWrapper = ({
       }}
     >
       <Controls
-        class={controlsStatic}
         swipeRef={swipeRef}
-        controlsVisible={controlsVisible}
-        onControlsEnter={() => {}}
-        onControlsLeave={() => {}}
+        class={controlsStatic}
         isFullscreen={isFullscreen}
         toggleFullscreen={() => setIsFullscreen(v => !v)}
         changePreset={() => {}}
+        controlsVisible={controlsVisible}
+        onControlsEnter={() => {}}
+        onControlsLeave={() => {}}
         trackName={showTrackInfo ? 'Clair de Lune — Claude Debussy' : undefined}
         presetName={showTrackInfo ? 'electric_sheep_23' : undefined}
         currentTime={showProgress ? currentTime : undefined}

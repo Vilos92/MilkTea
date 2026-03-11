@@ -1,5 +1,6 @@
 import type {ComponentChildren, RefObject} from 'preact';
 
+import {Icon} from '../icon/icon';
 import {
   closeBtnAdaptive,
   closeBtnDark,
@@ -19,9 +20,11 @@ import {
  * Types.
  */
 
+type PickerVariant = 'dark' | 'adaptive';
+
 type PickerProps = {
   children: ComponentChildren;
-  variant: 'dark' | 'adaptive';
+  variant: PickerVariant;
   id: string;
   title: string;
   onClose: () => void;
@@ -78,7 +81,7 @@ export function Picker({
                 }
               }}
             >
-              ✕
+              <Icon type="close" size="sm" />
             </button>
           </div>
           <input

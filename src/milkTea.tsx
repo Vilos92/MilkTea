@@ -134,11 +134,11 @@ export function MilkTea() {
   return (
     <DragArea handleDrop={handleAudioFileDrop}>
       <div ref={containerRef} class={[container, started ? containerStarted : containerSplash].join(' ')}>
-        <Visualizer canvasRef={canvasRef} presetName={presetName} trackName={trackName} />
+        <Visualizer canvasRef={canvasRef} />
         {!started && <Splash start={start} />}
         <Hud
-          started={started}
           swipeRef={containerRef}
+          started={started}
           isCanvasFullscreen={isCanvasFullscreen}
           toggleFullscreen={toggleFullscreen}
           changePreset={changePreset}
@@ -147,6 +147,8 @@ export function MilkTea() {
           audioSource={audioSource}
           pendingAudioSource={pendingAudioSource}
           onSourceChange={handleSourceChange}
+          trackName={trackName}
+          presetName={presetName}
           hasPresets={presetKeys.length > 0}
           stagedPresetName={stagedPreset}
           onFireStagedPreset={handleFireStagedPreset}

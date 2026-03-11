@@ -44,16 +44,18 @@ export const controlsStatic = style({
  */
 
 export const trackInfo = style({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
   textAlign: 'center',
   marginBottom: '12px',
-  opacity: 0.7
+  opacity: 0.95
 });
 
 export const trackTitle = style({
   fontSize: '11px',
   color: '#fff',
   letterSpacing: '0.12em',
-  textTransform: 'uppercase',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
@@ -62,7 +64,7 @@ export const trackTitle = style({
 
 export const trackPresetLabel = style({
   fontSize: '10px',
-  color: 'rgba(255, 255, 255, 0.45)',
+  color: 'rgba(255, 255, 255, 0.85)',
   letterSpacing: '0.08em',
   marginTop: '2px'
 });
@@ -82,7 +84,7 @@ export const progressWrap = style({
 
 export const timeLabel = style({
   fontSize: '9px',
-  color: 'rgba(255, 255, 255, 0.35)',
+  color: 'rgba(255, 255, 255, 0.8)',
   letterSpacing: '0.05em',
   minWidth: '28px',
   userSelect: 'none'
@@ -112,14 +114,14 @@ export const progressBarInner = style({
   top: '50%',
   transform: 'translateY(-50%)',
   height: '3px',
-  background: 'rgba(255, 255, 255, 0.12)',
+  background: 'rgba(255, 255, 255, 0.22)',
   borderRadius: '2px',
   transition: 'height 0.15s, background 0.15s'
 });
 
 export const progressFill = style({
   height: '100%',
-  background: 'rgba(255, 255, 255, 0.7)',
+  background: 'rgba(255, 255, 255, 0.88)',
   borderRadius: '2px',
   position: 'relative',
   pointerEvents: 'none',
@@ -142,7 +144,7 @@ export const progressFill = style({
 
 globalStyle(`${progressTrack}:hover ${progressBarInner}`, {
   height: '5px',
-  background: 'rgba(255, 255, 255, 0.2)'
+  background: 'rgba(255, 255, 255, 0.35)'
 });
 
 globalStyle(`${progressTrack}:hover ${progressFill}::after`, {
@@ -155,7 +157,7 @@ export const progressTrackDragging = style({
 
 globalStyle(`${progressTrackDragging} ${progressBarInner}`, {
   height: '5px',
-  background: 'rgba(255, 255, 255, 0.2)'
+  background: 'rgba(255, 255, 255, 0.35)'
 });
 
 globalStyle(`${progressTrackDragging} ${progressFill}::after`, {
@@ -168,7 +170,7 @@ globalStyle(`${progressTrackDragging} ${progressFill}::after`, {
 
 export const rowLabel = style({
   fontSize: '8px',
-  color: 'rgba(255, 255, 255, 0.2)',
+  color: 'rgba(255, 255, 255, 0.6)',
   letterSpacing: '0.15em',
   textTransform: 'uppercase',
   textAlign: 'center',
@@ -187,14 +189,14 @@ export const rowLabel = style({
 export const controlsRow = style({
   display: 'flex',
   alignItems: 'center',
-  background: 'rgba(22, 22, 22, 0.82)',
+  background: 'rgba(22, 22, 22, 0.94)',
   backdropFilter: 'blur(12px)',
-  border: '1px solid rgba(255, 255, 255, 0.07)',
+  border: '1px solid rgba(255, 255, 255, 0.12)',
   borderRadius: '60px',
   padding: '6px 10px',
   transition: 'background 0.15s',
   '@media': {
-    '(hover: hover)': {':hover': {background: 'rgba(30, 30, 30, 0.92)'}}
+    '(hover: hover)': {':hover': {background: 'rgba(30, 30, 30, 0.97)'}}
   }
 });
 
@@ -219,9 +221,9 @@ export const controlBtn = style({
   width: '44px',
   height: '44px',
   background: 'transparent',
-  color: 'rgba(255, 255, 255, 0.75)',
+  color: 'rgba(255, 255, 255, 0.92)',
   '@media': {
-    '(hover: hover)': {':hover': {background: 'rgba(255, 255, 255, 0.1)', color: '#fff'}},
+    '(hover: hover)': {':hover': {background: 'rgba(255, 255, 255, 0.15)', color: '#fff'}},
     '(pointer: coarse)': {width: '52px', height: '52px'}
   }
 });
@@ -243,9 +245,9 @@ export const recordBtn = style({
   width: '44px',
   height: '44px',
   background: 'transparent',
-  color: 'rgba(255, 255, 255, 0.3)',
+  color: 'rgba(255, 255, 255, 0.7)',
   '@media': {
-    '(hover: hover)': {':hover': {color: 'rgba(255, 90, 90, 0.8)', background: 'rgba(255, 90, 90, 0.1)'}},
+    '(hover: hover)': {':hover': {color: 'rgba(255, 90, 90, 0.95)', background: 'rgba(255, 90, 90, 0.15)'}},
     '(pointer: coarse)': {width: '52px', height: '52px'}
   }
 });
@@ -260,9 +262,9 @@ export const smallBtn = style({
   width: '36px',
   height: '36px',
   background: 'transparent',
-  color: 'rgba(255, 255, 255, 0.75)',
+  color: 'rgba(255, 255, 255, 0.92)',
   '@media': {
-    '(hover: hover)': {':hover': {background: 'rgba(255, 255, 255, 0.1)', color: '#fff'}},
+    '(hover: hover)': {':hover': {background: 'rgba(255, 255, 255, 0.15)', color: '#fff'}},
     '(pointer: coarse)': {width: '44px', height: '44px'}
   }
 });

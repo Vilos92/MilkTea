@@ -44,25 +44,25 @@ type ControlsProps = {
   controlsVisible: boolean;
   onControlsEnter: () => void;
   onControlsLeave: () => void;
-  // Track info
-  trackName?: string;
-  presetName?: string;
-  // Progress
-  currentTime?: number;
-  duration?: number;
-  onSeek?: (time: number) => void;
-  // Playback
-  isPlaying?: boolean;
-  onPlayPause?: () => void;
-  onPrevTrack?: () => void;
-  onNextTrack?: () => void;
-  // Recording
-  isRecording?: boolean;
-  onRecord?: () => void;
-  // Preset staging
-  hasPresets?: boolean;
-  stagedPresetName?: string;
-  onFireStagedPreset?: () => void;
+  // Track info.
+  trackName: string | undefined;
+  presetName: string | undefined;
+  // Progress.
+  currentTime: number | undefined;
+  duration: number | undefined;
+  onSeek: ((time: number) => void) | undefined;
+  // Playback.
+  isPlaying: boolean | undefined;
+  onPlayPause: (() => void) | undefined;
+  onPrevTrack: (() => void) | undefined;
+  onNextTrack: (() => void) | undefined;
+  // Recording.
+  isRecording: boolean | undefined;
+  onRecord: (() => void) | undefined;
+  // Preset staging.
+  hasPresets: boolean;
+  stagedPresetName: string | undefined;
+  onFireStagedPreset: () => void;
 };
 
 /*
@@ -199,7 +199,7 @@ export const Controls = ({
         onMouseEnter={onControlsEnter}
         onMouseLeave={onControlsLeave}
       >
-        {/* Track info */}
+        {/* Track info. */}
         {(trackName ?? presetName) && (
           <div class={trackInfo}>
             {trackName && <div class={trackTitle}>{trackName}</div>}
@@ -207,7 +207,7 @@ export const Controls = ({
           </div>
         )}
 
-        {/* Progress bar */}
+        {/* Progress bar. */}
         {hasProgress && (
           <div class={progressWrap}>
             <span class={timeLabel}>{formatTime(currentTime!)}</span>
@@ -245,7 +245,7 @@ export const Controls = ({
           </div>
         )}
 
-        {/* Playback row */}
+        {/* Playback row. */}
         <div class={rowLabel}>{t('controls.rowPlayback')}</div>
         <div class={controlsRow}>
           <button
