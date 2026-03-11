@@ -145,6 +145,14 @@ function renderDesktopHotkeys(t: Translate, isMac: boolean): preact.VNode[] {
       <span class={actionCell}>{t('help.keyNextAction')}</span>
     </li>,
     <li class={hotkeyRow}>
+      <span class={keyCell}>{t('help.keySemicolonKeys')}</span>
+      <span class={actionCell}>{t('help.keySemicolonAction')}</span>
+    </li>,
+    <li class={hotkeyRow}>
+      <span class={keyCell}>{t('help.keySpaceKeys')}</span>
+      <span class={actionCell}>{t('help.keySpaceAction')}</span>
+    </li>,
+    <li class={hotkeyRow}>
       <span class={keyCell}>{t('help.keyFullscreenKeys')}</span>
       <span class={actionCell}>{t('help.keyFullscreenAction')}</span>
     </li>,

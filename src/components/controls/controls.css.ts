@@ -23,6 +23,7 @@ export const controls = style({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
+  width: '280px',
   minWidth: '280px',
   transition: 'opacity 0.35s ease',
   selectors: {
@@ -76,7 +77,6 @@ export const trackPresetLabel = style({
 
 export const progressWrap = style({
   width: '100%',
-  minWidth: '280px',
   marginBottom: '10px',
   display: 'flex',
   alignItems: 'center',

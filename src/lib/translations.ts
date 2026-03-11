@@ -45,6 +45,10 @@ export type TranslationKey =
   | 'help.keyCommandPaletteKeysMac'
   | 'help.keyCommandPaletteKeysWindows'
   | 'help.keyCommandPaletteAction'
+  | 'help.keySpaceKeys'
+  | 'help.keySpaceAction'
+  | 'help.keySemicolonKeys'
+  | 'help.keySemicolonAction'
   | 'help.swipePrevKeys'
   | 'help.swipePrevAction'
   | 'help.swipeNextKeys'
@@ -90,8 +94,8 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'controls.stopRecord': 'Stop recording',
   'controls.prevPreset': 'Previous preset',
   'controls.nextPreset': 'Next preset',
-  'controls.stagePreset': 'Stage a preset',
-  'controls.firePreset': 'Apply staged preset',
+  'controls.stagePreset': 'Stage preset',
+  'controls.firePreset': 'Launch preset',
   'controls.presets': 'Presets',
   'controls.searchPresets': 'Search presets\u2026',
   'controls.enterFullscreen': 'Enter fullscreen',
@@ -115,6 +119,10 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'help.keyCommandPaletteKeysMac': '⌘K',
   'help.keyCommandPaletteKeysWindows': 'Ctrl+K',
   'help.keyCommandPaletteAction': 'Command Palette',
+  'help.keySpaceKeys': 'Space',
+  'help.keySpaceAction': 'Pause / Play',
+  'help.keySemicolonKeys': ';',
+  'help.keySemicolonAction': 'Stage preset and launch preset',
   'help.swipePrevKeys': 'Swipe left',
   'help.swipePrevAction': 'Previous preset',
   'help.swipeNextKeys': 'Swipe right',

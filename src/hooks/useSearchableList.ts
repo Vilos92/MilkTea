@@ -1,5 +1,7 @@
 import {useCallback, useEffect, useMemo, useState} from 'preact/hooks';
 
+import {smartSearch} from '../lib/search';
+
 /*
  * Types.
  */
@@ -10,10 +12,9 @@ export type GetSearchTerms<TItem> = (item: TItem) => string | readonly string[];
  * Manages query state, filtering, and keyboard-navigable active index for a searchable list.
  *
  * `getSearchTerms` receives a single item and returns the string(s) to match against. Any term
- * matching the query is sufficient. Wrap in `useCallback` when it has dependencies.
- *
- * Items should arrive pre-sorted in the desired navigation order — the hook preserves that order
- * while filtering and does not reorder results.
+ * matching the query is sufficient. Uses smart search: exact match > starts-with > fuzzy (query
+ * chars in order). Results are ordered by score then by match length. Wrap `getSearchTerms` in
+ * `useCallback` when it has dependencies.
  *
  * The active index resets to 0 when the query changes, and clamps when the filtered list shrinks.
  */
@@ -25,15 +26,22 @@ export function useSearchableList<TItem>(
   const [activeIndex, setActiveIndex] = useState(0);
 
   const filteredItems = useMemo(() => {
-    const normalizedQuery = normalizeForSearch(query.trim()).toLocaleLowerCase();
-    if (!normalizedQuery) {
+    const trimmed = query.trim();
+    if (!trimmed) {
       return items;
     }
-    return items.filter(item => {
+    const scoredItems = items.map(item => {
       const searchTerms = getSearchTerms(item);
-      const terms = typeof searchTerms === 'string' ? [searchTerms] : searchTerms;
-      return terms.some(term => normalizeForSearch(term).toLocaleLowerCase().includes(normalizedQuery));
+      const terms = typeof searchTerms === 'string' ? [searchTerms] : [...searchTerms];
+      const scored = smartSearch(query, terms);
+      const score = scored.length > 0 ? scored[0].score : 0;
+      const length = scored.length > 0 ? scored[0].item.length : Infinity;
+      return {item, score, length};
     });
+    return scoredItems
+      .filter(({score}) => score > 0)
+      .sort((a, b) => b.score - a.score || a.length - b.length)
+      .map(({item}) => item);
   }, [items, query, getSearchTerms]);
 
   useEffect(() => {
@@ -61,24 +69,4 @@ export function useSearchableList<TItem>(
     moveUp,
     moveDown
   };
-}
-
-/*
- * Helpers.
- */
-
-export function makeGetSearchTerms<TItem>(getSearchTerms: (item: TItem) => string | readonly string[]) {
-  return (item: TItem) => {
-    const searchTerms = getSearchTerms(item);
-    const terms = typeof searchTerms === 'string' ? [searchTerms] : searchTerms;
-    return terms.map(term => normalizeForSearch(term).toLocaleLowerCase());
-  };
-}
-
-/**
- * Accent-insensitive normalisation for search matching.
- * @example 'Héllo' → 'Hello'
- */
-function normalizeForSearch(str: string): string {
-  return str.normalize('NFD').replace(/\p{Mark}/gu, '');
 }
