@@ -13,13 +13,14 @@ import {controlsStatic} from './controls.css';
 
 type WrapperProps = Pick<
   ComponentProps<typeof Controls>,
-  'controlsVisible' | 'isPlaying' | 'isRecording' | 'isFullscreen'
+  'controlsVisible' | 'isRecording' | 'isFullscreen'
 > & {
   showProgress: boolean;
   showTrackInfo: boolean;
   showRecord: boolean;
   showStage: boolean;
   hasStagedPreset: boolean;
+  initialIsPlaying: boolean;
 };
 
 /*
@@ -28,7 +29,7 @@ type WrapperProps = Pick<
 
 const ControlsWrapper = ({
   controlsVisible,
-  isPlaying: initialIsPlaying,
+  initialIsPlaying,
   isRecording: initialIsRecording,
   isFullscreen: initialIsFullscreen,
   showProgress,
@@ -82,11 +83,17 @@ const ControlsWrapper = ({
         onControlsLeave={() => {}}
         trackName={showTrackInfo ? 'Clair de Lune — Claude Debussy' : undefined}
         presetName={showTrackInfo ? 'electric_sheep_23' : undefined}
-        currentTime={showProgress ? currentTime : undefined}
-        duration={showProgress ? 222 : undefined}
-        onSeek={showProgress ? setCurrentTime : undefined}
-        isPlaying={isPlaying}
-        onPlayPause={() => setIsPlaying(v => !v)}
+        filePlayback={
+          showProgress
+            ? {
+                currentTime,
+                duration: 222,
+                isPlaying,
+                onPlayPause: () => setIsPlaying((v: boolean) => !v),
+                onSeek: setCurrentTime
+              }
+            : undefined
+        }
         onPrevTrack={() => {}}
         onNextTrack={() => {}}
         isRecording={isRecording}
@@ -119,7 +126,7 @@ export const Default: Story = {
   render: () => (
     <ControlsWrapper
       controlsVisible={true}
-      isPlaying={false}
+      initialIsPlaying={false}
       isRecording={false}
       isFullscreen={false}
       showProgress={true}
@@ -135,7 +142,7 @@ export const Playing: Story = {
   render: () => (
     <ControlsWrapper
       controlsVisible={true}
-      isPlaying={true}
+      initialIsPlaying={true}
       isRecording={false}
       isFullscreen={false}
       showProgress={true}
@@ -151,7 +158,7 @@ export const Recording: Story = {
   render: () => (
     <ControlsWrapper
       controlsVisible={true}
-      isPlaying={true}
+      initialIsPlaying={true}
       isRecording={true}
       isFullscreen={false}
       showProgress={true}
@@ -167,7 +174,7 @@ export const StagedPreset: Story = {
   render: () => (
     <ControlsWrapper
       controlsVisible={true}
-      isPlaying={true}
+      initialIsPlaying={true}
       isRecording={false}
       isFullscreen={false}
       showProgress={true}
@@ -183,7 +190,7 @@ export const Fullscreen: Story = {
   render: () => (
     <ControlsWrapper
       controlsVisible={true}
-      isPlaying={true}
+      initialIsPlaying={true}
       isRecording={false}
       isFullscreen={true}
       showProgress={true}
@@ -199,7 +206,7 @@ export const Minimal: Story = {
   render: () => (
     <ControlsWrapper
       controlsVisible={true}
-      isPlaying={false}
+      initialIsPlaying={false}
       isRecording={false}
       isFullscreen={false}
       showProgress={false}
@@ -215,7 +222,7 @@ export const Hidden: Story = {
   render: () => (
     <ControlsWrapper
       controlsVisible={false}
-      isPlaying={false}
+      initialIsPlaying={false}
       isRecording={false}
       isFullscreen={false}
       showProgress={true}

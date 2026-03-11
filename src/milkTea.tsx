@@ -1,7 +1,6 @@
 import {useEffect, useState} from 'preact/hooks';
 
 import {container, containerSplash, containerStarted} from './app.css.ts';
-import {AudioSource} from './components/audioSourceButtons/audioSourceButtons';
 import {CommandPalette} from './components/commandPalette/commandPalette';
 import {DragArea} from './components/dragArea/dragArea';
 import {Help} from './components/help/help';
@@ -13,6 +12,7 @@ import {useAudioSource} from './hooks/useAudioSource';
 import {useButterchurn} from './hooks/useButterchurn';
 import {Axis, useSwipe} from './hooks/useSwipe';
 import {MilkTeaPanel, usePanelContext} from './providers/panel';
+import {AudioSource} from './types/audio';
 
 /*
  * MilkTea.
@@ -34,6 +34,7 @@ export function MilkTea() {
     connectAudioBuffer,
     connectOscillator,
     connectMediaStream,
+    filePlayback,
     isCanvasFullscreen,
     toggleFullscreen
   } = useButterchurn();
@@ -55,11 +56,18 @@ export function MilkTea() {
     audioSource,
     pendingAudioSource,
     trackName,
+    audioFilePlayback: audioFilePlayback,
     fileInputRef,
     onAudioFileChange,
     handleAudioFileDrop,
     handleSourceChange
-  } = useAudioSource({connectAudioBuffer, connectOscillator, connectMediaStream, onAudioFile: start});
+  } = useAudioSource({
+    connectAudioBuffer,
+    connectOscillator,
+    connectMediaStream,
+    onAudioFile: start,
+    filePlayback
+  });
 
   useEffect(() => {
     if (started) {
@@ -149,6 +157,7 @@ export function MilkTea() {
           onSourceChange={handleSourceChange}
           trackName={trackName}
           presetName={presetName}
+          filePlayback={audioFilePlayback}
           hasPresets={presetKeys.length > 0}
           stagedPresetName={stagedPreset}
           onFireStagedPreset={handleFireStagedPreset}

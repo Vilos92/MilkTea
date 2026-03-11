@@ -5,6 +5,7 @@ import {Axis, useSwipe} from '../../hooks/useSwipe';
 import {supportsRequestFullscreen} from '../../lib/platform';
 import {MilkTeaPanel, usePanelContext} from '../../providers/panel';
 import {useTranslate} from '../../providers/translation';
+import type {AudioFilePlayback} from '../../types/audio';
 import {Icon} from '../icon/icon';
 import {
   accentBtn,
@@ -47,13 +48,8 @@ type ControlsProps = {
   // Track info.
   trackName: string | undefined;
   presetName: string | undefined;
-  // Progress.
-  currentTime: number | undefined;
-  duration: number | undefined;
-  onSeek: ((time: number) => void) | undefined;
-  // Playback.
-  isPlaying: boolean | undefined;
-  onPlayPause: (() => void) | undefined;
+  /** When set, shows progress bar and play/pause row. `undefined` for oscillator/mic. */
+  filePlayback: AudioFilePlayback | undefined;
   onPrevTrack: (() => void) | undefined;
   onNextTrack: (() => void) | undefined;
   // Recording.
@@ -80,11 +76,7 @@ export const Controls = ({
   onControlsLeave,
   trackName,
   presetName,
-  currentTime,
-  duration,
-  onSeek,
-  isPlaying,
-  onPlayPause,
+  filePlayback,
   onPrevTrack,
   onNextTrack,
   isRecording,
@@ -116,21 +108,21 @@ export const Controls = ({
 
   const progressTrackRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const onSeekRef = useRef(onSeek);
-  onSeekRef.current = onSeek;
-  const durationRef = useRef(duration);
-  durationRef.current = duration;
+  const onSeekRef = useRef(filePlayback?.onSeek);
+  onSeekRef.current = filePlayback?.onSeek;
+  const trackDurationRef = useRef(filePlayback?.duration);
+  trackDurationRef.current = filePlayback?.duration;
 
   const seekFromClientX = (clientX: number) => {
     const element = progressTrackRef.current;
-    const seek = onSeekRef.current;
-    const duration = durationRef.current;
-    if (!element || !seek || !duration) {
+    const onSeek = onSeekRef.current;
+    const trackDuration = trackDurationRef.current;
+    if (!element || !onSeek || trackDuration == null || trackDuration <= 0) {
       return;
     }
     const rect = element.getBoundingClientRect();
     const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
-    seek((x / rect.width) * duration);
+    onSeek((x / rect.width) * trackDuration);
   };
 
   const startDrag = () => {
@@ -143,7 +135,7 @@ export const Controls = ({
   };
 
   const handleTrackMouseDown = (event: MouseEvent) => {
-    if (!onSeek || !duration) {
+    if (!filePlayback?.onSeek || filePlayback.duration <= 0) {
       return;
     }
     event.preventDefault();
@@ -166,7 +158,7 @@ export const Controls = ({
   };
 
   const handleTrackTouchStart = (event: TouchEvent) => {
-    if (!onSeek || !duration) {
+    if (!filePlayback?.onSeek || filePlayback.duration <= 0) {
       return;
     }
     event.preventDefault();
@@ -186,7 +178,7 @@ export const Controls = ({
     document.addEventListener('touchend', onTouchEnd);
   };
 
-  const hasProgress = typeof currentTime === 'number' && typeof duration === 'number' && duration > 0;
+  const hasProgress = filePlayback != null && filePlayback.duration > 0;
 
   return (
     <>
@@ -207,89 +199,99 @@ export const Controls = ({
           </div>
         )}
 
-        {/* Progress bar. */}
-        {hasProgress && (
+        {/* Progress bar (only when playing a file). */}
+        {filePlayback != null && hasProgress && (
           <div class={progressWrap}>
-            <span class={timeLabel}>{formatTime(currentTime!)}</span>
+            <span class={timeLabel}>{formatTime(filePlayback.currentTime)}</span>
             <div
               ref={progressTrackRef}
               class={isDragging ? [progressTrack, progressTrackDragging].join(' ') : progressTrack}
               role="slider"
               aria-label="Seek"
               aria-valuemin={0}
-              aria-valuemax={duration}
-              aria-valuenow={currentTime}
+              aria-valuemax={filePlayback.duration}
+              aria-valuenow={filePlayback.currentTime}
               tabIndex={0}
               onMouseDown={handleTrackMouseDown}
               onTouchStart={handleTrackTouchStart}
               onKeyDown={e => {
-                if (!onSeek || !duration) {
+                if (!filePlayback.onSeek) {
                   return;
                 }
                 if (e.key === 'ArrowRight') {
-                  onSeek(Math.min(currentTime! + 5, duration));
+                  filePlayback.onSeek(Math.min(filePlayback.currentTime + 5, filePlayback.duration));
                 }
                 if (e.key === 'ArrowLeft') {
-                  onSeek(Math.max(currentTime! - 5, 0));
+                  filePlayback.onSeek(Math.max(filePlayback.currentTime - 5, 0));
                 }
               }}
             >
               <div class={progressBarInner}>
                 <div
                   class={progressFill}
-                  style={{width: `${Math.min((currentTime! / duration!) * 100, 100)}%`}}
+                  style={{
+                    width: `${Math.min((filePlayback.currentTime / filePlayback.duration) * 100, 100)}%`
+                  }}
                 />
               </div>
             </div>
-            <span class={[timeLabel, timeLabelRight].join(' ')}>{formatTime(duration!)}</span>
+            <span class={[timeLabel, timeLabelRight].join(' ')}>{formatTime(filePlayback.duration)}</span>
           </div>
         )}
 
-        {/* Playback row. */}
-        <div class={rowLabel}>{t('controls.rowPlayback')}</div>
-        <div class={controlsRow}>
-          <button
-            type="button"
-            class={controlBtn}
-            onClick={onPrevTrack}
-            aria-label={t('controls.prevTrack')}
-            title={t('controls.prevTrack')}
-          >
-            <Icon type="prev-track" size="sm" />
-          </button>
-          <button
-            type="button"
-            class={accentBtn}
-            onClick={onPlayPause}
-            aria-label={isPlaying ? t('controls.pause') : t('controls.play')}
-            title={isPlaying ? t('controls.pause') : t('controls.play')}
-          >
-            <Icon type={isPlaying ? 'pause' : 'play'} size="md" />
-          </button>
-          <button
-            type="button"
-            class={controlBtn}
-            onClick={onNextTrack}
-            aria-label={t('controls.nextTrack')}
-            title={t('controls.nextTrack')}
-          >
-            <Icon type="next-track" size="sm" />
-          </button>
-          {onRecord !== undefined && (
-            <>
-              <div class={divider} />
+        {/* Playback row (only when playing a file). */}
+        {filePlayback != null && (
+          <>
+            <div class={rowLabel}>{t('controls.rowPlayback')}</div>
+            <div class={controlsRow}>
+              {onPrevTrack !== undefined && (
+                <button
+                  type="button"
+                  class={controlBtn}
+                  onClick={onPrevTrack}
+                  aria-label={t('controls.prevTrack')}
+                  title={t('controls.prevTrack')}
+                >
+                  <Icon type="prev-track" size="sm" />
+                </button>
+              )}
               <button
                 type="button"
-                class={isRecording ? [recordBtn, recordBtnActive].join(' ') : recordBtn}
-                onClick={onRecord}
-                aria-label={isRecording ? t('controls.stopRecord') : t('controls.record')}
-                title={isRecording ? t('controls.stopRecord') : t('controls.record')}
+                class={accentBtn}
+                onClick={filePlayback.onPlayPause}
+                aria-label={filePlayback.isPlaying ? t('controls.pause') : t('controls.play')}
+                title={filePlayback.isPlaying ? t('controls.pause') : t('controls.play')}
               >
-                <Icon type="record" size="sm" />
+                <Icon type={filePlayback.isPlaying ? 'pause' : 'play'} size="md" />
               </button>
-            </>
-          )}
-        </div>
+              {onNextTrack !== undefined && (
+                <button
+                  type="button"
+                  class={controlBtn}
+                  onClick={onNextTrack}
+                  aria-label={t('controls.nextTrack')}
+                  title={t('controls.nextTrack')}
+                >
+                  <Icon type="next-track" size="sm" />
+                </button>
+              )}
+              {onRecord !== undefined && (
+                <>
+                  <div class={divider} />
+                  <button
+                    type="button"
+                    class={isRecording ? [recordBtn, recordBtnActive].join(' ') : recordBtn}
+                    onClick={onRecord}
+                    aria-label={isRecording ? t('controls.stopRecord') : t('controls.record')}
+                    title={isRecording ? t('controls.stopRecord') : t('controls.record')}
+                  >
+                    <Icon type="record" size="sm" />
+                  </button>
+                </>
+              )}
+            </div>
+          </>
+        )}
 
         {/* Presets row */}
         <div class={rowLabel}>{t('controls.rowPresets')}</div>

@@ -2,7 +2,9 @@ import type {RefObject} from 'preact';
 import {useCallback, useEffect, useRef, useState} from 'preact/hooks';
 
 import {MilkTeaPanel, usePanelContext} from '../../providers/panel';
-import {AudioSource, AudioSourceButtons} from '../audioSourceButtons/audioSourceButtons';
+import type {AudioFilePlayback} from '../../types/audio';
+import {AudioSource} from '../../types/audio';
+import {AudioSourceButtons} from '../audioSourceButtons/audioSourceButtons';
 import {CommandPaletteButton} from '../commandPalette/commandPaletteButton';
 import {Controls} from '../controls/controls';
 import {HelpButton} from '../help/helpButton';
@@ -34,6 +36,8 @@ type HudProps = {
   // Track info.
   trackName: string | undefined;
   presetName: string | undefined;
+  // File playback (progress, play/pause). Only shown if audio source is file.
+  filePlayback: AudioFilePlayback | undefined;
   // Preset staging.
   hasPresets: boolean;
   stagedPresetName: string | undefined;
@@ -63,6 +67,7 @@ export function Hud({
   onSourceChange,
   trackName,
   presetName,
+  filePlayback,
   hasPresets,
   stagedPresetName,
   onFireStagedPreset
@@ -123,11 +128,7 @@ export function Hud({
         onControlsLeave={handleControlsLeave}
         trackName={trackName}
         presetName={presetName}
-        currentTime={undefined}
-        duration={undefined}
-        onSeek={undefined}
-        isPlaying={undefined}
-        onPlayPause={undefined}
+        filePlayback={filePlayback}
         onPrevTrack={undefined}
         onNextTrack={undefined}
         isRecording={undefined}
