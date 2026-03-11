@@ -74,9 +74,9 @@ export function Help({visualizerActive, presetName, trackName, onClose}: HelpPro
             </h2>
             <p class={paragraphClass}>{t('help.aboutText')}</p>
           </section>
-          <section class={section} aria-labelledby="help-hotkeys">
-            <h2 id="help-hotkeys" class={headingClass}>
-              {t('help.hotkeys')}
+          <section class={section} aria-labelledby={hasFinePointer ? 'help-hotkeys' : 'help-gestures'}>
+            <h2 id={hasFinePointer ? 'help-hotkeys' : 'help-gestures'} class={headingClass}>
+              {hasFinePointer ? t('help.hotkeys') : t('help.gestures')}
             </h2>
             <ul class={listClass}>
               {hasFinePointer ? renderDesktopHotkeys(t, isMac) : renderMobileHotkeys(t)}

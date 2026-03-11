@@ -31,6 +31,7 @@ export type TranslationKey =
   | 'help.about'
   | 'help.aboutText'
   | 'help.hotkeys'
+  | 'help.gestures'
   | 'help.openLabel'
   | 'help.close'
   | 'help.keyHelpKeys'
@@ -100,6 +101,7 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'help.about': 'About',
   'help.aboutText': 'MilkTea. A browser visualizer for MilkDrop',
   'help.hotkeys': 'Hotkeys',
+  'help.gestures': 'Gestures',
   'help.openLabel': 'Help',
   'help.close': 'Close',
   'help.keyHelpKeys': '?',

@@ -5,6 +5,7 @@ import {useLocaleContext} from '../../providers/locale';
 import {useSettingsContext} from '../../providers/settings';
 import {useTranslate} from '../../providers/translation';
 import {useDragArea} from '../dragArea/useDragArea';
+import {LocaleSwitcher} from '../locale/localeSwitcher';
 import {
   btn,
   btnSolid,
@@ -12,6 +13,9 @@ import {
   splashCutout,
   splashCutoutColumn,
   splashDisclaimer,
+  splashDisclaimerBelowLocale,
+  splashDisclaimerBlock,
+  splashLocaleWrap,
   splashOverlay,
   splashSubtext,
   splashTitleLine
@@ -62,8 +66,13 @@ export function Splash({start}: SplashProps) {
               <button type="button" onClick={start} class={btnSolid} aria-label={t('splash.ariaStart')}>
                 {splashLabel}
               </button>
-              <p class={splashDisclaimer}>{t('splash.disclaimer1')}</p>
-              <p class={splashDisclaimer}>{t('splash.disclaimer2')}</p>
+              <div class={splashLocaleWrap}>
+                <LocaleSwitcher />
+              </div>
+              <div class={splashDisclaimerBlock}>
+                <p class={splashDisclaimer}>{t('splash.disclaimer1')}</p>
+                <p class={splashDisclaimer}>{t('splash.disclaimer2')}</p>
+              </div>
             </>
           )}
         </div>
@@ -80,6 +89,12 @@ export function Splash({start}: SplashProps) {
           </button>
         )}
       </div>
+      {!isDragging && (
+        <div class={splashLocaleWrap}>
+          <LocaleSwitcher />
+        </div>
+      )}
+      <p class={[splashDisclaimer, splashDisclaimerBelowLocale].join(' ')}>{t('splash.disclaimer2')}</p>
     </div>
   );
 }

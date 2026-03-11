@@ -217,6 +217,17 @@ const btnShared: Parameters<typeof style>[0] = {
   ':focus-visible': {outline: '2px solid rgba(255, 255, 255, 0.4)', outlineOffset: '2px'}
 };
 
+/** Brief "pressed" state on mobile after tap; use with useMobilePressFeedback. */
+export const mobileBtnActive = style({
+  '@media': {
+    '(pointer: coarse)': {
+      background: 'rgba(255, 255, 255, 0.2) !important',
+      color: '#fff !important',
+      transform: 'scale(0.96)'
+    }
+  }
+});
+
 export const controlBtn = style({
   ...btnShared,
   width: '44px',

@@ -1,6 +1,7 @@
 import type {RefObject} from 'preact';
 import {useEffect, useRef, useState} from 'preact/hooks';
 
+import {useMobilePressFeedback} from '../../hooks/useMobilePressFeedback';
 import {Axis, useSwipe} from '../../hooks/useSwipe';
 import {supportsRequestFullscreen} from '../../lib/platform';
 import {MilkTeaPanel, usePanelContext} from '../../providers/panel';
@@ -13,6 +14,7 @@ import {
   controls,
   controlsRow,
   divider,
+  mobileBtnActive,
   progressBarInner,
   progressFill,
   progressTrack,
@@ -87,6 +89,15 @@ export const Controls = ({
 }: ControlsProps) => {
   const t = useTranslate();
   const {openPanel, togglePanel} = usePanelContext();
+
+  const prevTrackPress = useMobilePressFeedback();
+  const playPress = useMobilePressFeedback();
+  const nextTrackPress = useMobilePressFeedback();
+  const recordPress = useMobilePressFeedback();
+  const prevPresetPress = useMobilePressFeedback();
+  const stagePress = useMobilePressFeedback();
+  const nextPresetPress = useMobilePressFeedback();
+  const fullscreenPress = useMobilePressFeedback();
 
   const pickerOpen = openPanel === MilkTeaPanel.PRESET_PICKER;
   const stageBtnRef = useRef<HTMLButtonElement>(null);
@@ -250,8 +261,11 @@ export const Controls = ({
               {onPrevTrack !== undefined && (
                 <button
                   type="button"
-                  class={controlBtn}
+                  class={[controlBtn, prevTrackPress.isActive && mobileBtnActive].filter(Boolean).join(' ')}
                   onClick={onPrevTrack}
+                  onPointerDown={prevTrackPress.onPointerDown}
+                  onPointerUp={prevTrackPress.onPointerUp}
+                  onPointerLeave={prevTrackPress.onPointerLeave}
                   aria-label={t('controls.prevTrack')}
                   title={t('controls.prevTrack')}
                 >
@@ -260,8 +274,11 @@ export const Controls = ({
               )}
               <button
                 type="button"
-                class={accentBtn}
+                class={[accentBtn, playPress.isActive && mobileBtnActive].filter(Boolean).join(' ')}
                 onClick={filePlayback.onPlayPause}
+                onPointerDown={playPress.onPointerDown}
+                onPointerUp={playPress.onPointerUp}
+                onPointerLeave={playPress.onPointerLeave}
                 aria-label={filePlayback.isPlaying ? t('controls.pause') : t('controls.play')}
                 title={filePlayback.isPlaying ? t('controls.pause') : t('controls.play')}
               >
@@ -270,8 +287,11 @@ export const Controls = ({
               {onNextTrack !== undefined && (
                 <button
                   type="button"
-                  class={controlBtn}
+                  class={[controlBtn, nextTrackPress.isActive && mobileBtnActive].filter(Boolean).join(' ')}
                   onClick={onNextTrack}
+                  onPointerDown={nextTrackPress.onPointerDown}
+                  onPointerUp={nextTrackPress.onPointerUp}
+                  onPointerLeave={nextTrackPress.onPointerLeave}
                   aria-label={t('controls.nextTrack')}
                   title={t('controls.nextTrack')}
                 >
@@ -283,8 +303,17 @@ export const Controls = ({
                   <div class={divider} />
                   <button
                     type="button"
-                    class={isRecording ? [recordBtn, recordBtnActive].join(' ') : recordBtn}
+                    class={[
+                      recordBtn,
+                      isRecording && recordBtnActive,
+                      recordPress.isActive && mobileBtnActive
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
                     onClick={onRecord}
+                    onPointerDown={recordPress.onPointerDown}
+                    onPointerUp={recordPress.onPointerUp}
+                    onPointerLeave={recordPress.onPointerLeave}
                     aria-label={isRecording ? t('controls.stopRecord') : t('controls.record')}
                     title={isRecording ? t('controls.stopRecord') : t('controls.record')}
                   >
@@ -301,8 +330,11 @@ export const Controls = ({
         <div class={controlsRow}>
           <button
             type="button"
-            class={smallBtn}
+            class={[smallBtn, prevPresetPress.isActive && mobileBtnActive].filter(Boolean).join(' ')}
             onClick={() => changePreset(-1)}
+            onPointerDown={prevPresetPress.onPointerDown}
+            onPointerUp={prevPresetPress.onPointerUp}
+            onPointerLeave={prevPresetPress.onPointerLeave}
             aria-label={t('controls.prevPreset')}
             title={t('controls.prevPreset')}
           >
@@ -314,8 +346,13 @@ export const Controls = ({
               <button
                 ref={stageBtnRef}
                 type="button"
-                class={stagedPresetName ? [stageBtn, stageBtnLoaded].join(' ') : stageBtn}
+                class={[stageBtn, stagedPresetName && stageBtnLoaded, stagePress.isActive && mobileBtnActive]
+                  .filter(Boolean)
+                  .join(' ')}
                 onClick={handleStageClick}
+                onPointerDown={stagePress.onPointerDown}
+                onPointerUp={stagePress.onPointerUp}
+                onPointerLeave={stagePress.onPointerLeave}
                 aria-label={stagedPresetName ? t('controls.firePreset') : t('controls.stagePreset')}
                 title={stagedPresetName ? t('controls.firePreset') : t('controls.stagePreset')}
               >
@@ -326,8 +363,11 @@ export const Controls = ({
 
           <button
             type="button"
-            class={smallBtn}
+            class={[smallBtn, nextPresetPress.isActive && mobileBtnActive].filter(Boolean).join(' ')}
             onClick={() => changePreset(1)}
+            onPointerDown={nextPresetPress.onPointerDown}
+            onPointerUp={nextPresetPress.onPointerUp}
+            onPointerLeave={nextPresetPress.onPointerLeave}
             aria-label={t('controls.nextPreset')}
             title={t('controls.nextPreset')}
           >
@@ -337,8 +377,11 @@ export const Controls = ({
           {supportsRequestFullscreen && (
             <button
               type="button"
-              class={smallBtn}
+              class={[smallBtn, fullscreenPress.isActive && mobileBtnActive].filter(Boolean).join(' ')}
               onClick={toggleFullscreen}
+              onPointerDown={fullscreenPress.onPointerDown}
+              onPointerUp={fullscreenPress.onPointerUp}
+              onPointerLeave={fullscreenPress.onPointerLeave}
               aria-label={isFullscreen ? t('controls.exitFullscreen') : t('controls.enterFullscreen')}
               title={isFullscreen ? t('controls.exitFullscreen') : t('controls.enterFullscreen')}
             >
