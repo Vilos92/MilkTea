@@ -30,7 +30,7 @@ export function MilkTea() {
     presetName,
     presetKeys,
     presetNameToIndex,
-    goToPreset,
+    loadPresetByIndex,
     changePreset,
     connectAudioBuffer,
     connectOscillator,
@@ -48,7 +48,7 @@ export function MilkTea() {
     }
     const targetIndex = presetNameToIndex.get(stagedPreset);
     if (targetIndex !== undefined) {
-      goToPreset(targetIndex);
+      loadPresetByIndex(targetIndex);
     }
     setStagedPreset(undefined);
   };
