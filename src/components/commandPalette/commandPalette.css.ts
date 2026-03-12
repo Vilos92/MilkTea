@@ -51,6 +51,7 @@ export const commandButton = style({
   boxSizing: 'border-box',
   display: 'flex',
   alignItems: 'center',
+  gap: '10px',
   ':focus-visible': {
     outline: '2px solid rgba(255,255,255,0.5)',
     outlineOffset: 2
@@ -79,6 +80,7 @@ export const commandButtonSplash = style({
   boxSizing: 'border-box',
   display: 'flex',
   alignItems: 'center',
+  gap: '10px',
   ':focus-visible': {
     outline: '2px solid rgba(255,255,255,0.5)',
     outlineOffset: 2

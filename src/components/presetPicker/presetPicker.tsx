@@ -113,6 +113,7 @@ export function PresetPicker({items, selectedItem, onSelect, onClose}: PresetPic
       variant="dark"
       id="preset-picker-title"
       title={t('controls.presets')}
+      titleIcon="bookmark"
       onClose={onClose}
       inputRef={inputRef}
       closeBtnRef={closeBtnRef}

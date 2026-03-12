@@ -3,9 +3,14 @@ import {BookmarkCheck} from './paths/bookmarkCheck';
 import {ChevronLeft} from './paths/chevronLeft';
 import {ChevronRight} from './paths/chevronRight';
 import {Close} from './paths/close';
+import {CommandPalette as CommandPalettePath} from './paths/commandPalette';
 import {EnterFullscreen} from './paths/enterFullscreen';
 import {ExitFullscreen} from './paths/exitFullscreen';
+import {FileAudio} from './paths/fileAudio';
+import {HelpCircle} from './paths/helpCircle';
+import {Microphone} from './paths/microphone';
 import {NextTrack} from './paths/nextTrack';
+import {Oscillator} from './paths/oscillator';
 import {Pause} from './paths/pause';
 import {Play} from './paths/play';
 import {PrevTrack} from './paths/prevTrack';
@@ -27,7 +32,12 @@ export type IconType =
   | 'bookmark-check'
   | 'close'
   | 'enter-fullscreen'
-  | 'exit-fullscreen';
+  | 'exit-fullscreen'
+  | 'oscillator'
+  | 'file-audio'
+  | 'microphone'
+  | 'help'
+  | 'command-palette';
 
 export type IconSize = 'sm' | 'md' | 'lg';
 
@@ -89,6 +99,16 @@ function renderPaths(type: IconType) {
       return <EnterFullscreen />;
     case 'exit-fullscreen':
       return <ExitFullscreen />;
+    case 'oscillator':
+      return <Oscillator />;
+    case 'file-audio':
+      return <FileAudio />;
+    case 'microphone':
+      return <Microphone />;
+    case 'help':
+      return <HelpCircle />;
+    case 'command-palette':
+      return <CommandPalettePath />;
     default:
       throw new Error(`Unknown icon type: ${type}`);
   }

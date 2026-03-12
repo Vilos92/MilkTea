@@ -1,4 +1,5 @@
 import {useTranslate} from '../../providers/translation';
+import {Icon} from '../icon/icon';
 import {
   commandPaletteButton,
   commandPaletteButtonActive,
@@ -45,7 +46,7 @@ export function CommandPaletteButton({
       aria-label={t('help.keyCommandPaletteAction')}
       title={t('help.keyCommandPaletteAction')}
     >
-      &gt;_
+      <Icon type="command-palette" size="sm" />
     </button>
   );
 }

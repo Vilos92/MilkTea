@@ -1,4 +1,5 @@
 import {useTranslate} from '../../providers/translation';
+import {Icon} from '../icon/icon';
 import {
   helpButton,
   helpButtonActive,
@@ -42,7 +43,7 @@ export function HelpButton({alwaysLight, active, onOpen, class: className}: Help
         aria-label={t('help.openLabel')}
         title={t('help.openLabel')}
       >
-        ❓
+        <Icon type="help" size="sm" />
       </button>
     </div>
   );

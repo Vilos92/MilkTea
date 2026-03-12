@@ -77,7 +77,10 @@ const headingBase = {
   fontSize: '14px',
   fontWeight: 600,
   textTransform: 'uppercase' as const,
-  letterSpacing: '0.06em'
+  letterSpacing: '0.06em',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px'
 };
 
 export const headingDark = style({

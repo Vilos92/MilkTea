@@ -6,6 +6,7 @@ import {supportsRequestFullscreen} from '../../lib/platform';
 import {useSettingsContext} from '../../providers/settings';
 import {type Translate, useTranslate} from '../../providers/translation';
 import type {AudioFilePlayback} from '../../types/audio';
+import {Icon, type IconType} from '../icon/icon';
 import {Picker} from '../picker/picker';
 import {Switch} from '../switch/switch';
 import {
@@ -57,6 +58,7 @@ type CommandPaletteItem = {
   type: PaletteItemType;
   label: string;
   onSelect: () => void;
+  iconType?: IconType;
 };
 
 type SwitchPaletteItem = {
@@ -239,6 +241,7 @@ export function CommandPalette({
           onClose();
         }}
       >
+        {item.iconType ? <Icon type={item.iconType} size="sm" /> : null}
         {item.label}
       </button>
     );
@@ -258,6 +261,7 @@ export function CommandPalette({
       variant={visualizerActive ? 'dark' : 'adaptive'}
       id="command-palette-title"
       title={t('help.keyCommandPaletteAction')}
+      titleIcon="command-palette"
       onClose={onClose}
       inputRef={inputRef}
       closeBtnRef={closeBtnRef}
@@ -324,8 +328,17 @@ function usePaletteItems(
         {
           type: PaletteItemType.COMMAND_HELP,
           label: t('help.openLabel'),
-          onSelect: onOpenHelp
+          onSelect: onOpenHelp,
+          iconType: 'help' as IconType
         },
+        supportsRequestFullscreen
+          ? {
+              type: PaletteItemType.COMMAND_FULL_SCREEN,
+              label: isFullscreen ? t('controls.exitFullscreen') : t('controls.enterFullscreen'),
+              onSelect: onFullScreen,
+              iconType: (isFullscreen ? 'exit-fullscreen' : 'enter-fullscreen') as IconType
+            }
+          : undefined,
         {
           type: PaletteItemType.COMMAND_PREV_PRESET,
           label: t('controls.prevPreset'),
@@ -340,38 +353,36 @@ function usePaletteItems(
           ? {
               type: PaletteItemType.COMMAND_STAGE_OR_LAUNCH_PRESET,
               label: stagedPresetName ? t('controls.firePreset') : t('controls.stagePreset'),
-              onSelect: stagedPresetName ? onFireStagedPreset : onOpenPresetPicker
-            }
-          : undefined,
-        supportsRequestFullscreen
-          ? {
-              type: PaletteItemType.COMMAND_FULL_SCREEN,
-              label: isFullscreen ? t('controls.exitFullscreen') : t('controls.enterFullscreen'),
-              onSelect: onFullScreen
+              onSelect: stagedPresetName ? onFireStagedPreset : onOpenPresetPicker,
+              iconType: (stagedPresetName ? 'bookmark-check' : 'bookmark') as IconType
             }
           : undefined,
         filePlayback != null
           ? {
               type: PaletteItemType.COMMAND_PLAY_PAUSE,
               label: filePlayback.isPlaying ? t('controls.pause') : t('controls.play'),
-              onSelect: filePlayback.onPlayPause
+              onSelect: filePlayback.onPlayPause,
+              iconType: (filePlayback.isPlaying ? 'pause' : 'play') as IconType
             }
           : undefined,
         // Audio
         {
           type: PaletteItemType.AUDIO_INPUT_OSCILLATOR,
           label: t('source.oscillator'),
-          onSelect: onSelectOscillator
+          onSelect: onSelectOscillator,
+          iconType: 'oscillator' as IconType
         },
         {
           type: PaletteItemType.AUDIO_INPUT_FILE,
           label: t('source.file'),
-          onSelect: onOpenFilePicker
+          onSelect: onOpenFilePicker,
+          iconType: 'file-audio' as IconType
         },
         {
           type: PaletteItemType.AUDIO_INPUT_MIC,
           label: t('source.microphone'),
-          onSelect: onSelectMic
+          onSelect: onSelectMic,
+          iconType: 'microphone' as IconType
         }
       ].filter(item => item !== undefined),
     [

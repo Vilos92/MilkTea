@@ -2,6 +2,7 @@ import type {RefObject} from 'preact';
 
 import {useTranslate} from '../../providers/translation';
 import {AudioSource} from '../../types/audio';
+import {Icon} from '../icon/icon';
 import {
   audioSourceButton,
   audioSourceButtonActive,
@@ -51,7 +52,7 @@ export function AudioSourceButtons({
         aria-pressed={audioSource === AudioSource.OSCILLATOR}
         title={t('source.oscillator')}
       >
-        〰️
+        <Icon type="oscillator" size="sm" />
       </button>
       <button
         type="button"
@@ -61,7 +62,7 @@ export function AudioSourceButtons({
         aria-pressed={audioSource === AudioSource.FILE}
         title={t('source.file')}
       >
-        📼
+        <Icon type="file-audio" size="sm" />
       </button>
       <button
         type="button"
@@ -71,7 +72,7 @@ export function AudioSourceButtons({
         aria-pressed={audioSource === AudioSource.MICROPHONE}
         title={t('source.microphone')}
       >
-        🎙️
+        <Icon type="microphone" size="sm" />
       </button>
     </div>
   );
