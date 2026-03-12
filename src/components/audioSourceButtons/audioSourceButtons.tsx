@@ -7,6 +7,7 @@ import {
   audioSourceButton,
   audioSourceButtonActive,
   audioSourceButtonAlwaysLight,
+  audioSourceButtonAlwaysLightActive,
   audioSourceButtonPending,
   audioSourceRoot
 } from './audioSourceButtons.css.ts';
@@ -95,7 +96,8 @@ function buttonClass(
     return [base, audioSourceButtonPending].join(' ');
   }
   if (activeSource === source) {
-    return [base, audioSourceButtonActive].join(' ');
+    const activeClass = started ? audioSourceButtonAlwaysLightActive : audioSourceButtonActive;
+    return [base, activeClass].join(' ');
   }
   return base;
 }

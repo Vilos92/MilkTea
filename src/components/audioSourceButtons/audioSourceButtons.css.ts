@@ -31,6 +31,7 @@ export const audioSourceButton = style({
   padding: 0,
   fontSize: '1.2rem',
   lineHeight: 1,
+  color: 'rgba(255,255,255,0.9)',
   background: 'rgba(0,0,0,0.45)',
   border: '1px solid rgba(255,255,255,0.25)',
   borderRadius: '4px',
@@ -46,6 +47,7 @@ export const audioSourceButton = style({
       }
     },
     '(prefers-color-scheme: light)': {
+      color: 'rgba(0,0,0,0.85)',
       background: 'rgba(255,255,255,0.85)',
       border: '1px solid rgba(0,0,0,0.2)',
       ':focus-visible': {
@@ -69,7 +71,7 @@ export const audioSourceButton = style({
 
 export const audioSourceButtonAlwaysLight = style({
   background: 'rgba(0,0,0,0.5)',
-  color: 'rgba(255,255,255,0.9)',
+  color: 'rgba(255,255,255,0.95)',
   borderColor: 'rgba(255,255,255,0.3)',
   borderStyle: 'solid',
   ':focus-visible': {
@@ -85,7 +87,7 @@ export const audioSourceButtonAlwaysLight = style({
     },
     '(prefers-color-scheme: light)': {
       background: 'rgba(0,0,0,0.5)',
-      color: 'rgba(255,255,255,0.9)',
+      color: 'rgba(255,255,255,0.95)',
       borderColor: 'rgba(255,255,255,0.3)',
       borderStyle: 'solid',
       ':focus-visible': {
@@ -97,6 +99,32 @@ export const audioSourceButtonAlwaysLight = style({
       ':hover': {
         borderColor: 'rgba(255,255,255,0.5)',
         background: 'rgba(255,255,255,0.1)'
+      }
+    }
+  }
+});
+
+/** Active (selected) state when over visualizer. */
+export const audioSourceButtonAlwaysLightActive = style({
+  borderColor: 'rgba(255,255,255,0.7)',
+  borderWidth: '2px',
+  background: 'rgba(255,255,255,0.2)',
+  '@media': {
+    '(hover: hover)': {
+      ':hover': {
+        borderColor: 'rgba(255,255,255,0.7)',
+        background: 'rgba(255,255,255,0.2)'
+      }
+    },
+    '(prefers-color-scheme: light)': {
+      borderColor: 'rgba(255,255,255,0.7)',
+      borderWidth: '2px',
+      background: 'rgba(255,255,255,0.2)'
+    },
+    '(hover: hover) and (prefers-color-scheme: light)': {
+      ':hover': {
+        borderColor: 'rgba(255,255,255,0.7)',
+        background: 'rgba(255,255,255,0.2)'
       }
     }
   }
