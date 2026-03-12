@@ -67,7 +67,10 @@ export const trackTitle = style({
 export const trackPresetLabel = style({
   fontSize: '10px',
   color: 'rgba(255, 255, 255, 0.85)',
-  letterSpacing: '0.08em',
+  letterSpacing: '0.08em'
+});
+
+globalStyle(`${trackInfo} ${trackPresetLabel}:not(:first-child)`, {
   marginTop: '2px'
 });
 

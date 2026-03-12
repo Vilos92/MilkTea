@@ -33,8 +33,8 @@ const PaletteItemType = {
   AUDIO_INPUT_FILE: 'audio_input_file',
   AUDIO_INPUT_OSCILLATOR: 'audio_input_oscillator',
   SETTINGS_SKIP_SPLASH_ON_LOAD: 'settings_skip_splash_on_load',
-  SETTINGS_SHOW_PRESET_ON_CHANGE: 'settings_show_preset_on_change',
-  SETTINGS_SHOW_TRACK_ON_CHANGE: 'settings_show_track_on_change'
+  SETTINGS_SHOW_PRESET_IN_CONTROLS: 'settings_show_preset_in_controls',
+  SETTINGS_SHOW_TRACK_IN_CONTROLS: 'settings_show_track_in_controls'
 } as const;
 type PaletteItemType = (typeof PaletteItemType)[keyof typeof PaletteItemType];
 
@@ -286,14 +286,14 @@ function usePaletteItems(
           onChange: setShouldSkipSplashOnLoad
         },
         {
-          type: PaletteItemType.SETTINGS_SHOW_PRESET_ON_CHANGE,
-          label: t('settings.showPresetNameOnChange'),
+          type: PaletteItemType.SETTINGS_SHOW_PRESET_IN_CONTROLS,
+          label: t('settings.showPresetNameInControls'),
           checked: shouldShowPresetName,
           onChange: setShouldShowPresetName
         },
         {
-          type: PaletteItemType.SETTINGS_SHOW_TRACK_ON_CHANGE,
-          label: t('settings.showTrackNameOnChange'),
+          type: PaletteItemType.SETTINGS_SHOW_TRACK_IN_CONTROLS,
+          label: t('settings.showTrackNameInControls'),
           checked: shouldShowTrackName,
           onChange: setShouldShowTrackName
         },
@@ -378,7 +378,7 @@ function formatGroupHeading(t: Translate, group: PaletteGroup): string {
  * Derive group from type key prefix.
  *
  * @example
- * - SETTINGS_SHOW_PRESET_ON_CHANGE → 'settings'
+ * - SETTINGS_SHOW_PRESET_IN_CONTROLS → 'settings'
  * - COMMAND_HELP → 'command'
  * - AUDIO_INPUT_MIC → 'audio'
  */

@@ -1,7 +1,7 @@
 import type {Locale} from './locale';
 import {
-  DEFAULT_SHOW_PRESET_NAME_ON_CHANGE,
-  DEFAULT_SHOW_TRACK_NAME_ON_CHANGE,
+  DEFAULT_SHOW_PRESET_IN_CONTROLS,
+  DEFAULT_SHOW_TRACK_IN_CONTROLS,
   DEFAULT_SKIP_SPLASH_ON_LOAD
 } from './settings';
 import type {Translations} from './translations';
@@ -14,8 +14,8 @@ type StorageKey =
   | 'locale'
   | 'translations'
   | 'skipSplashOnLoad'
-  | 'showPresetNameOnChange'
-  | 'showTrackNameOnChange';
+  | 'showPresetNameInControls'
+  | 'showTrackNameInControls';
 
 type MilkTeaStorageKey = `milktea:${StorageKey}`;
 
@@ -49,18 +49,18 @@ export function getStorageSkipSplashOnLoad(): boolean | undefined {
   return getStorageItem<boolean>('skipSplashOnLoad');
 }
 
-export function setStorageShowPresetNameOnChange(value: boolean): void {
-  setStorageItem('showPresetNameOnChange', value === DEFAULT_SHOW_PRESET_NAME_ON_CHANGE ? undefined : value);
+export function setStorageShowPresetNameInControls(value: boolean): void {
+  setStorageItem('showPresetNameInControls', value === DEFAULT_SHOW_PRESET_IN_CONTROLS ? undefined : value);
 }
-export function getStorageShowPresetNameOnChange(): boolean | undefined {
-  return getStorageItem<boolean>('showPresetNameOnChange');
+export function getStorageShowPresetNameInControls(): boolean | undefined {
+  return getStorageItem<boolean>('showPresetNameInControls');
 }
 
-export function setStorageShowTrackNameOnChange(value: boolean): void {
-  setStorageItem('showTrackNameOnChange', value === DEFAULT_SHOW_TRACK_NAME_ON_CHANGE ? undefined : value);
+export function setStorageShowTrackNameInControls(value: boolean): void {
+  setStorageItem('showTrackNameInControls', value === DEFAULT_SHOW_TRACK_IN_CONTROLS ? undefined : value);
 }
-export function getStorageShowTrackNameOnChange(): boolean | undefined {
-  return getStorageItem<boolean>('showTrackNameOnChange');
+export function getStorageShowTrackNameInControls(): boolean | undefined {
+  return getStorageItem<boolean>('showTrackNameInControls');
 }
 
 /*

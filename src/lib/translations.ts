@@ -57,8 +57,8 @@ export type TranslationKey =
   | 'help.presetName'
   | 'settings.title'
   | 'settings.close'
-  | 'settings.showPresetNameOnChange'
-  | 'settings.showTrackNameOnChange'
+  | 'settings.showPresetNameInControls'
+  | 'settings.showTrackNameInControls'
   | 'settings.autoStart'
   | 'commandPalette.searchPlaceholder'
   | 'commandPalette.group.command'
@@ -129,8 +129,8 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'help.presetName': 'Preset',
   'settings.title': 'Settings',
   'settings.close': 'Close',
-  'settings.showPresetNameOnChange': 'Show preset name on change',
-  'settings.showTrackNameOnChange': 'Show audio track name on change',
+  'settings.showPresetNameInControls': 'Show preset name',
+  'settings.showTrackNameInControls': 'Show track name',
   'settings.autoStart': 'Start visualizer automatically',
   'commandPalette.searchPlaceholder': 'Search…',
   'commandPalette.group.command': 'Command',

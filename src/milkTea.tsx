@@ -11,6 +11,7 @@ import {Visualizer} from './components/visualizer/visualizer';
 import {useAudioSource} from './hooks/useAudioSource';
 import {useButterchurn} from './hooks/useButterchurn';
 import {MilkTeaPanel, usePanelContext} from './providers/panel';
+import {useSettingsContext} from './providers/settings';
 import {AudioSource} from './types/audio';
 
 /*
@@ -19,6 +20,7 @@ import {AudioSource} from './types/audio';
 
 export function MilkTea() {
   const {openPanel, setOpenPanel} = usePanelContext();
+  const {shouldShowTrackName, shouldShowPresetName} = useSettingsContext();
 
   const {
     containerRef,
@@ -162,8 +164,8 @@ export function MilkTea() {
           audioSource={audioSource}
           pendingAudioSource={pendingAudioSource}
           onSourceChange={handleSourceChange}
-          trackName={trackName}
-          presetName={presetName}
+          trackName={shouldShowTrackName ? trackName : undefined}
+          presetName={shouldShowPresetName ? presetName : undefined}
           filePlayback={audioFilePlayback}
           hasPresets={presetKeys.length > 0}
           stagedPresetName={stagedPreset}

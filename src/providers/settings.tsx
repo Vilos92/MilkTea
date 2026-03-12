@@ -3,16 +3,16 @@ import type {ComponentChildren} from 'preact';
 import {useCallback, useContext, useState} from 'preact/hooks';
 
 import {
-  DEFAULT_SHOW_PRESET_NAME_ON_CHANGE,
-  DEFAULT_SHOW_TRACK_NAME_ON_CHANGE,
+  DEFAULT_SHOW_PRESET_IN_CONTROLS,
+  DEFAULT_SHOW_TRACK_IN_CONTROLS,
   DEFAULT_SKIP_SPLASH_ON_LOAD
 } from '../lib/settings';
 import {
-  getStorageShowPresetNameOnChange,
-  getStorageShowTrackNameOnChange,
+  getStorageShowPresetNameInControls,
+  getStorageShowTrackNameInControls,
   getStorageSkipSplashOnLoad,
-  setStorageShowPresetNameOnChange,
-  setStorageShowTrackNameOnChange,
+  setStorageShowPresetNameInControls,
+  setStorageShowTrackNameInControls,
   setStorageSkipSplashOnLoad
 } from '../lib/storage';
 
@@ -36,9 +36,9 @@ export type SettingsContextValue = {
 const SettingsContextValue = createContext<SettingsContextValue>({
   shouldSkipSplashOnLoad: DEFAULT_SKIP_SPLASH_ON_LOAD,
   setShouldSkipSplashOnLoad: () => {},
-  shouldShowPresetName: DEFAULT_SHOW_PRESET_NAME_ON_CHANGE,
+  shouldShowPresetName: DEFAULT_SHOW_PRESET_IN_CONTROLS,
   setShouldShowPresetName: () => {},
-  shouldShowTrackName: DEFAULT_SHOW_TRACK_NAME_ON_CHANGE,
+  shouldShowTrackName: DEFAULT_SHOW_TRACK_IN_CONTROLS,
   setShouldShowTrackName: () => {}
 });
 
@@ -55,10 +55,10 @@ export function SettingsProvider({children}: SettingsProviderProps) {
     () => getStorageSkipSplashOnLoad() ?? DEFAULT_SKIP_SPLASH_ON_LOAD
   );
   const [shouldShowPresetName, setShouldShowPresetName] = useState(
-    () => getStorageShowPresetNameOnChange() ?? DEFAULT_SHOW_PRESET_NAME_ON_CHANGE
+    () => getStorageShowPresetNameInControls() ?? DEFAULT_SHOW_PRESET_IN_CONTROLS
   );
   const [shouldShowTrackName, setShouldShowTrackName] = useState(
-    () => getStorageShowTrackNameOnChange() ?? DEFAULT_SHOW_TRACK_NAME_ON_CHANGE
+    () => getStorageShowTrackNameInControls() ?? DEFAULT_SHOW_TRACK_IN_CONTROLS
   );
 
   const setShouldSkipSplashOnLoadWithStorage = useCallback((shouldSkip: boolean) => {
@@ -68,11 +68,11 @@ export function SettingsProvider({children}: SettingsProviderProps) {
 
   const setShouldShowPresetNameWithStorage = useCallback((shouldShow: boolean) => {
     setShouldShowPresetName(shouldShow);
-    setStorageShowPresetNameOnChange(shouldShow);
+    setStorageShowPresetNameInControls(shouldShow);
   }, []);
   const setShouldShowTrackNameWithStorage = useCallback((shouldShow: boolean) => {
     setShouldShowTrackName(shouldShow);
-    setStorageShowTrackNameOnChange(shouldShow);
+    setStorageShowTrackNameInControls(shouldShow);
   }, []);
 
   return (
