@@ -1,4 +1,5 @@
 {
+  "common.close": "סגור",
   "splash.button": "תה עם חלב",
   "splash.ariaStart": "התחל ויזואלים",
   "splash.disclaimer1": "בגלל האינטראקציות הלא שגרתיות, ייתכן שהתערוכה הזו לא תעמוד במלואה בציפיות הנגישות המקובלות. תודה על ההבנה.",
@@ -26,7 +27,6 @@
   "help.hotkeys": "קיצורי מקלדת",
   "help.gestures": "מחוות",
   "help.openLabel": "עזרה",
-  "help.close": "סגור",
   "help.keyHelpKeys": "?",
   "help.keyHelpAction": "עזרה",
   "help.keyPrevKeys": "שמאל, A, H",

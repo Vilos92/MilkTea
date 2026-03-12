@@ -1,4 +1,5 @@
 {
+  "common.close": "Sluiten",
   "splash.button": "Thee met melk",
   "splash.ariaStart": "Start visuele weergave",
   "splash.disclaimer1": "Vanwege de ongebruikelijke interacties voldoet deze installatie mogelijk niet volledig aan de gebruikelijke toegankelijkheidsverwachtingen. Bedankt voor uw begrip.",
@@ -26,7 +27,6 @@
   "help.hotkeys": "Sneltoetsen",
   "help.gestures": "Gebaren",
   "help.openLabel": "Help",
-  "help.close": "Sluiten",
   "help.keyHelpKeys": "?",
   "help.keyHelpAction": "Help",
   "help.keyPrevKeys": "Links, A, H",

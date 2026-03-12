@@ -32,12 +32,12 @@ describe('translations', () => {
 
   test('validateTranslations fails when a valid key is missing', () => {
     const fake = {...ENGLISH_TRANSLATIONS};
-    delete (fake as Record<string, string>)['help.close'];
+    delete (fake as Record<string, string>)['common.close'];
 
     const result = validateTranslations(fake as Translations);
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(result.errors).toContain("missing key: 'help.close'");
+      expect(result.errors).toContain("missing key: 'common.close'");
     }
   });
 

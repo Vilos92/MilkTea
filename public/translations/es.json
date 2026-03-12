@@ -1,4 +1,5 @@
 {
+  "common.close": "Cerrar",
   "splash.button": "Té con leche",
   "splash.ariaStart": "Iniciar visuales",
   "splash.disclaimer1": "Dado sus interacciones poco convencionales, esta instalación puede no cumplir plenamente con las expectativas habituales de accesibilidad. Gracias por su comprensión.",
@@ -26,7 +27,6 @@
   "help.hotkeys": "Atajos",
   "help.gestures": "Gestos",
   "help.openLabel": "Ayuda",
-  "help.close": "Cerrar",
   "help.keyHelpKeys": "?",
   "help.keyHelpAction": "Ayuda",
   "help.keyPrevKeys": "Izq, A, H",

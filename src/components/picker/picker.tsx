@@ -1,5 +1,6 @@
 import type {ComponentChildren, RefObject} from 'preact';
 
+import {useTranslate} from '../../providers/translation';
 import {Icon} from '../icon/icon';
 import {
   closeBtnAdaptive,
@@ -53,6 +54,7 @@ export function Picker({
   onSearchKeyDown,
   searchPlaceholder
 }: PickerProps) {
+  const t = useTranslate();
   const isAdaptive = variant === 'adaptive';
 
   return (
@@ -73,7 +75,8 @@ export function Picker({
               type="button"
               class={isAdaptive ? closeBtnAdaptive : closeBtnDark}
               onClick={onClose}
-              aria-label="Close"
+              aria-label={t('common.close')}
+              title={t('common.close')}
               onKeyDown={event => {
                 if (event.key === 'Tab' && !event.shiftKey) {
                   event.preventDefault();

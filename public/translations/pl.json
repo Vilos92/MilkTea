@@ -1,4 +1,5 @@
 {
+  "common.close": "Zamknij",
   "splash.button": "Herbata z mlekiem",
   "splash.ariaStart": "Uruchom wizualizację",
   "splash.disclaimer1": "Ze względu na nietypowe interakcje ta instalacja może nie spełniać w pełni powszechnych oczekiwań dotyczących dostępności. Dziękujemy za zrozumienie.",
@@ -26,7 +27,6 @@
   "help.hotkeys": "Skróty",
   "help.gestures": "Gesty",
   "help.openLabel": "Pomoc",
-  "help.close": "Zamknij",
   "help.keyHelpKeys": "?",
   "help.keyHelpAction": "Pomoc",
   "help.keyPrevKeys": "Lewo, A, H",

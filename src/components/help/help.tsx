@@ -100,8 +100,14 @@ export function Help({visualizerActive, presetName, trackName, onClose}: HelpPro
           )}
         </div>
         <div class={closeRow}>
-          <button type="button" class={closeBtnClass} onClick={onClose} aria-label={t('help.close')}>
-            {t('help.close')}
+          <button
+            type="button"
+            class={closeBtnClass}
+            onClick={onClose}
+            aria-label={t('common.close')}
+            title={t('common.close')}
+          >
+            {t('common.close')}
           </button>
         </div>
       </div>

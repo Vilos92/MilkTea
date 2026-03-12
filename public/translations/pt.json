@@ -1,4 +1,5 @@
 {
+  "common.close": "Fechar",
   "splash.button": "Chá com leite",
   "splash.ariaStart": "Iniciar visuais",
   "splash.disclaimer1": "Devido às suas interações pouco convencionais, esta instalação pode não aderir totalmente às expectativas comuns de acessibilidade. Agradecemos a sua compreensão.",
@@ -26,7 +27,6 @@
   "help.hotkeys": "Atalhos",
   "help.gestures": "Gestos",
   "help.openLabel": "Ajuda",
-  "help.close": "Fechar",
   "help.keyHelpKeys": "?",
   "help.keyHelpAction": "Ajuda",
   "help.keyPrevKeys": "Esq, A, H",

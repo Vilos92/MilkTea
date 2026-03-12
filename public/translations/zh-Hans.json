@@ -1,4 +1,5 @@
 {
+  "common.close": "关闭",
   "splash.button": "奶茶",
   "splash.ariaStart": "开始视觉效果",
   "splash.disclaimer1": "由于本展品的交互方式较为特殊，可能无法完全符合常见的无障碍预期。感谢您的理解。",
@@ -26,7 +27,6 @@
   "help.hotkeys": "快捷键",
   "help.gestures": "手势",
   "help.openLabel": "帮助",
-  "help.close": "关闭",
   "help.keyHelpKeys": "?",
   "help.keyHelpAction": "帮助",
   "help.keyPrevKeys": "←, A, H",

@@ -1,4 +1,5 @@
 {
+  "common.close": "إغلاق",
   "splash.button": "شاي بالحليب",
   "splash.ariaStart": "بدء المرئيات",
   "splash.disclaimer1": "نظرًا لتفاعلاتها غير التقليدية، قد لا يتوافق هذا المعرض بالكامل مع توقعات إمكانية الوصول الشائعة. شكرًا لتفهمكم.",
@@ -26,7 +27,6 @@
   "help.hotkeys": "اختصارات",
   "help.gestures": "إيماءات",
   "help.openLabel": "مساعدة",
-  "help.close": "إغلاق",
   "help.keyHelpKeys": "?",
   "help.keyHelpAction": "مساعدة",
   "help.keyPrevKeys": "يسار، A، H",

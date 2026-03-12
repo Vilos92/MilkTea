@@ -1,4 +1,5 @@
 {
+  "common.close": "Bezárás",
   "splash.button": "Tejes tea",
   "splash.ariaStart": "Vizuális indítása",
   "splash.disclaimer1": "A szokatlan interakciók miatt ez a kiállítás nem feltétlenül felel meg teljes mértékben a szokásos akadálymentesítési elvárásoknak. Köszönjük megértését.",
@@ -26,7 +27,6 @@
   "help.hotkeys": "Gyorsbillentyűk",
   "help.gestures": "Gestusok",
   "help.openLabel": "Súgó",
-  "help.close": "Bezárás",
   "help.keyHelpKeys": "?",
   "help.keyHelpAction": "Súgó",
   "help.keyPrevKeys": "Bal, A, H",

@@ -1,4 +1,5 @@
 {
+  "common.close": "Schließen",
   "splash.button": "Milchtee",
   "splash.ariaStart": "Visuals starten",
   "splash.disclaimer1": "Aufgrund der unkonventionellen Interaktionen entspricht diese Installation möglicherweise nicht vollständig den üblichen Anforderungen an Barrierefreiheit. Vielen Dank für Ihr Verständnis.",
@@ -26,7 +27,6 @@
   "help.hotkeys": "Tastenkürzel",
   "help.gestures": "Gesten",
   "help.openLabel": "Hilfe",
-  "help.close": "Schließen",
   "help.keyHelpKeys": "?",
   "help.keyHelpAction": "Hilfe",
   "help.keyPrevKeys": "Links, A, H",

@@ -1,4 +1,5 @@
 {
+  "common.close": "Zavřít",
   "splash.button": "Čaj s mlékem",
   "splash.ariaStart": "Spustit vizuál",
   "splash.disclaimer1": "Kvůli neobvyklým interakcím tato instalace nemusí plně vyhovovat běžným očekáváním přístupnosti. Děkujeme za pochopení.",
@@ -26,7 +27,6 @@
   "help.hotkeys": "Zkratky",
   "help.gestures": "Gesty",
   "help.openLabel": "Nápověda",
-  "help.close": "Zavřít",
   "help.keyHelpKeys": "?",
   "help.keyHelpAction": "Nápověda",
   "help.keyPrevKeys": "Vlevo, A, H",
