@@ -118,25 +118,27 @@ export function Hud({
         active={openPanel === MilkTeaPanel.HELP}
         onOpen={() => togglePanel(MilkTeaPanel.HELP)}
       />
-      <Controls
-        swipeRef={swipeRef}
-        isFullscreen={isCanvasFullscreen}
-        toggleFullscreen={toggleFullscreen}
-        changePreset={changePreset}
-        controlsVisible={hudVisible}
-        onControlsEnter={handleControlsEnter}
-        onControlsLeave={handleControlsLeave}
-        trackName={trackName}
-        presetName={presetName}
-        filePlayback={filePlayback}
-        onPrevTrack={undefined}
-        onNextTrack={undefined}
-        isRecording={undefined}
-        onRecord={undefined}
-        hasPresets={hasPresets}
-        stagedPresetName={stagedPresetName}
-        onFireStagedPreset={onFireStagedPreset}
-      />
+      {started && (
+        <Controls
+          swipeRef={swipeRef}
+          isFullscreen={isCanvasFullscreen}
+          toggleFullscreen={toggleFullscreen}
+          changePreset={changePreset}
+          controlsVisible={hudVisible}
+          onControlsEnter={handleControlsEnter}
+          onControlsLeave={handleControlsLeave}
+          trackName={trackName}
+          presetName={presetName}
+          filePlayback={filePlayback}
+          onPrevTrack={undefined}
+          onNextTrack={undefined}
+          isRecording={undefined}
+          onRecord={undefined}
+          hasPresets={hasPresets}
+          stagedPresetName={stagedPresetName}
+          onFireStagedPreset={onFireStagedPreset}
+        />
+      )}
     </>
   );
 }
