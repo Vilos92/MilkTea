@@ -40,8 +40,8 @@ export function HelpButton({alwaysLight, active, onOpen, class: className}: Help
         type="button"
         class={buttonClass}
         onClick={onOpen}
-        aria-label={t('help.openLabel')}
-        title={t('help.openLabel')}
+        aria-label={t('common.help')}
+        title={t('common.help')}
       >
         <Icon type="help" size="sm" />
       </button>

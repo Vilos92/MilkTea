@@ -1,5 +1,6 @@
 {
   "common.close": "Stäng",
+  "common.help": "Hjälp",
   "splash.button": "Mjölkte",
   "splash.ariaStart": "Starta visuella",
   "splash.disclaimer1": "På grund av sina ovanliga interaktioner kanske denna installation inte fullt ut uppfyller vanliga tillgänglighetsförväntningar. Tack för din förståelse.",
@@ -26,7 +27,6 @@
   "help.aboutText": "MilkTea. En webbläsarvisualiserare för MilkDrop",
   "help.hotkeys": "Kortkommandon",
   "help.gestures": "Gester",
-  "help.openLabel": "Hjälp",
   "help.keyHelpKeys": "?",
   "help.keyHelpAction": "Hjälp",
   "help.keyPrevKeys": "Vänster, A, H",

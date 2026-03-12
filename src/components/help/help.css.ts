@@ -69,7 +69,10 @@ const headingBase = {
   fontSize: '14px',
   fontWeight: 600,
   textTransform: 'uppercase' as const,
-  letterSpacing: '0.06em'
+  letterSpacing: '0.06em',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px'
 };
 
 export const heading = style({
@@ -153,65 +156,4 @@ export const actionCell = style({
   textAlign: 'right',
   flex: 1,
   minWidth: 0
-});
-
-export const closeRow = style({
-  marginTop: '8px',
-  display: 'flex',
-  justifyContent: 'center'
-});
-
-export const closeBtn = style({
-  padding: '10px 20px',
-  fontSize: '14px',
-  background: 'rgba(255,255,255,0.12)',
-  color: '#fff',
-  border: '1px solid rgba(255,255,255,0.25)',
-  borderRadius: '4px',
-  ':focus-visible': {
-    outline: '2px solid rgba(255,255,255,0.5)',
-    outlineOffset: 2
-  },
-  '@media': {
-    '(hover: hover)': {
-      ':hover': {
-        background: 'rgba(255,255,255,0.18)',
-        borderColor: 'rgba(255,255,255,0.35)'
-      }
-    }
-  }
-});
-
-export const closeBtnSplash = style({
-  padding: '10px 20px',
-  fontSize: '14px',
-  background: 'rgba(255,255,255,0.12)',
-  color: '#fff',
-  border: '1px solid rgba(255,255,255,0.25)',
-  borderRadius: '4px',
-  ':focus-visible': {
-    outline: '2px solid rgba(255,255,255,0.5)',
-    outlineOffset: 2
-  },
-  '@media': {
-    '(hover: hover)': {
-      ':hover': {
-        background: 'rgba(255,255,255,0.18)',
-        borderColor: 'rgba(255,255,255,0.35)'
-      }
-    },
-    '(prefers-color-scheme: light)': {
-      background: 'rgba(0,0,0,0.08)',
-      color: '#213547',
-      border: '1px solid rgba(0,0,0,0.2)',
-      ':focus-visible': {
-        outline: '2px solid rgba(0,0,0,0.4)',
-        outlineOffset: 2
-      },
-      ':hover': {
-        background: 'rgba(0,0,0,0.12)',
-        borderColor: 'rgba(0,0,0,0.3)'
-      }
-    }
-  }
 });

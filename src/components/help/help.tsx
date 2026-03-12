@@ -3,12 +3,11 @@ import {useEffect} from 'preact/hooks';
 import {useHasFinePointer} from '../../hooks/useHasFinePointer';
 import {isMac} from '../../lib/platform';
 import {type Translate, useTranslate} from '../../providers/translation';
+import {Icon} from '../icon/icon';
 import {LocaleSwitcher} from '../locale/localeSwitcher';
+import {closeBtnAdaptive, closeBtnDark, headingRow} from '../picker/picker.css';
 import {
   actionCell,
-  closeBtn,
-  closeBtnSplash,
-  closeRow,
   content,
   heading,
   headingSplash,
@@ -48,7 +47,7 @@ export function Help({visualizerActive, presetName, trackName, onClose}: HelpPro
   const headingClass = visualizerActive ? heading : headingSplash;
   const paragraphClass = visualizerActive ? paragraph : paragraphSplash;
   const listClass = visualizerActive ? list : listSplash;
-  const closeBtnClass = visualizerActive ? closeBtn : closeBtnSplash;
+  const closeBtnClass = visualizerActive ? closeBtnDark : closeBtnAdaptive;
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -62,8 +61,23 @@ export function Help({visualizerActive, presetName, trackName, onClose}: HelpPro
   }, [onClose]);
 
   return (
-    <div class={overlayClass} role="dialog" aria-modal="true" aria-labelledby="help-about">
+    <div class={overlayClass} role="dialog" aria-modal="true" aria-labelledby="help-title">
       <div class={content}>
+        <div class={headingRow}>
+          <h2 id="help-title" class={headingClass}>
+            <Icon type="help" size="sm" />
+            {t('common.help')}
+          </h2>
+          <button
+            type="button"
+            class={closeBtnClass}
+            onClick={onClose}
+            aria-label={t('common.close')}
+            title={t('common.close')}
+          >
+            <Icon type="close" size="sm" />
+          </button>
+        </div>
         <div class={scrollArea}>
           <div class={localeRow}>
             <LocaleSwitcher />
@@ -98,17 +112,6 @@ export function Help({visualizerActive, presetName, trackName, onClose}: HelpPro
               <p class={paragraphClass}>{trackName}</p>
             </section>
           )}
-        </div>
-        <div class={closeRow}>
-          <button
-            type="button"
-            class={closeBtnClass}
-            onClick={onClose}
-            aria-label={t('common.close')}
-            title={t('common.close')}
-          >
-            {t('common.close')}
-          </button>
         </div>
       </div>
     </div>

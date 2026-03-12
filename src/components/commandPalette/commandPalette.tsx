@@ -335,7 +335,7 @@ function usePaletteItems(
         // Commands
         {
           type: PaletteItemType.COMMAND_HELP,
-          label: t('help.openLabel'),
+          label: t('common.help'),
           onSelect: onOpenHelp,
           iconType: 'help' as IconType
         },

@@ -1,5 +1,6 @@
 {
   "common.close": "Kapat",
+  "common.help": "Yardım",
   "splash.button": "Sütlü çay",
   "splash.ariaStart": "Görselleri başlat",
   "splash.disclaimer1": "Alışılmadık etkileşimleri nedeniyle bu sergi, yaygın erişilebilirlik beklentilerine tam uymayabilir. Anlayışınız için teşekkürler.",
@@ -26,7 +27,6 @@
   "help.aboutText": "MilkTea. Tarayıcı için MilkDrop görselleştirici",
   "help.hotkeys": "Kısayollar",
   "help.gestures": "Hareketler",
-  "help.openLabel": "Yardım",
   "help.keyHelpKeys": "?",
   "help.keyHelpAction": "Yardım",
   "help.keyPrevKeys": "Sol, A, H",

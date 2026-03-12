@@ -1,5 +1,6 @@
 {
   "common.close": "סגור",
+  "common.help": "עזרה",
   "splash.button": "תה עם חלב",
   "splash.ariaStart": "התחל ויזואלים",
   "splash.disclaimer1": "בגלל האינטראקציות הלא שגרתיות, ייתכן שהתערוכה הזו לא תעמוד במלואה בציפיות הנגישות המקובלות. תודה על ההבנה.",
@@ -26,7 +27,6 @@
   "help.aboutText": "MilkTea. מציג ויזואלי של MilkDrop בדפדפן",
   "help.hotkeys": "קיצורי מקלדת",
   "help.gestures": "מחוות",
-  "help.openLabel": "עזרה",
   "help.keyHelpKeys": "?",
   "help.keyHelpAction": "עזרה",
   "help.keyPrevKeys": "שמאל, A, H",

@@ -1,5 +1,6 @@
 {
   "common.close": "Κλείσιμο",
+  "common.help": "Βοήθεια",
   "splash.button": "Τσάι με γάλα",
   "splash.ariaStart": "Έναρξη οπτικών",
   "splash.disclaimer1": "Λόγω των ασυνήθιστων αλληλεπιδράσεών της, αυτή η εγκατάσταση ενδέχεται να μην πληροί πλήρως τις συνήθεις προσδοκίες προσβασιμότητας. Ευχαριστούμε για την κατανόησή σας.",
@@ -26,7 +27,6 @@
   "help.aboutText": "MilkTea. Οπτικοποιητής MilkDrop για το πρόγραμμα περιήγησης",
   "help.hotkeys": "Συντομεύσεις",
   "help.gestures": "Χειρονομίες",
-  "help.openLabel": "Βοήθεια",
   "help.keyHelpKeys": "?",
   "help.keyHelpAction": "Βοήθεια",
   "help.keyPrevKeys": "Αριστερά, A, H",

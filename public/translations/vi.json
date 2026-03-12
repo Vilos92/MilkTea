@@ -1,5 +1,6 @@
 {
   "common.close": "Đóng",
+  "common.help": "Trợ giúp",
   "splash.button": "Trà sữa",
   "splash.ariaStart": "Bắt đầu hình ảnh",
   "splash.disclaimer1": "Do tương tác không theo quy ước, triển lãm này có thể không đáp ứng đầy đủ kỳ vọng về trợ năng phổ biến. Cảm ơn sự thông cảm của bạn.",
@@ -26,7 +27,6 @@
   "help.aboutText": "MilkTea. Trình hiển thị MilkDrop trên trình duyệt",
   "help.hotkeys": "Phím tắt",
   "help.gestures": "Cử chỉ",
-  "help.openLabel": "Trợ giúp",
   "help.keyHelpKeys": "?",
   "help.keyHelpAction": "Trợ giúp",
   "help.keyPrevKeys": "Trái, A, H",

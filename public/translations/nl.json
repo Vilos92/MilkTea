@@ -1,5 +1,6 @@
 {
   "common.close": "Sluiten",
+  "common.help": "Help",
   "splash.button": "Thee met melk",
   "splash.ariaStart": "Start visuele weergave",
   "splash.disclaimer1": "Vanwege de ongebruikelijke interacties voldoet deze installatie mogelijk niet volledig aan de gebruikelijke toegankelijkheidsverwachtingen. Bedankt voor uw begrip.",
@@ -26,7 +27,6 @@
   "help.aboutText": "MilkTea. Een browser-visualizer voor MilkDrop",
   "help.hotkeys": "Sneltoetsen",
   "help.gestures": "Gebaren",
-  "help.openLabel": "Help",
   "help.keyHelpKeys": "?",
   "help.keyHelpAction": "Help",
   "help.keyPrevKeys": "Links, A, H",

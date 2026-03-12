@@ -7,6 +7,7 @@ import {DEFAULT_LOCALE, Locale} from './locale';
 /** All translation keys used in the app. */
 export type TranslationKey =
   | 'common.close'
+  | 'common.help'
   | 'splash.button'
   | 'splash.ariaStart'
   | 'splash.disclaimer1'
@@ -33,7 +34,6 @@ export type TranslationKey =
   | 'help.aboutText'
   | 'help.hotkeys'
   | 'help.gestures'
-  | 'help.openLabel'
   | 'help.keyHelpKeys'
   | 'help.keyHelpAction'
   | 'help.keyPrevKeys'
@@ -78,6 +78,7 @@ export type Translations = Record<TranslationKey, string>;
 /** Default locale manuscript. No fetch for 'en'; inlined so no en.json in public. */
 export const ENGLISH_TRANSLATIONS: Translations = {
   'common.close': 'Close',
+  'common.help': 'Help',
   'splash.button': 'MilkTea',
   'splash.ariaStart': 'Start visuals',
   'splash.disclaimer1':
@@ -105,7 +106,6 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'help.aboutText': 'MilkTea. A browser visualizer for MilkDrop',
   'help.hotkeys': 'Hotkeys',
   'help.gestures': 'Gestures',
-  'help.openLabel': 'Help',
   'help.keyHelpKeys': '?',
   'help.keyHelpAction': 'Help',
   'help.keyPrevKeys': 'Left, A, H',

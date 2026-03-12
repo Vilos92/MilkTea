@@ -1,5 +1,6 @@
 {
   "common.close": "Zavřít",
+  "common.help": "Nápověda",
   "splash.button": "Čaj s mlékem",
   "splash.ariaStart": "Spustit vizuál",
   "splash.disclaimer1": "Kvůli neobvyklým interakcím tato instalace nemusí plně vyhovovat běžným očekáváním přístupnosti. Děkujeme za pochopení.",
@@ -26,7 +27,6 @@
   "help.aboutText": "MilkTea. Vizualizér MilkDrop v prohlížeči",
   "help.hotkeys": "Zkratky",
   "help.gestures": "Gesty",
-  "help.openLabel": "Nápověda",
   "help.keyHelpKeys": "?",
   "help.keyHelpAction": "Nápověda",
   "help.keyPrevKeys": "Vlevo, A, H",

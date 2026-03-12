@@ -1,5 +1,6 @@
 {
   "common.close": "Закрыть",
+  "common.help": "Справка",
   "splash.button": "Молочный чай",
   "splash.ariaStart": "Запустить визуализацию",
   "splash.disclaimer1": "Из-за нестандартного взаимодействия эта экспозиция может не полностью соответствовать обычным ожиданиям доступности. Благодарим за понимание.",
@@ -26,7 +27,6 @@
   "help.aboutText": "MilkTea. Визуализатор MilkDrop для браузера",
   "help.hotkeys": "Горячие клавиши",
   "help.gestures": "Жесты",
-  "help.openLabel": "Справка",
   "help.keyHelpKeys": "?",
   "help.keyHelpAction": "Справка",
   "help.keyPrevKeys": "Влево, A, H",

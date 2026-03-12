@@ -1,5 +1,6 @@
 {
   "common.close": "Chiudi",
+  "common.help": "Aiuto",
   "splash.button": "Tè al latte",
   "splash.ariaStart": "Avvia visuali",
   "splash.disclaimer1": "A causa delle sue interazioni non convenzionali, questa installazione potrebbe non rispettare pienamente le aspettative comuni di accessibilità. Grazie per la comprensione.",
@@ -26,7 +27,6 @@
   "help.aboutText": "MilkTea. Un visualizer MilkDrop per il browser",
   "help.hotkeys": "Scorciatoie",
   "help.gestures": "Gesture",
-  "help.openLabel": "Aiuto",
   "help.keyHelpKeys": "?",
   "help.keyHelpAction": "Aiuto",
   "help.keyPrevKeys": "Sinistra, A, H",

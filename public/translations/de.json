@@ -1,5 +1,6 @@
 {
   "common.close": "Schließen",
+  "common.help": "Hilfe",
   "splash.button": "Milchtee",
   "splash.ariaStart": "Visuals starten",
   "splash.disclaimer1": "Aufgrund der unkonventionellen Interaktionen entspricht diese Installation möglicherweise nicht vollständig den üblichen Anforderungen an Barrierefreiheit. Vielen Dank für Ihr Verständnis.",
@@ -26,7 +27,6 @@
   "help.aboutText": "MilkTea. Ein Browser-Visualizer für MilkDrop",
   "help.hotkeys": "Tastenkürzel",
   "help.gestures": "Gesten",
-  "help.openLabel": "Hilfe",
   "help.keyHelpKeys": "?",
   "help.keyHelpAction": "Hilfe",
   "help.keyPrevKeys": "Links, A, H",

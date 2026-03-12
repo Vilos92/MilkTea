@@ -1,5 +1,6 @@
 {
   "common.close": "Închide",
+  "common.help": "Ajutor",
   "splash.button": "Ceai cu lapte",
   "splash.ariaStart": "Pornește vizualizarea",
   "splash.disclaimer1": "Datorită interacțiunilor neconvenționale, această instalație poate să nu respecte pe deplin așteptările comune de accesibilitate. Mulțumim pentru înțelegere.",
@@ -26,7 +27,6 @@
   "help.aboutText": "MilkTea. Un vizualizator MilkDrop în browser",
   "help.hotkeys": "Scurtături",
   "help.gestures": "Gesturi",
-  "help.openLabel": "Ajutor",
   "help.keyHelpKeys": "?",
   "help.keyHelpAction": "Ajutor",
   "help.keyPrevKeys": "Stânga, A, H",

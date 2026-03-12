@@ -1,5 +1,6 @@
 {
   "common.close": "Закрити",
+  "common.help": "Довідка",
   "splash.button": "Чай з молоком",
   "splash.ariaStart": "Запустити візуалізацію",
   "splash.disclaimer1": "Через нестандартну взаємодію ця експозиція може не повністю відповідати звичним очікуванням доступності. Дякуємо за розуміння.",
@@ -26,7 +27,6 @@
   "help.aboutText": "MilkTea. Візуалізатор MilkDrop для браузера",
   "help.hotkeys": "Гарячі клавіші",
   "help.gestures": "Жести",
-  "help.openLabel": "Довідка",
   "help.keyHelpKeys": "?",
   "help.keyHelpAction": "Довідка",
   "help.keyPrevKeys": "Вліво, A, H",
