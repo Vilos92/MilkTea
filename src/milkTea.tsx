@@ -122,6 +122,11 @@ export function MilkTea() {
             }}
             onSelectOscillator={() => handleSourceChange(AudioSource.OSCILLATOR)}
             onSelectMic={() => handleSourceChange(AudioSource.MICROPHONE)}
+            filePlayback={audioFilePlayback}
+            hasPresets={presetKeys.length > 0}
+            stagedPresetName={stagedPreset}
+            onOpenPresetPicker={() => setOpenPanel(MilkTeaPanel.PRESET_PICKER)}
+            onFireStagedPreset={handleFireStagedPreset}
           />
         );
       case MilkTeaPanel.HELP:

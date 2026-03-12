@@ -5,6 +5,7 @@ import {type GetSearchTerms, useSearchableList} from '../../hooks/useSearchableL
 import {supportsRequestFullscreen} from '../../lib/platform';
 import {useSettingsContext} from '../../providers/settings';
 import {type Translate, useTranslate} from '../../providers/translation';
+import type {AudioFilePlayback} from '../../types/audio';
 import {Picker} from '../picker/picker';
 import {Switch} from '../switch/switch';
 import {
@@ -29,6 +30,8 @@ const PaletteItemType = {
   COMMAND_PREV_PRESET: 'command_prev_preset',
   COMMAND_NEXT_PRESET: 'command_next_preset',
   COMMAND_FULL_SCREEN: 'command_full_screen',
+  COMMAND_PLAY_PAUSE: 'command_play_pause',
+  COMMAND_STAGE_OR_LAUNCH_PRESET: 'command_stage_or_launch_preset',
   AUDIO_INPUT_MIC: 'audio_input_mic',
   AUDIO_INPUT_FILE: 'audio_input_file',
   AUDIO_INPUT_OSCILLATOR: 'audio_input_oscillator',
@@ -80,6 +83,11 @@ type CommandPaletteProps = {
   onOpenFilePicker: () => void;
   onSelectOscillator: () => void;
   onSelectMic: () => void;
+  filePlayback: AudioFilePlayback | undefined;
+  hasPresets: boolean;
+  stagedPresetName: string | undefined;
+  onOpenPresetPicker: () => void;
+  onFireStagedPreset: () => void;
 };
 
 /*
@@ -96,7 +104,12 @@ export function CommandPalette({
   onFullScreen,
   onOpenFilePicker,
   onSelectOscillator,
-  onSelectMic
+  onSelectMic,
+  filePlayback,
+  hasPresets,
+  stagedPresetName,
+  onOpenPresetPicker,
+  onFireStagedPreset
 }: CommandPaletteProps) {
   const t = useTranslate();
   const hasFinePointer = useHasFinePointer();
@@ -117,7 +130,12 @@ export function CommandPalette({
     onFullScreen,
     onSelectOscillator,
     onSelectMic,
-    onOpenFilePicker
+    onOpenFilePicker,
+    filePlayback,
+    hasPresets,
+    stagedPresetName,
+    onOpenPresetPicker,
+    onFireStagedPreset
   );
 
   const getSearchTerms = useCallback<GetSearchTerms<PaletteItem>>(
@@ -263,7 +281,12 @@ function usePaletteItems(
   onFullScreen: () => void,
   onSelectOscillator: () => void,
   onSelectMic: () => void,
-  onOpenFilePicker: () => void
+  onOpenFilePicker: () => void,
+  filePlayback: AudioFilePlayback | undefined,
+  hasPresets: boolean,
+  stagedPresetName: string | undefined,
+  onOpenPresetPicker: () => void,
+  onFireStagedPreset: () => void
 ): readonly PaletteItem[] {
   const t = useTranslate();
   const {
@@ -313,11 +336,25 @@ function usePaletteItems(
           label: t('controls.nextPreset'),
           onSelect: onNextPreset
         },
+        hasPresets
+          ? {
+              type: PaletteItemType.COMMAND_STAGE_OR_LAUNCH_PRESET,
+              label: stagedPresetName ? t('controls.firePreset') : t('controls.stagePreset'),
+              onSelect: stagedPresetName ? onFireStagedPreset : onOpenPresetPicker
+            }
+          : undefined,
         supportsRequestFullscreen
           ? {
               type: PaletteItemType.COMMAND_FULL_SCREEN,
               label: isFullscreen ? t('controls.exitFullscreen') : t('controls.enterFullscreen'),
               onSelect: onFullScreen
+            }
+          : undefined,
+        filePlayback != null
+          ? {
+              type: PaletteItemType.COMMAND_PLAY_PAUSE,
+              label: filePlayback.isPlaying ? t('controls.pause') : t('controls.play'),
+              onSelect: filePlayback.onPlayPause
             }
           : undefined,
         // Audio
@@ -338,11 +375,15 @@ function usePaletteItems(
         }
       ].filter(item => item !== undefined),
     [
+      filePlayback,
+      hasPresets,
       isFullscreen,
       onFullScreen,
       onNextPreset,
+      onFireStagedPreset,
       onOpenFilePicker,
       onOpenHelp,
+      onOpenPresetPicker,
       onPrevPreset,
       onSelectMic,
       onSelectOscillator,
@@ -352,6 +393,7 @@ function usePaletteItems(
       shouldSkipSplashOnLoad,
       shouldShowPresetName,
       shouldShowTrackName,
+      stagedPresetName,
       t
     ]
   );
