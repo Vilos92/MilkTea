@@ -4,6 +4,7 @@ import {useLocaleContext} from '../../providers/locale';
 import {useTranslate} from '../../providers/translation';
 import {
   globe,
+  globeWrapper,
   label,
   labelAlwaysLight,
   root,
@@ -41,8 +42,8 @@ export function LocaleSwitcher({class: className}: LocaleSwitcherProps) {
     <div class={rootClass}>
       <div class={labelClass}>
         <span class={row}>
-          <span class={globe} aria-hidden="true">
-            🌐
+          <span class={globeWrapper} aria-hidden="true">
+            <span class={globe}>🌐</span>
           </span>
           <label htmlFor="locale-select" class={srOnly}>
             {t('locale.ariaSelectLanguage')}

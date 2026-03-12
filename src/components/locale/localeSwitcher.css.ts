@@ -1,9 +1,16 @@
 import {style} from '@vanilla-extract/css';
 
+/** Shift row left so the select is visually centered (globe width + gap). */
 export const root = style({
   display: 'flex',
   alignItems: 'center',
-  gap: '8px'
+  gap: '8px',
+  transform: 'translateX(calc(-0.5 * (1.5rem + 12px)))',
+  '@media': {
+    '(pointer: fine)': {
+      transform: 'translateX(calc(-0.5 * (1.25rem + 8px)))'
+    }
+  }
 });
 
 export const label = style({
@@ -28,8 +35,21 @@ export const row = style({
   }
 });
 
+/** Fixed-width container so root transform can use exact (globe + gap) for centering. */
+export const globeWrapper = style({
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '1.5rem',
+  flexShrink: 0,
+  '@media': {
+    '(pointer: fine)': {
+      width: '1.25rem'
+    }
+  }
+});
+
 export const globe = style({
-  display: 'inline-block',
   fontSize: '1.5rem',
   lineHeight: 1,
   '@media': {
