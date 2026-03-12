@@ -148,3 +148,10 @@ export const switchRow = style({
   boxSizing: 'border-box',
   borderRadius: '4px'
 });
+
+/** Icon + label block so switch row labels align with command rows (same gap as commandButton). */
+export const switchRowLabel = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '10px'
+});

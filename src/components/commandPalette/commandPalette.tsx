@@ -19,7 +19,8 @@ import {
   paletteGroup,
   switchRow,
   switchRowActive,
-  switchRowActiveSplash
+  switchRowActiveSplash,
+  switchRowLabel
 } from './commandPalette.css';
 
 /*
@@ -58,7 +59,7 @@ type CommandPaletteItem = {
   type: PaletteItemType;
   label: string;
   onSelect: () => void;
-  iconType?: IconType;
+  iconType: IconType;
 };
 
 type SwitchPaletteItem = {
@@ -66,6 +67,7 @@ type SwitchPaletteItem = {
   label: string;
   checked: boolean;
   onChange: (value: boolean) => void;
+  iconType: IconType;
 };
 
 type PaletteItem = CommandPaletteItem | SwitchPaletteItem;
@@ -225,7 +227,10 @@ export function CommandPalette({
             inputRef.current?.focus();
           }}
         >
-          <span>{item.label}</span>
+          <span class={switchRowLabel}>
+            <Icon type={item.iconType} size="sm" />
+            <span>{item.label}</span>
+          </span>
           <Switch checked={item.checked} onChange={item.onChange} label={item.label} />
         </div>
       );
@@ -241,7 +246,7 @@ export function CommandPalette({
           onClose();
         }}
       >
-        {item.iconType ? <Icon type={item.iconType} size="sm" /> : null}
+        <Icon type={item.iconType} size="sm" />
         {item.label}
       </button>
     );
@@ -310,19 +315,22 @@ function usePaletteItems(
           type: PaletteItemType.SETTINGS_SKIP_SPLASH_ON_LOAD,
           label: t('settings.autoStart'),
           checked: shouldSkipSplashOnLoad,
-          onChange: setShouldSkipSplashOnLoad
+          onChange: setShouldSkipSplashOnLoad,
+          iconType: 'settings' as IconType
         },
         {
           type: PaletteItemType.SETTINGS_SHOW_PRESET_IN_CONTROLS,
           label: t('settings.showPresetNameInControls'),
           checked: shouldShowPresetName,
-          onChange: setShouldShowPresetName
+          onChange: setShouldShowPresetName,
+          iconType: 'settings' as IconType
         },
         {
           type: PaletteItemType.SETTINGS_SHOW_TRACK_IN_CONTROLS,
           label: t('settings.showTrackNameInControls'),
           checked: shouldShowTrackName,
-          onChange: setShouldShowTrackName
+          onChange: setShouldShowTrackName,
+          iconType: 'settings' as IconType
         },
         // Commands
         {
@@ -342,12 +350,14 @@ function usePaletteItems(
         {
           type: PaletteItemType.COMMAND_PREV_PRESET,
           label: t('controls.prevPreset'),
-          onSelect: onPrevPreset
+          onSelect: onPrevPreset,
+          iconType: 'chevron-left' as IconType
         },
         {
           type: PaletteItemType.COMMAND_NEXT_PRESET,
           label: t('controls.nextPreset'),
-          onSelect: onNextPreset
+          onSelect: onNextPreset,
+          iconType: 'chevron-right' as IconType
         },
         hasPresets
           ? {

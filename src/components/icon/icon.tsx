@@ -15,6 +15,7 @@ import {Pause} from './paths/pause';
 import {Play} from './paths/play';
 import {PrevTrack} from './paths/prevTrack';
 import {Record} from './paths/record';
+import {Settings} from './paths/settings';
 
 /*
  * Types.
@@ -37,7 +38,8 @@ export type IconType =
   | 'file-audio'
   | 'microphone'
   | 'help'
-  | 'command-palette';
+  | 'command-palette'
+  | 'settings';
 
 export type IconSize = 'sm' | 'md' | 'lg';
 
@@ -109,6 +111,8 @@ function renderPaths(type: IconType) {
       return <HelpCircle />;
     case 'command-palette':
       return <CommandPalettePath />;
+    case 'settings':
+      return <Settings />;
     default:
       throw new Error(`Unknown icon type: ${type}`);
   }
