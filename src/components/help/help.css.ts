@@ -7,7 +7,7 @@ const baseOverlay = style({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  justifyContent: 'center',
+  justifyContent: 'flex-start',
   padding: '24px',
   boxSizing: 'border-box'
 });
@@ -40,8 +40,10 @@ export const content = style({
   display: 'flex',
   flexDirection: 'column',
   marginTop: '40px',
+  paddingTop: '16px',
   gap: '16px',
-  maxHeight: 'min(640px, calc(100vh - 80px))'
+  maxHeight: 'min(640px, calc(100vh - 80px))',
+  boxSizing: 'border-box'
 });
 
 export const scrollArea = style({
@@ -157,3 +159,45 @@ export const actionCell = style({
   flex: 1,
   minWidth: 0
 });
+
+export const blueskyWrap = style({
+  display: 'inline-flex',
+  justifyContent: 'center',
+  marginTop: '4px',
+  cursor: 'pointer',
+  textDecoration: 'none',
+  alignSelf: 'center'
+});
+
+/** Splash: black on light background, white on dark. */
+export const blueskyWrapSplash = style([
+  blueskyWrap,
+  {
+    color: '#000',
+    '@media': {
+      '(prefers-color-scheme: dark)': {
+        color: '#fff'
+      },
+      '(hover: hover)': {
+        ':hover': {
+          color: '#0085FF'
+        }
+      }
+    }
+  }
+]);
+
+/** Active overlay: white on dark. */
+export const blueskyWrapActive = style([
+  blueskyWrap,
+  {
+    color: 'rgba(255,255,255,0.9)',
+    '@media': {
+      '(hover: hover)': {
+        ':hover': {
+          color: '#0085FF'
+        }
+      }
+    }
+  }
+]);

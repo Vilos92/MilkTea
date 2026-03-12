@@ -1,3 +1,4 @@
+import {Bluesky} from './paths/bluesky';
 import {Bookmark} from './paths/bookmark';
 import {BookmarkCheck} from './paths/bookmarkCheck';
 import {ChevronLeft} from './paths/chevronLeft';
@@ -38,6 +39,7 @@ export type IconType =
   | 'file-audio'
   | 'microphone'
   | 'help'
+  | 'bluesky'
   | 'command-palette'
   | 'settings';
 
@@ -109,6 +111,8 @@ function renderPaths(type: IconType) {
       return <Microphone />;
     case 'help':
       return <HelpCircle />;
+    case 'bluesky':
+      return <Bluesky />;
     case 'command-palette':
       return <CommandPalettePath />;
     case 'settings':

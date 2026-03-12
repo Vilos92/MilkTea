@@ -8,6 +8,8 @@ import {LocaleSwitcher} from '../locale/localeSwitcher';
 import {closeBtnAdaptive, closeBtnDark, headingRow} from '../picker/picker.css';
 import {
   actionCell,
+  blueskyWrapActive,
+  blueskyWrapSplash,
   content,
   heading,
   headingSplash,
@@ -87,6 +89,16 @@ export function Help({visualizerActive, presetName, trackName, onClose}: HelpPro
               {t('help.about')}
             </h2>
             <p class={paragraphClass}>{t('help.aboutText')}</p>
+            <a
+              href={`https://bsky.app/intent/compose?text=${encodeURIComponent('Check out this visualizer: https://milktea.ink')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              class={visualizerActive ? blueskyWrapActive : blueskyWrapSplash}
+              title={t('common.shareToBluesky')}
+              aria-label={t('common.shareToBluesky')}
+            >
+              <Icon type="bluesky" size="lg" />
+            </a>
           </section>
           <section class={section} aria-labelledby={hasFinePointer ? 'help-hotkeys' : 'help-gestures'}>
             <h2 id={hasFinePointer ? 'help-hotkeys' : 'help-gestures'} class={headingClass}>

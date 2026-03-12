@@ -8,6 +8,7 @@ import {DEFAULT_LOCALE, Locale} from './locale';
 export type TranslationKey =
   | 'common.close'
   | 'common.help'
+  | 'common.shareToBluesky'
   | 'splash.button'
   | 'splash.ariaStart'
   | 'splash.disclaimer1'
@@ -79,6 +80,7 @@ export type Translations = Record<TranslationKey, string>;
 export const ENGLISH_TRANSLATIONS: Translations = {
   'common.close': 'Close',
   'common.help': 'Help',
+  'common.shareToBluesky': 'Share to Bluesky',
   'splash.button': 'MilkTea',
   'splash.ariaStart': 'Start visuals',
   'splash.disclaimer1':
