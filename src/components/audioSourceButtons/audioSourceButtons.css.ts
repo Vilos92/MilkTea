@@ -12,12 +12,18 @@ export const audioSourceRoot = style({
   flexWrap: 'nowrap',
   gap: '8px',
   transition: 'opacity 0.35s ease',
-  '@media': {
-    '(max-width: 314px)': {
-      top: '68px'
+  selectors: {
+    '&:not(:has(> *:nth-child(4)))': {
+      '@media': {
+        '(max-width: 314px)': {top: '68px'},
+        '(max-width: 314px) and (pointer: fine)': {top: '48px'}
+      }
     },
-    '(max-width: 314px) and (pointer: fine)': {
-      top: '48px'
+    '&:has(> *:nth-child(4))': {
+      '@media': {
+        '(max-width: 370px)': {top: '68px'},
+        '(max-width: 370px) and (pointer: fine)': {top: '48px'}
+      }
     }
   }
 });

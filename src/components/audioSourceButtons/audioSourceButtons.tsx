@@ -76,8 +76,6 @@ export function AudioSourceButtons({
       >
         <Icon type="microphone" size="sm" />
       </button>
-      {/* TODO: Gate this on whether browser has getDisplayMedia */}
-      {/* TODO: Make sure we update the media breakpoint for the corner buttons nwow that we have one more in the middle */}
       {likelySupportsDisplayAudio && (
         <button
           type="button"
