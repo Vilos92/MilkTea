@@ -25,6 +25,7 @@
   "locale.ariaSelectLanguage": "Seleziona lingua",
   "help.about": "Informazioni",
   "help.aboutText": "MilkTea. Un visualizer MilkDrop per il browser",
+  "help.shareToBlueskyMessage": "Guarda questo visualizer: https://milktea.ink",
   "help.hotkeys": "Scorciatoie",
   "help.gestures": "Gesture",
   "help.keyHelpKeys": "?",

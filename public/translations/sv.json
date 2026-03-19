@@ -25,6 +25,7 @@
   "locale.ariaSelectLanguage": "Välj språk",
   "help.about": "Om",
   "help.aboutText": "MilkTea. En webbläsarvisualiserare för MilkDrop",
+  "help.shareToBlueskyMessage": "Kolla in denna visualisering: https://milktea.ink",
   "help.hotkeys": "Kortkommandon",
   "help.gestures": "Gester",
   "help.keyHelpKeys": "?",

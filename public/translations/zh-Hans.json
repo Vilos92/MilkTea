@@ -25,6 +25,7 @@
   "locale.ariaSelectLanguage": "选择语言",
   "help.about": "关于",
   "help.aboutText": "MilkTea。浏览器版 MilkDrop 可视化工具",
+  "help.shareToBlueskyMessage": "看看这个可视化工具：https://milktea.ink",
   "help.hotkeys": "快捷键",
   "help.gestures": "手势",
   "help.keyHelpKeys": "?",

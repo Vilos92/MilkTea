@@ -25,6 +25,7 @@
   "locale.ariaSelectLanguage": "Selectează limba",
   "help.about": "Despre",
   "help.aboutText": "MilkTea. Un vizualizator MilkDrop în browser",
+  "help.shareToBlueskyMessage": "Vizualizează acest vizualizator: https://milktea.ink",
   "help.hotkeys": "Scurtături",
   "help.gestures": "Gesturi",
   "help.keyHelpKeys": "?",

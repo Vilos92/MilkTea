@@ -32,6 +32,7 @@ export type TranslationKey =
   | 'locale.ariaSelectLanguage'
   | 'help.about'
   | 'help.aboutText'
+  | 'help.shareToBlueskyMessage'
   | 'help.hotkeys'
   | 'help.gestures'
   | 'help.keyHelpKeys'
@@ -103,6 +104,7 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'locale.ariaSelectLanguage': 'Select language',
   'help.about': 'About',
   'help.aboutText': 'MilkTea. A browser visualizer for MilkDrop',
+  'help.shareToBlueskyMessage': 'Check out this visualizer: https://milktea.ink',
   'help.hotkeys': 'Hotkeys',
   'help.gestures': 'Gestures',
   'help.keyHelpKeys': '?',

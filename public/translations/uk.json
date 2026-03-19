@@ -25,6 +25,7 @@
   "locale.ariaSelectLanguage": "Вибрати мову",
   "help.about": "Про програму",
   "help.aboutText": "MilkTea. Візуалізатор MilkDrop для браузера",
+  "help.shareToBlueskyMessage": "Перегляньте цей візуалізатор: https://milktea.ink",
   "help.hotkeys": "Гарячі клавіші",
   "help.gestures": "Жести",
   "help.keyHelpKeys": "?",

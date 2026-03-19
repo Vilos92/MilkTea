@@ -25,6 +25,7 @@
   "locale.ariaSelectLanguage": "Nyelv kiválasztása",
   "help.about": "Névjegy",
   "help.aboutText": "MilkTea. MilkDrop böngészős vizualizáló",
+  "help.shareToBlueskyMessage": "Nézd meg ezt a vizualizálót: https://milktea.ink",
   "help.hotkeys": "Gyorsbillentyűk",
   "help.gestures": "Gestusok",
   "help.keyHelpKeys": "?",

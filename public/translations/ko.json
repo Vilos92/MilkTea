@@ -25,6 +25,7 @@
   "locale.ariaSelectLanguage": "언어 선택",
   "help.about": "정보",
   "help.aboutText": "MilkTea. 브라우저용 MilkDrop 비주얼라이저",
+  "help.shareToBlueskyMessage": "이 비주얼라이저를 확인해 보세요: https://milktea.ink",
   "help.hotkeys": "단축키",
   "help.gestures": "제스처",
   "help.keyHelpKeys": "?",

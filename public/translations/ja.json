@@ -25,6 +25,7 @@
   "locale.ariaSelectLanguage": "言語を選択",
   "help.about": "概要",
   "help.aboutText": "MilkTea. ブラウザ用MilkDropビジュアライザー",
+  "help.shareToBlueskyMessage": "このビジュアライザーを見てみて: https://milktea.ink",
   "help.hotkeys": "ショートカット",
   "help.gestures": "ジェスチャー",
   "help.keyHelpKeys": "?",
