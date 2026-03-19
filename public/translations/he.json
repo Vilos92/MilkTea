@@ -22,10 +22,10 @@
   "controls.nextPreset": "הגדרה הבאה",
   "controls.enterFullscreen": "מסך מלא",
   "controls.exitFullscreen": "צא ממסך מלא",
-  "locale.label": "שפה",
   "locale.ariaSelectLanguage": "בחר שפה",
   "help.about": "אודות",
   "help.aboutText": "MilkTea. מציג ויזואלי של MilkDrop בדפדפן",
+  "help.shareToBlueskyMessage": "בדוק את הוויזואלייזר הזה: https://milktea.ink",
   "help.hotkeys": "קיצורי מקלדת",
   "help.gestures": "מחוות",
   "help.keyHelpKeys": "?",
@@ -49,8 +49,6 @@
   "help.swipeNextAction": "הגדרה הבאה",
   "help.trackName": "עכשיו מתנגן",
   "help.presetName": "ערכת הגדרות",
-  "settings.title": "הגדרות",
-  "settings.close": "סגור",
   "settings.showPresetNameInControls": "הצג שם ערכת הגדרות",
   "settings.showTrackNameInControls": "הצג שם רצועת שמע",
   "settings.autoStart": "הפעל את הוויזואליזר באופן אוטומטי",
@@ -61,5 +59,6 @@
   "dragDrop.message": "גרור קובץ שמע כדי להפעיל אותו.",
   "source.oscillator": "אוסילטור",
   "source.file": "קובץ שמע",
-  "source.microphone": "מיקרופון"
+  "source.microphone": "מיקרופון",
+  "source.audio-capture": "לכידת אודיו"
 }

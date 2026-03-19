@@ -5,7 +5,8 @@
 export const AudioSource = {
   OSCILLATOR: 'oscillator',
   FILE: 'file',
-  MICROPHONE: 'microphone'
+  MICROPHONE: 'microphone',
+  SCREEN_CAPTURE: 'screen-capture'
 } as const;
 export type AudioSource = (typeof AudioSource)[keyof typeof AudioSource];
 

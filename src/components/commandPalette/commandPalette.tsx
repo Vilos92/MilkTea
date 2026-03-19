@@ -37,6 +37,7 @@ const PaletteItemType = {
   AUDIO_INPUT_MIC: 'audio_input_mic',
   AUDIO_INPUT_FILE: 'audio_input_file',
   AUDIO_INPUT_OSCILLATOR: 'audio_input_oscillator',
+  AUDIO_INPUT_AUDIO_CAPTURE: 'audio_input_audio_capture',
   SETTINGS_SKIP_SPLASH_ON_LOAD: 'settings_skip_splash_on_load',
   SETTINGS_SHOW_PRESET_IN_CONTROLS: 'settings_show_preset_in_controls',
   SETTINGS_SHOW_TRACK_IN_CONTROLS: 'settings_show_track_in_controls'
@@ -87,6 +88,7 @@ type CommandPaletteProps = {
   onOpenFilePicker: () => void;
   onSelectOscillator: () => void;
   onSelectMic: () => void;
+  onSelectAudioCapture: () => void;
   filePlayback: AudioFilePlayback | undefined;
   hasPresets: boolean;
   stagedPresetName: string | undefined;
@@ -109,6 +111,7 @@ export function CommandPalette({
   onOpenFilePicker,
   onSelectOscillator,
   onSelectMic,
+  onSelectAudioCapture,
   filePlayback,
   hasPresets,
   stagedPresetName,
@@ -135,6 +138,7 @@ export function CommandPalette({
     onSelectOscillator,
     onSelectMic,
     onOpenFilePicker,
+    onSelectAudioCapture,
     filePlayback,
     hasPresets,
     stagedPresetName,
@@ -228,7 +232,9 @@ export function CommandPalette({
           }}
         >
           <span class={switchRowLabel}>
-            <Icon type={item.iconType} size="sm" />
+            <span>
+              <Icon type={item.iconType} size="sm" />
+            </span>
             <span>{item.label}</span>
           </span>
           <Switch checked={item.checked} onChange={item.onChange} label={item.label} />
@@ -291,6 +297,7 @@ function usePaletteItems(
   onSelectOscillator: () => void,
   onSelectMic: () => void,
   onOpenFilePicker: () => void,
+  onSelectAudioCapture: () => void,
   filePlayback: AudioFilePlayback | undefined,
   hasPresets: boolean,
   stagedPresetName: string | undefined,
@@ -393,29 +400,36 @@ function usePaletteItems(
           label: t('source.microphone'),
           onSelect: onSelectMic,
           iconType: 'microphone' as IconType
+        },
+        {
+          type: PaletteItemType.AUDIO_INPUT_AUDIO_CAPTURE,
+          label: t('source.audio-capture'),
+          onSelect: onSelectAudioCapture,
+          iconType: 'screen-capture' as IconType
         }
       ].filter(item => item !== undefined),
     [
-      filePlayback,
-      hasPresets,
+      t,
+      shouldSkipSplashOnLoad,
+      setShouldSkipSplashOnLoad,
+      shouldShowPresetName,
+      setShouldShowPresetName,
+      shouldShowTrackName,
+      setShouldShowTrackName,
+      onOpenHelp,
       isFullscreen,
       onFullScreen,
-      onNextPreset,
-      onFireStagedPreset,
-      onOpenFilePicker,
-      onOpenHelp,
-      onOpenPresetPicker,
       onPrevPreset,
-      onSelectMic,
-      onSelectOscillator,
-      setShouldSkipSplashOnLoad,
-      setShouldShowPresetName,
-      setShouldShowTrackName,
-      shouldSkipSplashOnLoad,
-      shouldShowPresetName,
-      shouldShowTrackName,
+      onNextPreset,
+      hasPresets,
       stagedPresetName,
-      t
+      onFireStagedPreset,
+      onOpenPresetPicker,
+      filePlayback,
+      onSelectOscillator,
+      onOpenFilePicker,
+      onSelectMic,
+      onSelectAudioCapture
     ]
   );
 }

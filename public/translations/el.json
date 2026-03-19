@@ -22,10 +22,10 @@
   "controls.nextPreset": "Επόμενη προεπιλογή",
   "controls.enterFullscreen": "Πλήρης οθόνη",
   "controls.exitFullscreen": "Έξοδος από πλήρη οθόνη",
-  "locale.label": "Γλώσσα",
   "locale.ariaSelectLanguage": "Επιλέξτε γλώσσα",
   "help.about": "Σχετικά",
   "help.aboutText": "MilkTea. Οπτικοποιητής MilkDrop για το πρόγραμμα περιήγησης",
+  "help.shareToBlueskyMessage": "Δείτε αυτόν τον οπτικοποιητή: https://milktea.ink",
   "help.hotkeys": "Συντομεύσεις",
   "help.gestures": "Χειρονομίες",
   "help.keyHelpKeys": "?",
@@ -49,8 +49,6 @@
   "help.swipeNextAction": "Επόμενη προεπιλογή",
   "help.trackName": "Τώρα παίζει",
   "help.presetName": "Προεπιλογή",
-  "settings.title": "Ρυθμίσεις",
-  "settings.close": "Κλείσιμο",
   "settings.showPresetNameInControls": "Εμφάνιση ονόματος προεπιλογής",
   "settings.showTrackNameInControls": "Εμφάνιση ονόματος τραγουδιού",
   "settings.autoStart": "Εκκίνηση του οπτικοποιητή αυτόματα",
@@ -61,5 +59,6 @@
   "dragDrop.message": "Αποθέστε ένα αρχείο ήχου για αναπαραγωγή.",
   "source.oscillator": "Ταλαντωτής",
   "source.file": "Αρχείο ήχου",
-  "source.microphone": "Μικρόφωνο"
+  "source.microphone": "Μικρόφωνο",
+  "source.audio-capture": "Λήψη ήχου"
 }

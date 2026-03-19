@@ -29,10 +29,10 @@ export type TranslationKey =
   | 'controls.searchPresets'
   | 'controls.enterFullscreen'
   | 'controls.exitFullscreen'
-  | 'locale.label'
   | 'locale.ariaSelectLanguage'
   | 'help.about'
   | 'help.aboutText'
+  | 'help.shareToBlueskyMessage'
   | 'help.hotkeys'
   | 'help.gestures'
   | 'help.keyHelpKeys'
@@ -56,8 +56,6 @@ export type TranslationKey =
   | 'help.swipeNextAction'
   | 'help.trackName'
   | 'help.presetName'
-  | 'settings.title'
-  | 'settings.close'
   | 'settings.showPresetNameInControls'
   | 'settings.showTrackNameInControls'
   | 'settings.autoStart'
@@ -68,7 +66,8 @@ export type TranslationKey =
   | 'dragDrop.message'
   | 'source.oscillator'
   | 'source.file'
-  | 'source.microphone';
+  | 'source.microphone'
+  | 'source.audio-capture';
 
 export type Translations = Record<TranslationKey, string>;
 
@@ -102,10 +101,10 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'controls.searchPresets': 'Search presets\u2026',
   'controls.enterFullscreen': 'Enter fullscreen',
   'controls.exitFullscreen': 'Exit fullscreen',
-  'locale.label': 'Language',
   'locale.ariaSelectLanguage': 'Select language',
   'help.about': 'About',
   'help.aboutText': 'MilkTea. A browser visualizer for MilkDrop',
+  'help.shareToBlueskyMessage': 'Check out this visualizer: https://milktea.ink',
   'help.hotkeys': 'Hotkeys',
   'help.gestures': 'Gestures',
   'help.keyHelpKeys': '?',
@@ -129,8 +128,6 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'help.swipeNextAction': 'Next preset',
   'help.trackName': 'Now playing',
   'help.presetName': 'Preset',
-  'settings.title': 'Settings',
-  'settings.close': 'Close',
   'settings.showPresetNameInControls': 'Show preset name',
   'settings.showTrackNameInControls': 'Show track name',
   'settings.autoStart': 'Start visualizer automatically',
@@ -141,7 +138,8 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'dragDrop.message': 'Drop an audio file to play it.',
   'source.oscillator': 'Oscillator',
   'source.file': 'Audio file',
-  'source.microphone': 'Microphone'
+  'source.microphone': 'Microphone',
+  'source.audio-capture': 'Audio capture'
 };
 
 const SUPPORTED_LOCALES = new Set<string>(Object.values(Locale));

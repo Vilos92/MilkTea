@@ -22,10 +22,10 @@
   "controls.nextPreset": "Sonraki ön ayar",
   "controls.enterFullscreen": "Tam ekran",
   "controls.exitFullscreen": "Tam ekrandan çık",
-  "locale.label": "Dil",
   "locale.ariaSelectLanguage": "Dil seçin",
   "help.about": "Hakkında",
   "help.aboutText": "MilkTea. Tarayıcı için MilkDrop görselleştirici",
+  "help.shareToBlueskyMessage": "Bu görselleştiriciye göz atın: https://milktea.ink",
   "help.hotkeys": "Kısayollar",
   "help.gestures": "Hareketler",
   "help.keyHelpKeys": "?",
@@ -49,8 +49,6 @@
   "help.swipeNextAction": "Sonraki ön ayar",
   "help.trackName": "Şu an çalıyor",
   "help.presetName": "Ön ayar",
-  "settings.title": "Ayarlar",
-  "settings.close": "Kapat",
   "settings.showPresetNameInControls": "Ön ayar adını göster",
   "settings.showTrackNameInControls": "Parça adını göster",
   "settings.autoStart": "Görselleştiriciyi otomatik olarak başlat",
@@ -61,5 +59,6 @@
   "dragDrop.message": "Oynatmak için bir ses dosyası bırakın.",
   "source.oscillator": "Osilatör",
   "source.file": "Ses dosyası",
-  "source.microphone": "Mikrofon"
+  "source.microphone": "Mikrofon",
+  "source.audio-capture": "Ses yakalama"
 }

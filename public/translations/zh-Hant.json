@@ -22,10 +22,10 @@
   "controls.nextPreset": "下一個預設",
   "controls.enterFullscreen": "進入全螢幕",
   "controls.exitFullscreen": "結束全螢幕",
-  "locale.label": "語言",
   "locale.ariaSelectLanguage": "選擇語言",
   "help.about": "關於",
   "help.aboutText": "MilkTea。瀏覽器版 MilkDrop 視覺化工具",
+  "help.shareToBlueskyMessage": "看看這個視覺化工具：https://milktea.ink",
   "help.hotkeys": "快捷鍵",
   "help.gestures": "手勢",
   "help.keyHelpKeys": "?",
@@ -49,8 +49,6 @@
   "help.swipeNextAction": "下一個預設",
   "help.trackName": "正在播放",
   "help.presetName": "預設",
-  "settings.title": "設定",
-  "settings.close": "關閉",
   "settings.showPresetNameInControls": "顯示預設名稱",
   "settings.showTrackNameInControls": "顯示音軌名稱",
   "settings.autoStart": "自動啟動視覺化器",
@@ -61,5 +59,6 @@
   "dragDrop.message": "拖入音訊檔案即可播放。",
   "source.oscillator": "振盪器",
   "source.file": "音訊檔案",
-  "source.microphone": "麥克風"
+  "source.microphone": "麥克風",
+  "source.audio-capture": "音訊擷取"
 }

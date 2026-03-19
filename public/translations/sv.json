@@ -22,10 +22,10 @@
   "controls.nextPreset": "Nästa förinställning",
   "controls.enterFullscreen": "Fullskärm",
   "controls.exitFullscreen": "Avsluta fullskärm",
-  "locale.label": "Språk",
   "locale.ariaSelectLanguage": "Välj språk",
   "help.about": "Om",
   "help.aboutText": "MilkTea. En webbläsarvisualiserare för MilkDrop",
+  "help.shareToBlueskyMessage": "Kolla in denna visualisering: https://milktea.ink",
   "help.hotkeys": "Kortkommandon",
   "help.gestures": "Gester",
   "help.keyHelpKeys": "?",
@@ -49,8 +49,6 @@
   "help.swipeNextAction": "Nästa förinställning",
   "help.trackName": "Spelar nu",
   "help.presetName": "Förinställning",
-  "settings.title": "Inställningar",
-  "settings.close": "Stäng",
   "settings.showPresetNameInControls": "Visa förinställningsnamn",
   "settings.showTrackNameInControls": "Visa spårsnamn",
   "settings.autoStart": "Starta visualiseraren automatiskt",
@@ -61,5 +59,6 @@
   "dragDrop.message": "Släpp en ljudfil för att spela den.",
   "source.oscillator": "Oscillator",
   "source.file": "Ljudfil",
-  "source.microphone": "Mikrofon"
+  "source.microphone": "Mikrofon",
+  "source.audio-capture": "Ljudinspelning"
 }

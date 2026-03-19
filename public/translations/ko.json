@@ -22,10 +22,10 @@
   "controls.nextPreset": "다음 프리셋",
   "controls.enterFullscreen": "전체 화면",
   "controls.exitFullscreen": "전체 화면 종료",
-  "locale.label": "언어",
   "locale.ariaSelectLanguage": "언어 선택",
   "help.about": "정보",
   "help.aboutText": "MilkTea. 브라우저용 MilkDrop 비주얼라이저",
+  "help.shareToBlueskyMessage": "이 비주얼라이저를 확인해 보세요: https://milktea.ink",
   "help.hotkeys": "단축키",
   "help.gestures": "제스처",
   "help.keyHelpKeys": "?",
@@ -49,8 +49,6 @@
   "help.swipeNextAction": "다음 프리셋",
   "help.trackName": "재생 중",
   "help.presetName": "프리셋",
-  "settings.title": "설정",
-  "settings.close": "닫기",
   "settings.showPresetNameInControls": "프리셋 이름 표시",
   "settings.showTrackNameInControls": "트랙 이름 표시",
   "settings.autoStart": "비주얼라이저를 자동으로 시작합니다",
@@ -61,5 +59,6 @@
   "dragDrop.message": "오디오 파일을 놓으면 재생됩니다.",
   "source.oscillator": "오실레이터",
   "source.file": "오디오 파일",
-  "source.microphone": "마이크"
+  "source.microphone": "마이크",
+  "source.audio-capture": "오디오 캡처"
 }

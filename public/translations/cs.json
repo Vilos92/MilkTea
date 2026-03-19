@@ -22,10 +22,10 @@
   "controls.nextPreset": "Další předvolba",
   "controls.enterFullscreen": "Celá obrazovka",
   "controls.exitFullscreen": "Ukončit celou obrazovku",
-  "locale.label": "Jazyk",
   "locale.ariaSelectLanguage": "Vybrat jazyk",
   "help.about": "O aplikaci",
   "help.aboutText": "MilkTea. Vizualizér MilkDrop v prohlížeči",
+  "help.shareToBlueskyMessage": "Podívejte se na tento vizualizér: https://milktea.ink",
   "help.hotkeys": "Zkratky",
   "help.gestures": "Gesty",
   "help.keyHelpKeys": "?",
@@ -49,8 +49,6 @@
   "help.swipeNextAction": "Další předvolba",
   "help.trackName": "Právě hraje",
   "help.presetName": "Předvolba",
-  "settings.title": "Nastavení",
-  "settings.close": "Zavřít",
   "settings.showPresetNameInControls": "Zobrazit název předvolby",
   "settings.showTrackNameInControls": "Zobrazit název stopy",
   "settings.autoStart": "Spustit vizualizér automaticky",
@@ -61,5 +59,6 @@
   "dragDrop.message": "Přetáhněte zvukový soubor pro přehrání.",
   "source.oscillator": "Oscilátor",
   "source.file": "Zvukový soubor",
-  "source.microphone": "Mikrofon"
+  "source.microphone": "Mikrofon",
+  "source.audio-capture": "Zachycení zvuku"
 }

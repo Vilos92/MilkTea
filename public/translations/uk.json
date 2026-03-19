@@ -22,10 +22,10 @@
   "controls.nextPreset": "Наступний пресет",
   "controls.enterFullscreen": "Повний екран",
   "controls.exitFullscreen": "Вийти з повного екрану",
-  "locale.label": "Мова",
   "locale.ariaSelectLanguage": "Вибрати мову",
   "help.about": "Про програму",
   "help.aboutText": "MilkTea. Візуалізатор MilkDrop для браузера",
+  "help.shareToBlueskyMessage": "Перегляньте цей візуалізатор: https://milktea.ink",
   "help.hotkeys": "Гарячі клавіші",
   "help.gestures": "Жести",
   "help.keyHelpKeys": "?",
@@ -49,8 +49,6 @@
   "help.swipeNextAction": "Наступний пресет",
   "help.trackName": "Зараз грає",
   "help.presetName": "Пресет",
-  "settings.title": "Налаштування",
-  "settings.close": "Закрити",
   "settings.showPresetNameInControls": "Показувати назву пресету",
   "settings.showTrackNameInControls": "Показувати назву треку",
   "settings.autoStart": "Автоматично запускати візуалізатор",
@@ -61,5 +59,6 @@
   "dragDrop.message": "Перетягніть аудіофайл для відтворення.",
   "source.oscillator": "Осцилятор",
   "source.file": "Аудіофайл",
-  "source.microphone": "Мікрофон"
+  "source.microphone": "Мікрофон",
+  "source.audio-capture": "Захоплення звуку"
 }

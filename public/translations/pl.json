@@ -22,10 +22,10 @@
   "controls.nextPreset": "Następny preset",
   "controls.enterFullscreen": "Pełny ekran",
   "controls.exitFullscreen": "Zamknij pełny ekran",
-  "locale.label": "Język",
   "locale.ariaSelectLanguage": "Wybierz język",
   "help.about": "O nas",
   "help.aboutText": "MilkTea. Wizualizator MilkDrop w przeglądarce",
+  "help.shareToBlueskyMessage": "Zobacz ten wizualizator: https://milktea.ink",
   "help.hotkeys": "Skróty",
   "help.gestures": "Gesty",
   "help.keyHelpKeys": "?",
@@ -49,8 +49,6 @@
   "help.swipeNextAction": "Następny preset",
   "help.trackName": "Teraz odtwarzane",
   "help.presetName": "Preset",
-  "settings.title": "Ustawienia",
-  "settings.close": "Zamknij",
   "settings.showPresetNameInControls": "Pokaż nazwę presetu",
   "settings.showTrackNameInControls": "Pokaż nazwę ścieżki",
   "settings.autoStart": "Automatycznie uruchamiaj wizualizator",
@@ -61,5 +59,6 @@
   "dragDrop.message": "Upuść plik audio, aby go odtworzyć.",
   "source.oscillator": "Oscylator",
   "source.file": "Plik audio",
-  "source.microphone": "Mikrofon"
+  "source.microphone": "Mikrofon",
+  "source.audio-capture": "Przechwytywanie dźwięku"
 }

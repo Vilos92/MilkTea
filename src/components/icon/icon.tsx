@@ -16,6 +16,7 @@ import {Pause} from './paths/pause';
 import {Play} from './paths/play';
 import {PrevTrack} from './paths/prevTrack';
 import {Record} from './paths/record';
+import {ScreenCapture} from './paths/screenCapture';
 import {Settings} from './paths/settings';
 
 /*
@@ -38,6 +39,7 @@ export type IconType =
   | 'oscillator'
   | 'file-audio'
   | 'microphone'
+  | 'screen-capture'
   | 'help'
   | 'bluesky'
   | 'command-palette'
@@ -109,6 +111,8 @@ function renderPaths(type: IconType) {
       return <FileAudio />;
     case 'microphone':
       return <Microphone />;
+    case 'screen-capture':
+      return <ScreenCapture />;
     case 'help':
       return <HelpCircle />;
     case 'bluesky':

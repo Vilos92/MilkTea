@@ -90,7 +90,7 @@ export function Help({visualizerActive, presetName, trackName, onClose}: HelpPro
             </h2>
             <p class={paragraphClass}>{t('help.aboutText')}</p>
             <a
-              href={`https://bsky.app/intent/compose?text=${encodeURIComponent('Check out this visualizer: https://milktea.ink')}`}
+              href={`https://bsky.app/intent/compose?text=${encodeURIComponent(t('help.shareToBlueskyMessage'))}`}
               target="_blank"
               rel="noopener noreferrer"
               class={visualizerActive ? blueskyWrapActive : blueskyWrapSplash}

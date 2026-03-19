@@ -122,6 +122,7 @@ export function MilkTea() {
             }}
             onSelectOscillator={() => handleSourceChange(AudioSource.OSCILLATOR)}
             onSelectMic={() => handleSourceChange(AudioSource.MICROPHONE)}
+            onSelectAudioCapture={() => handleSourceChange(AudioSource.SCREEN_CAPTURE)}
             filePlayback={audioFilePlayback}
             hasPresets={presetKeys.length > 0}
             stagedPresetName={stagedPreset}

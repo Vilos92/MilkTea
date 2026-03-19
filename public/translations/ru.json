@@ -22,10 +22,10 @@
   "controls.nextPreset": "Следующий пресет",
   "controls.enterFullscreen": "Полный экран",
   "controls.exitFullscreen": "Выйти из полного экрана",
-  "locale.label": "Язык",
   "locale.ariaSelectLanguage": "Выбрать язык",
   "help.about": "О программе",
   "help.aboutText": "MilkTea. Визуализатор MilkDrop для браузера",
+  "help.shareToBlueskyMessage": "Посмотрите этот визуализатор: https://milktea.ink",
   "help.hotkeys": "Горячие клавиши",
   "help.gestures": "Жесты",
   "help.keyHelpKeys": "?",
@@ -49,8 +49,6 @@
   "help.swipeNextAction": "Следующий пресет",
   "help.trackName": "Сейчас играет",
   "help.presetName": "Пресет",
-  "settings.title": "Настройки",
-  "settings.close": "Закрыть",
   "settings.showPresetNameInControls": "Показывать название пресета",
   "settings.showTrackNameInControls": "Показывать название трека",
   "settings.autoStart": "Автоматически запускать визуализатор",
@@ -61,5 +59,6 @@
   "dragDrop.message": "Перетащите аудиофайл для воспроизведения.",
   "source.oscillator": "Осциллятор",
   "source.file": "Аудиофайл",
-  "source.microphone": "Микрофон"
+  "source.microphone": "Микрофон",
+  "source.audio-capture": "Захват звука"
 }

@@ -22,10 +22,10 @@
   "controls.nextPreset": "Következő előbeállítás",
   "controls.enterFullscreen": "Teljes képernyő",
   "controls.exitFullscreen": "Kilépés a teljes képernyőből",
-  "locale.label": "Nyelv",
   "locale.ariaSelectLanguage": "Nyelv kiválasztása",
   "help.about": "Névjegy",
   "help.aboutText": "MilkTea. MilkDrop böngészős vizualizáló",
+  "help.shareToBlueskyMessage": "Nézd meg ezt a vizualizálót: https://milktea.ink",
   "help.hotkeys": "Gyorsbillentyűk",
   "help.gestures": "Gestusok",
   "help.keyHelpKeys": "?",
@@ -49,8 +49,6 @@
   "help.swipeNextAction": "Következő előbeállítás",
   "help.trackName": "Most játszott",
   "help.presetName": "Előbeállítás",
-  "settings.title": "Beállítások",
-  "settings.close": "Bezárás",
   "settings.showPresetNameInControls": "Előbeállítás nevének megjelenítése",
   "settings.showTrackNameInControls": "Sáv nevének megjelenítése",
   "settings.autoStart": "Vizualizátor automatikus indítása",
@@ -61,5 +59,6 @@
   "dragDrop.message": "Ejtsen ide egy hangfájlt a lejátszáshoz.",
   "source.oscillator": "Oszcillátor",
   "source.file": "Hangfájl",
-  "source.microphone": "Mikrofon"
+  "source.microphone": "Mikrofon",
+  "source.audio-capture": "Hangrögzítés"
 }

@@ -22,10 +22,10 @@
   "controls.nextPreset": "Cài đặt tiếp theo",
   "controls.enterFullscreen": "Toàn màn hình",
   "controls.exitFullscreen": "Thoát toàn màn hình",
-  "locale.label": "Ngôn ngữ",
   "locale.ariaSelectLanguage": "Chọn ngôn ngữ",
   "help.about": "Giới thiệu",
   "help.aboutText": "MilkTea. Trình hiển thị MilkDrop trên trình duyệt",
+  "help.shareToBlueskyMessage": "Xem trình hiển thị này: https://milktea.ink",
   "help.hotkeys": "Phím tắt",
   "help.gestures": "Cử chỉ",
   "help.keyHelpKeys": "?",
@@ -49,8 +49,6 @@
   "help.swipeNextAction": "Cài đặt tiếp theo",
   "help.trackName": "Đang phát",
   "help.presetName": "Cài sẵn",
-  "settings.title": "Cài đặt",
-  "settings.close": "Đóng",
   "settings.showPresetNameInControls": "Hiển thị tên cài sẵn",
   "settings.showTrackNameInControls": "Hiển thị tên bản nhạc",
   "settings.autoStart": "Tự động khởi động trình hiển thị hình ảnh",
@@ -61,5 +59,6 @@
   "dragDrop.message": "Thả tệp âm thanh để phát.",
   "source.oscillator": "Bộ dao động",
   "source.file": "Tệp âm thanh",
-  "source.microphone": "Micrô"
+  "source.microphone": "Micrô",
+  "source.audio-capture": "Chụp âm thanh"
 }
