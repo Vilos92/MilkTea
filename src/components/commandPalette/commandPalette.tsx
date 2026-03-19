@@ -228,7 +228,9 @@ export function CommandPalette({
           }}
         >
           <span class={switchRowLabel}>
-            <Icon type={item.iconType} size="sm" />
+            <span>
+              <Icon type={item.iconType} size="sm" />
+            </span>
             <span>{item.label}</span>
           </span>
           <Switch checked={item.checked} onChange={item.onChange} label={item.label} />
