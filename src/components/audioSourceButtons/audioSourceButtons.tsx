@@ -1,5 +1,6 @@
 import type {RefObject} from 'preact';
 
+import {likelySupportsDisplayAudio} from '../../lib/platform.ts';
 import {useTranslate} from '../../providers/translation';
 import {AudioSource} from '../../types/audio';
 import {Icon} from '../icon/icon';
@@ -75,6 +76,20 @@ export function AudioSourceButtons({
       >
         <Icon type="microphone" size="sm" />
       </button>
+      {/* TODO: Gate this on whether browser has getDisplayMedia */}
+      {/* TODO: Make sure we update the media breakpoint for the corner buttons nwow that we have one more in the middle */}
+      {likelySupportsDisplayAudio && (
+        <button
+          type="button"
+          class={buttonClass(AudioSource.SCREEN_CAPTURE, audioSource, pendingAudioSource, started)}
+          onClick={() => onSourceChange(AudioSource.SCREEN_CAPTURE)}
+          aria-label={t('source.screen-capture')}
+          aria-pressed={audioSource === AudioSource.SCREEN_CAPTURE}
+          title={t('source.screen-capture')}
+        >
+          <Icon type="screen-capture" size="sm" />
+        </button>
+      )}
     </div>
   );
 }

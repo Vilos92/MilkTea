@@ -68,7 +68,8 @@ export type TranslationKey =
   | 'dragDrop.message'
   | 'source.oscillator'
   | 'source.file'
-  | 'source.microphone';
+  | 'source.microphone'
+  | 'source.screen-capture';
 
 export type Translations = Record<TranslationKey, string>;
 
@@ -141,7 +142,8 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'dragDrop.message': 'Drop an audio file to play it.',
   'source.oscillator': 'Oscillator',
   'source.file': 'Audio file',
-  'source.microphone': 'Microphone'
+  'source.microphone': 'Microphone',
+  'source.screen-capture': 'Screen capture'
 };
 
 const SUPPORTED_LOCALES = new Set<string>(Object.values(Locale));

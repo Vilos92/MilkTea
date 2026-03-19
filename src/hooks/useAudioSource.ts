@@ -1,6 +1,7 @@
 import type {RefObject} from 'preact';
 import {useCallback, useRef, useState} from 'preact/hooks';
 
+import {likelySupportsDisplayAudio} from '../lib/platform';
 import {AudioSource} from '../types/audio';
 import type {AudioFilePlayback} from '../types/audio';
 
@@ -45,6 +46,7 @@ export function useAudioSource({
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const micStreamRef = useRef<MediaStream | null>(null);
+  const screenCaptureStreamRef = useRef<MediaStream | null>(null);
 
   const stopMicHardware = useCallback(() => {
     micStreamRef.current?.getTracks().forEach(track => track.stop());
@@ -119,6 +121,33 @@ export function useAudioSource({
               micStreamRef.current = stream;
               connectMediaStream(stream);
               setAudioSource(AudioSource.MICROPHONE);
+            })
+            .catch(console.warn);
+          return;
+        case AudioSource.SCREEN_CAPTURE:
+          if (!likelySupportsDisplayAudio) {
+            throw new Error('Screen capture is not supported on this browser');
+          }
+
+          navigator.mediaDevices
+            .getDisplayMedia({video: true, audio: true})
+            .then(stream => {
+              const audioTracks = stream.getAudioTracks();
+              if (audioTracks.length === 0) {
+                stream.getVideoTracks().forEach(track => track.stop());
+                throw new Error('Could not capture audio from screen capture');
+              }
+
+              const audioOnlyStream = new MediaStream(audioTracks);
+              screenCaptureStreamRef.current = stream;
+
+              connectMediaStream(audioOnlyStream);
+              setAudioSource(AudioSource.SCREEN_CAPTURE);
+
+              stream.getVideoTracks()[0]?.addEventListener('ended', () => {
+                setAudioSource(AudioSource.OSCILLATOR);
+                screenCaptureStreamRef.current = null;
+              });
             })
             .catch(console.warn);
           return;
