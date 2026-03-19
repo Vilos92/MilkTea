@@ -1,4 +1,5 @@
 import {describe, expect, test} from 'bun:test';
+import {readFileSync, readdirSync, statSync} from 'node:fs';
 import {join} from 'node:path';
 
 import {Locale} from './locale';
@@ -9,6 +10,9 @@ import {ENGLISH_TRANSLATIONS} from './translations';
  */
 
 const TRANSLATION_KEYS = new Set(Object.keys(ENGLISH_TRANSLATIONS));
+
+/** Match t('key') and capture the translation key. */
+const T_CALL_REGEX = /t\s*\(\s*'([^']+)'\s*\)/g;
 
 /*
  * Types.
@@ -69,6 +73,13 @@ describe('translations', () => {
 
     expect(failures).toEqual([]);
   });
+
+  test('every translation key is used at least once in app source', () => {
+    const srcDir = join(import.meta.dir, '..');
+    const usedKeys = collectUsedTranslationKeys(srcDir);
+    const unused = [...TRANSLATION_KEYS].filter(k => !usedKeys.has(k));
+    expect(unused).toEqual([]);
+  });
 });
 
 /*
@@ -99,4 +110,39 @@ function validateTranslations(translations: Translations): ValidationResult {
     return {ok: false, errors};
   }
   return {ok: true};
+}
+
+/** Recursively list .ts/.tsx files under dir. Excludes test and story files. */
+function listSourceFiles(dir: string): string[] {
+  const files: string[] = [];
+  for (const name of readdirSync(dir)) {
+    const path = join(dir, name);
+    const stat = statSync(path);
+    if (stat.isDirectory()) {
+      files.push(...listSourceFiles(path));
+      continue;
+    }
+
+    if (
+      (name.endsWith('.ts') || name.endsWith('.tsx')) &&
+      !name.endsWith('.spec.ts') &&
+      !name.endsWith('.test.ts') &&
+      !name.endsWith('.stories.tsx')
+    ) {
+      files.push(path);
+    }
+  }
+  return files;
+}
+
+function collectUsedTranslationKeys(srcDir: string): Set<string> {
+  const translationKeys = new Set<string>();
+  const files = listSourceFiles(srcDir);
+  for (const filePath of files) {
+    const content = readFileSync(filePath, 'utf-8');
+    for (const match of content.matchAll(T_CALL_REGEX)) {
+      translationKeys.add(match[1]);
+    }
+  }
+  return translationKeys;
 }

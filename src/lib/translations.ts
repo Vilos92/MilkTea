@@ -29,7 +29,6 @@ export type TranslationKey =
   | 'controls.searchPresets'
   | 'controls.enterFullscreen'
   | 'controls.exitFullscreen'
-  | 'locale.label'
   | 'locale.ariaSelectLanguage'
   | 'help.about'
   | 'help.aboutText'
@@ -56,8 +55,6 @@ export type TranslationKey =
   | 'help.swipeNextAction'
   | 'help.trackName'
   | 'help.presetName'
-  | 'settings.title'
-  | 'settings.close'
   | 'settings.showPresetNameInControls'
   | 'settings.showTrackNameInControls'
   | 'settings.autoStart'
@@ -103,7 +100,6 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'controls.searchPresets': 'Search presets\u2026',
   'controls.enterFullscreen': 'Enter fullscreen',
   'controls.exitFullscreen': 'Exit fullscreen',
-  'locale.label': 'Language',
   'locale.ariaSelectLanguage': 'Select language',
   'help.about': 'About',
   'help.aboutText': 'MilkTea. A browser visualizer for MilkDrop',
@@ -130,8 +126,6 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'help.swipeNextAction': 'Next preset',
   'help.trackName': 'Now playing',
   'help.presetName': 'Preset',
-  'settings.title': 'Settings',
-  'settings.close': 'Close',
   'settings.showPresetNameInControls': 'Show preset name',
   'settings.showTrackNameInControls': 'Show track name',
   'settings.autoStart': 'Start visualizer automatically',
