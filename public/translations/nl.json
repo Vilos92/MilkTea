@@ -61,5 +61,6 @@
   "dragDrop.message": "Sleep een audiobestand om het af te spelen.",
   "source.oscillator": "Oscillator",
   "source.file": "Audiobestand",
-  "source.microphone": "Microfoon"
+  "source.microphone": "Microfoon",
+  "source.screen-capture": "Schermopname"
 }

@@ -61,5 +61,6 @@
   "dragDrop.message": "Trageți un fișier audio pentru a-l reda.",
   "source.oscillator": "Oscilator",
   "source.file": "Fișier audio",
-  "source.microphone": "Microfon"
+  "source.microphone": "Microfon",
+  "source.screen-capture": "Captură de ecran"
 }

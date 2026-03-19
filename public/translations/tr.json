@@ -61,5 +61,6 @@
   "dragDrop.message": "Oynatmak için bir ses dosyası bırakın.",
   "source.oscillator": "Osilatör",
   "source.file": "Ses dosyası",
-  "source.microphone": "Mikrofon"
+  "source.microphone": "Mikrofon",
+  "source.screen-capture": "Ekran yakalama"
 }

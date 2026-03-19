@@ -61,5 +61,6 @@
   "dragDrop.message": "音声ファイルをドロップして再生。",
   "source.oscillator": "オシレーター",
   "source.file": "音声ファイル",
-  "source.microphone": "マイク"
+  "source.microphone": "マイク",
+  "source.screen-capture": "画面キャプチャ"
 }

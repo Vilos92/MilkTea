@@ -61,5 +61,6 @@
   "dragDrop.message": "Перетягніть аудіофайл для відтворення.",
   "source.oscillator": "Осцилятор",
   "source.file": "Аудіофайл",
-  "source.microphone": "Мікрофон"
+  "source.microphone": "Мікрофон",
+  "source.screen-capture": "Захоплення екрана"
 }

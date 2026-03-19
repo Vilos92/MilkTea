@@ -61,5 +61,6 @@
   "dragDrop.message": "Upuść plik audio, aby go odtworzyć.",
   "source.oscillator": "Oscylator",
   "source.file": "Plik audio",
-  "source.microphone": "Mikrofon"
+  "source.microphone": "Mikrofon",
+  "source.screen-capture": "Przechwytywanie ekranu"
 }

@@ -61,5 +61,6 @@
   "dragDrop.message": "拖入音频文件即可播放。",
   "source.oscillator": "振荡器",
   "source.file": "音频文件",
-  "source.microphone": "麦克风"
+  "source.microphone": "麦克风",
+  "source.screen-capture": "屏幕捕获"
 }

@@ -61,5 +61,6 @@
   "dragDrop.message": "Ejtsen ide egy hangfájlt a lejátszáshoz.",
   "source.oscillator": "Oszcillátor",
   "source.file": "Hangfájl",
-  "source.microphone": "Mikrofon"
+  "source.microphone": "Mikrofon",
+  "source.screen-capture": "Képernyőrögzítés"
 }

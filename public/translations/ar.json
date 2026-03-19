@@ -61,5 +61,6 @@
   "dragDrop.message": "أسقط ملف صوتي لتشغيله.",
   "source.oscillator": "مُذبذب",
   "source.file": "ملف صوتي",
-  "source.microphone": "ميكروفون"
+  "source.microphone": "ميكروفون",
+  "source.screen-capture": "التقاط الشاشة"
 }

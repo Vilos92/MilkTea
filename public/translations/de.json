@@ -61,5 +61,6 @@
   "dragDrop.message": "Audiodatei ablegen, um sie abzuspielen.",
   "source.oscillator": "Oszillator",
   "source.file": "Audiodatei",
-  "source.microphone": "Mikrofon"
+  "source.microphone": "Mikrofon",
+  "source.screen-capture": "Bildschirmaufnahme"
 }

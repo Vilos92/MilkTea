@@ -61,5 +61,6 @@
   "dragDrop.message": "Suelta un archivo de audio para reproducirlo.",
   "source.oscillator": "Oscilador",
   "source.file": "Archivo de audio",
-  "source.microphone": "Micrófono"
+  "source.microphone": "Micrófono",
+  "source.screen-capture": "Captura de pantalla"
 }

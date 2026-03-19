@@ -61,5 +61,6 @@
   "dragDrop.message": "Přetáhněte zvukový soubor pro přehrání.",
   "source.oscillator": "Oscilátor",
   "source.file": "Zvukový soubor",
-  "source.microphone": "Mikrofon"
+  "source.microphone": "Mikrofon",
+  "source.screen-capture": "Zachycení obrazovky"
 }

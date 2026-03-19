@@ -61,5 +61,6 @@
   "dragDrop.message": "Thả tệp âm thanh để phát.",
   "source.oscillator": "Bộ dao động",
   "source.file": "Tệp âm thanh",
-  "source.microphone": "Micrô"
+  "source.microphone": "Micrô",
+  "source.screen-capture": "Chụp màn hình"
 }

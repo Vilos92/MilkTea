@@ -61,5 +61,6 @@
   "dragDrop.message": "Αποθέστε ένα αρχείο ήχου για αναπαραγωγή.",
   "source.oscillator": "Ταλαντωτής",
   "source.file": "Αρχείο ήχου",
-  "source.microphone": "Μικρόφωνο"
+  "source.microphone": "Μικρόφωνο",
+  "source.screen-capture": "Λήψη οθόνης"
 }

@@ -61,5 +61,6 @@
   "dragDrop.message": "גרור קובץ שמע כדי להפעיל אותו.",
   "source.oscillator": "אוסילטור",
   "source.file": "קובץ שמע",
-  "source.microphone": "מיקרופון"
+  "source.microphone": "מיקרופון",
+  "source.screen-capture": "לכידת מסך"
 }

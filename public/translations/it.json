@@ -61,5 +61,6 @@
   "dragDrop.message": "Trascina un file audio per riprodurlo.",
   "source.oscillator": "Oscillatore",
   "source.file": "File audio",
-  "source.microphone": "Microfono"
+  "source.microphone": "Microfono",
+  "source.screen-capture": "Cattura schermo"
 }

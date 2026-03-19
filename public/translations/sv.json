@@ -61,5 +61,6 @@
   "dragDrop.message": "Släpp en ljudfil för att spela den.",
   "source.oscillator": "Oscillator",
   "source.file": "Ljudfil",
-  "source.microphone": "Mikrofon"
+  "source.microphone": "Mikrofon",
+  "source.screen-capture": "Skärminspelning"
 }

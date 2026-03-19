@@ -61,5 +61,6 @@
   "dragDrop.message": "ऑडियो फ़ाइल छोड़ें और चलाएं।",
   "source.oscillator": "ऑसिलेटर",
   "source.file": "ऑडियो फ़ाइल",
-  "source.microphone": "माइक्रोफ़ोन"
+  "source.microphone": "माइक्रोफ़ोन",
+  "source.screen-capture": "स्क्रीन कैप्चर"
 }
