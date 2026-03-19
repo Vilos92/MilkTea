@@ -13,7 +13,12 @@ const baseOverlay = style({
   alignItems: 'center',
   justifyContent: 'flex-start',
   padding: '24px',
-  boxSizing: 'border-box'
+  boxSizing: 'border-box',
+  '@media': {
+    /* When audio source row breaks, reserve top space so panel content clears it. */
+    '(max-width: 370px)': {paddingTop: '88px'},
+    '(max-width: 370px) and (pointer: fine)': {paddingTop: '48px'}
+  }
 });
 
 /** Always dark (e.g. over a dark canvas). */
