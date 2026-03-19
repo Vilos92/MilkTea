@@ -59,5 +59,5 @@
   "source.oscillator": "振荡器",
   "source.file": "音频文件",
   "source.microphone": "麦克风",
-  "source.screen-capture": "屏幕捕获"
+  "source.audio-capture": "音频捕获"
 }

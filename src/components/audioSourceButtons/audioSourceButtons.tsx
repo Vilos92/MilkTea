@@ -81,9 +81,9 @@ export function AudioSourceButtons({
           type="button"
           class={buttonClass(AudioSource.SCREEN_CAPTURE, audioSource, pendingAudioSource, started)}
           onClick={() => onSourceChange(AudioSource.SCREEN_CAPTURE)}
-          aria-label={t('source.screen-capture')}
+          aria-label={t('source.audio-capture')}
           aria-pressed={audioSource === AudioSource.SCREEN_CAPTURE}
-          title={t('source.screen-capture')}
+          title={t('source.audio-capture')}
         >
           <Icon type="screen-capture" size="sm" />
         </button>

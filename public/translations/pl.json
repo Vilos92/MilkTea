@@ -59,5 +59,5 @@
   "source.oscillator": "Oscylator",
   "source.file": "Plik audio",
   "source.microphone": "Mikrofon",
-  "source.screen-capture": "Przechwytywanie ekranu"
+  "source.audio-capture": "Przechwytywanie dźwięku"
 }
