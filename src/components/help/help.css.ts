@@ -12,8 +12,8 @@ const baseOverlay = style({
   boxSizing: 'border-box',
   '@media': {
     /* When audio source row breaks, reserve top space so panel content clears it. */
-    '(max-width: 320px)': {paddingTop: '88px'},
-    '(max-width: 320px) and (pointer: fine)': {paddingTop: '48px'}
+    '(max-width: 350px)': {paddingTop: '88px'},
+    '(max-width: 350px) and (pointer: fine)': {paddingTop: '48px'}
   }
 });
 

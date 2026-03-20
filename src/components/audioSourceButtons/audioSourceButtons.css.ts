@@ -21,8 +21,8 @@ export const audioSourceRoot = style({
     },
     '&:has(> *:nth-child(4))': {
       '@media': {
-        '(max-width: 320px)': {top: '68px'},
-        '(max-width: 320px) and (pointer: fine)': {top: '48px'}
+        '(max-width: 350px)': {top: '68px'},
+        '(max-width: 350px) and (pointer: fine)': {top: '48px'}
       }
     }
   }
