@@ -1,5 +1,5 @@
 import type {RefObject} from 'preact';
-import {useCallback, useEffect, useRef, useState} from 'preact/hooks';
+import {useEffect} from 'preact/hooks';
 
 import {MilkTeaPanel, usePanelContext} from '../../providers/panel';
 import type {AudioFilePlayback} from '../../types/audio';
@@ -27,6 +27,11 @@ type HudProps = {
   isCanvasFullscreen: boolean;
   toggleFullscreen: () => void;
   changePreset: (delta: number) => void;
+  // HUD visibility.
+  isHudVisible: boolean;
+  onControlsEnter: () => void;
+  onControlsLeave: () => void;
+  forceVisible: () => void;
   // Audio source.
   fileInputRef: RefObject<HTMLInputElement>;
   onFileChange: (event: Event) => void;
@@ -45,12 +50,6 @@ type HudProps = {
 };
 
 /*
- * Constants.
- */
-
-const CONTROLS_FADE_DELAY_MS = 2500;
-
-/*
  * Component.
  */
 
@@ -60,6 +59,10 @@ export function Hud({
   isCanvasFullscreen,
   toggleFullscreen,
   changePreset,
+  isHudVisible: isHudVisibleParam,
+  onControlsEnter,
+  onControlsLeave,
+  forceVisible,
   fileInputRef,
   onFileChange,
   audioSource,
@@ -73,7 +76,6 @@ export function Hud({
   onFireStagedPreset
 }: HudProps) {
   const {openPanel, togglePanel} = usePanelContext();
-  const {hudVisible, handleControlsEnter, handleControlsLeave, forceVisible} = useHudVisibility();
 
   useEffect(() => {
     if (openPanel !== MilkTeaPanel.NONE) {
@@ -81,18 +83,7 @@ export function Hud({
     }
   }, [openPanel, forceVisible]);
 
-  useEffect(() => {
-    if (!started) {
-      document.body.style.cursor = '';
-      return;
-    }
-    document.body.style.cursor = hudVisible ? '' : 'none';
-    return () => {
-      document.body.style.cursor = '';
-    };
-  }, [hudVisible, started]);
-
-  const isHudVisible = hudVisible || !started || openPanel !== MilkTeaPanel.NONE;
+  const isHudVisible = isHudVisibleParam || !started || openPanel !== MilkTeaPanel.NONE;
   const visibilityClass = isHudVisible ? visibleClass : fadedClass;
 
   return (
@@ -124,9 +115,9 @@ export function Hud({
           isFullscreen={isCanvasFullscreen}
           toggleFullscreen={toggleFullscreen}
           changePreset={changePreset}
-          controlsVisible={hudVisible}
-          onControlsEnter={handleControlsEnter}
-          onControlsLeave={handleControlsLeave}
+          controlsVisible={isHudVisible}
+          onControlsEnter={onControlsEnter}
+          onControlsLeave={onControlsLeave}
           trackName={trackName}
           presetName={presetName}
           filePlayback={filePlayback}
@@ -141,65 +132,4 @@ export function Hud({
       )}
     </>
   );
-}
-
-/*
- * Hooks.
- */
-
-function useHudVisibility() {
-  const [hudVisible, setHudVisible] = useState(true);
-  const fadeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const scheduleFadeOutRef = useRef<(() => void) | null>(null);
-
-  useEffect(() => {
-    const scheduleFadeOut = () => {
-      if (fadeTimeoutRef.current) {
-        clearTimeout(fadeTimeoutRef.current);
-      }
-      fadeTimeoutRef.current = setTimeout(() => setHudVisible(false), CONTROLS_FADE_DELAY_MS);
-    };
-    scheduleFadeOutRef.current = scheduleFadeOut;
-
-    const showControls = () => {
-      setHudVisible(true);
-      scheduleFadeOut();
-    };
-
-    window.addEventListener('mousemove', showControls);
-    window.addEventListener('touchstart', showControls, {passive: true});
-    scheduleFadeOut();
-
-    return () => {
-      window.removeEventListener('mousemove', showControls);
-      window.removeEventListener('touchstart', showControls);
-      scheduleFadeOutRef.current = null;
-      if (fadeTimeoutRef.current) {
-        clearTimeout(fadeTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  const handleControlsEnter = () => {
-    if (fadeTimeoutRef.current) {
-      clearTimeout(fadeTimeoutRef.current);
-      fadeTimeoutRef.current = null;
-    }
-    setHudVisible(true);
-    scheduleFadeOutRef.current?.();
-  };
-
-  const handleControlsLeave = () => {
-    scheduleFadeOutRef.current?.();
-  };
-
-  const forceVisible = useCallback(() => {
-    setHudVisible(true);
-    if (fadeTimeoutRef.current) {
-      clearTimeout(fadeTimeoutRef.current);
-      fadeTimeoutRef.current = null;
-    }
-  }, []);
-
-  return {hudVisible, handleControlsEnter, handleControlsLeave, forceVisible};
 }

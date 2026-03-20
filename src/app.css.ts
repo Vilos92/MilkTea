@@ -26,3 +26,7 @@ export const containerStarted = style({
   background: '#000',
   color: '#fff'
 });
+
+export const cursorHidden = style({
+  cursor: 'none'
+});

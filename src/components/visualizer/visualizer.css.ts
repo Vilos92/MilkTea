@@ -10,5 +10,5 @@ export const canvas = style({
   background: '#000',
   display: 'block',
   border: 'none',
-  cursor: 'default'
+  cursor: 'inherit'
 });

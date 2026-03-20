@@ -1,6 +1,6 @@
-import {useEffect, useState} from 'preact/hooks';
+import {useCallback, useEffect, useRef, useState} from 'preact/hooks';
 
-import {container, containerSplash, containerStarted} from './app.css.ts';
+import {container, containerSplash, containerStarted, cursorHidden} from './app.css.ts';
 import {CommandPalette} from './components/commandPalette/commandPalette';
 import {DragArea} from './components/dragArea/dragArea';
 import {Help} from './components/help/help';
@@ -13,6 +13,12 @@ import {useButterchurn} from './hooks/useButterchurn';
 import {MilkTeaPanel, usePanelContext} from './providers/panel';
 import {useSettingsContext} from './providers/settings';
 import {AudioSource} from './types/audio';
+
+/*
+ * Constants.
+ */
+
+const HUD_FADE_DELAY_MS = 2500;
 
 /*
  * MilkTea.
@@ -41,6 +47,13 @@ export function MilkTea() {
   } = useButterchurn();
 
   const [stagedPreset, setStagedPreset] = useState<string | undefined>(undefined);
+  const {hudVisible, handleControlsEnter, handleControlsLeave, forceVisible, scheduleFade} =
+    useHudVisibility();
+
+  const closePanel = () => {
+    setOpenPanel(MilkTeaPanel.NONE);
+    scheduleFade();
+  };
 
   const handleFireStagedPreset = () => {
     if (!stagedPreset) {
@@ -109,9 +122,7 @@ export function MilkTea() {
         return (
           <CommandPalette
             visualizerActive={started}
-            onClose={() =>
-              setOpenPanel(prev => (prev === MilkTeaPanel.COMMAND_PALETTE ? MilkTeaPanel.NONE : prev))
-            }
+            onClose={closePanel}
             onOpenHelp={() => setOpenPanel(MilkTeaPanel.HELP)}
             onPrevPreset={() => changePreset(-1)}
             onNextPreset={() => changePreset(1)}
@@ -136,7 +147,7 @@ export function MilkTea() {
             visualizerActive={started}
             presetName={presetName}
             trackName={trackName}
-            onClose={() => setOpenPanel(MilkTeaPanel.NONE)}
+            onClose={closePanel}
           />
         );
       case MilkTeaPanel.PRESET_PICKER:
@@ -145,7 +156,7 @@ export function MilkTea() {
             items={presetKeys}
             selectedItem={stagedPreset}
             onSelect={setStagedPreset}
-            onClose={() => setOpenPanel(MilkTeaPanel.NONE)}
+            onClose={closePanel}
           />
         );
       case MilkTeaPanel.NONE:
@@ -154,9 +165,15 @@ export function MilkTea() {
     }
   };
 
+  const containerClass = [container, started ? containerStarted : containerSplash];
+  if (started && !hudVisible && openPanel === MilkTeaPanel.NONE) {
+    containerClass.push(cursorHidden);
+  }
+  const containerClassName = containerClass.join(' ');
+
   return (
     <DragArea handleDrop={handleAudioFileDrop}>
-      <div ref={containerRef} class={[container, started ? containerStarted : containerSplash].join(' ')}>
+      <div ref={containerRef} class={containerClassName}>
         <Visualizer canvasRef={canvasRef} />
         {!started && <Splash start={start} />}
         <Hud
@@ -165,6 +182,10 @@ export function MilkTea() {
           isCanvasFullscreen={isCanvasFullscreen}
           toggleFullscreen={toggleFullscreen}
           changePreset={changePreset}
+          isHudVisible={hudVisible}
+          onControlsEnter={handleControlsEnter}
+          onControlsLeave={handleControlsLeave}
+          forceVisible={forceVisible}
           fileInputRef={fileInputRef}
           onFileChange={onAudioFileChange}
           audioSource={audioSource}
@@ -181,4 +202,72 @@ export function MilkTea() {
       </div>
     </DragArea>
   );
+}
+
+/*
+ * Hooks.
+ */
+
+function useHudVisibility() {
+  const [hudVisible, setHudVisible] = useState(true);
+  const fadeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scheduleFadeOutRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    const scheduleFadeOut = () => {
+      if (fadeTimeoutRef.current) {
+        clearTimeout(fadeTimeoutRef.current);
+      }
+      fadeTimeoutRef.current = setTimeout(() => setHudVisible(false), HUD_FADE_DELAY_MS);
+    };
+    scheduleFadeOutRef.current = scheduleFadeOut;
+
+    const showControls = () => {
+      setHudVisible(true);
+      scheduleFadeOut();
+    };
+
+    window.addEventListener('mousemove', showControls);
+    window.addEventListener('touchstart', showControls, {passive: true});
+    scheduleFadeOut();
+
+    return () => {
+      window.removeEventListener('mousemove', showControls);
+      window.removeEventListener('touchstart', showControls);
+      scheduleFadeOutRef.current = null;
+      if (fadeTimeoutRef.current) {
+        clearTimeout(fadeTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleControlsEnter = () => {
+    if (fadeTimeoutRef.current) {
+      clearTimeout(fadeTimeoutRef.current);
+      fadeTimeoutRef.current = null;
+    }
+    setHudVisible(true);
+    scheduleFadeOutRef.current?.();
+  };
+
+  const handleControlsLeave = () => {
+    scheduleFadeOutRef.current?.();
+  };
+
+  const forceVisible = useCallback(() => {
+    setHudVisible(true);
+    if (fadeTimeoutRef.current) {
+      clearTimeout(fadeTimeoutRef.current);
+      fadeTimeoutRef.current = null;
+    }
+  }, []);
+
+  const scheduleFade = useCallback(() => {
+    if (fadeTimeoutRef.current) {
+      clearTimeout(fadeTimeoutRef.current);
+    }
+    fadeTimeoutRef.current = setTimeout(() => setHudVisible(false), HUD_FADE_DELAY_MS);
+  }, []);
+
+  return {hudVisible, handleControlsEnter, handleControlsLeave, forceVisible, scheduleFade};
 }
