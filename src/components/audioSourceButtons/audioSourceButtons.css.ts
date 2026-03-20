@@ -13,13 +13,15 @@ export const audioSourceRoot = style({
   gap: '8px',
   transition: 'opacity 0.35s ease',
   selectors: {
-    '&:not(:has(> *:nth-child(4)))': {
+    /* 3 visible buttons (input + 3 buttons = 4 children, no 5th) */
+    '&:not(:has(> *:nth-child(5)))': {
       '@media': {
         '(max-width: 280px)': {top: '68px'},
         '(max-width: 280px) and (pointer: fine)': {top: '48px'}
       }
     },
-    '&:has(> *:nth-child(4))': {
+    /* 4 visible buttons (input + 4 buttons = 5 children) */
+    '&:has(> *:nth-child(5))': {
       '@media': {
         '(max-width: 350px)': {top: '68px'},
         '(max-width: 350px) and (pointer: fine)': {top: '48px'}
