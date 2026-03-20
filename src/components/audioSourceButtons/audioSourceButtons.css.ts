@@ -15,14 +15,14 @@ export const audioSourceRoot = style({
   selectors: {
     '&:not(:has(> *:nth-child(4)))': {
       '@media': {
-        '(max-width: 314px)': {top: '68px'},
-        '(max-width: 314px) and (pointer: fine)': {top: '48px'}
+        '(max-width: 280px)': {top: '68px'},
+        '(max-width: 280px) and (pointer: fine)': {top: '48px'}
       }
     },
     '&:has(> *:nth-child(4))': {
       '@media': {
-        '(max-width: 370px)': {top: '68px'},
-        '(max-width: 370px) and (pointer: fine)': {top: '48px'}
+        '(max-width: 320px)': {top: '68px'},
+        '(max-width: 320px) and (pointer: fine)': {top: '48px'}
       }
     }
   }
