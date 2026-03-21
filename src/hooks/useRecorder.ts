@@ -1,9 +1,10 @@
 import type {RefObject} from 'preact';
 import {useCallback, useEffect, useRef, useState} from 'preact/hooks';
 
-import {convertWebmToFormat} from '../lib/mediabunny';
-import type {VideoOutputFormat} from '../lib/mediabunny';
+import {convertWebmToFormat} from '../lib/mediabunny/convert';
+import {preloadMediabunny} from '../lib/mediabunny/preload';
 import {computeVideoBitrate} from '../lib/video';
+import type {VideoFormatId} from '../lib/video';
 import type {Size} from '../types/geometry';
 
 /*
@@ -11,7 +12,7 @@ import type {Size} from '../types/geometry';
  */
 
 /** The configuration that defines how the output video will be rendered. */
-export type RenderConfig = Size & {fps: number; bpp: number; format: VideoOutputFormat; baseName: string};
+export type RenderConfig = Size & {fps: number; bpp: number; format: VideoFormatId; baseName: string};
 
 export type RecordingProcessedPayload = {
   blob: Blob;
@@ -68,6 +69,9 @@ export function useRecorder(
     setRecordingUrl(undefined);
     chunksRef.current = [];
 
+    // Preload the mediabunny chunk so that we are ready to process the WebM when the user stops recording.
+    preloadMediabunny();
+
     const videoBitrate = computeVideoBitrate(width, height, fps, bpp);
 
     const canvasStream = canvas.captureStream(fps);
@@ -91,7 +95,7 @@ export function useRecorder(
         try {
           const webmBlob = new Blob(chunksRef.current, {type: 'video/webm'});
           const blob = await convertWebmToFormat(webmBlob, format, videoBitrate);
-          const suggestedFilename = formatAssetName(baseName, format.fileExtension.slice(1));
+          const suggestedFilename = formatAssetName(baseName, format);
           const handleProcessed = onProcessedRef.current;
 
           if (handleProcessed) {

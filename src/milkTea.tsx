@@ -11,12 +11,12 @@ import {Visualizer} from './components/visualizer/visualizer';
 import {useAudioSource} from './hooks/useAudioSource';
 import {useButterchurn} from './hooks/useButterchurn';
 import {type RecordingProcessedPayload, type RenderConfig, useRecorder} from './hooks/useRecorder';
-import {VIDEO_FORMAT_OPTIONS} from './lib/mediabunny';
 import {vibrateHeavy, vibrateLight, vibrateMedium} from './lib/vibrate';
 import {
   DEFAULT_MAIN_RECORD_BPP,
   DEFAULT_VIDEO_FPS,
   DEFAULT_VIDEO_SIZE_PRESET,
+  VIDEO_FORMAT_OPTIONS,
   sizeFromVideoPreset
 } from './lib/video';
 import {MilkTeaPanel, usePanelContext} from './providers/panel';
@@ -33,7 +33,7 @@ const RENDER_CONFIG: RenderConfig = {
   ...sizeFromVideoPreset(DEFAULT_VIDEO_SIZE_PRESET),
   fps: DEFAULT_VIDEO_FPS,
   bpp: DEFAULT_MAIN_RECORD_BPP,
-  format: VIDEO_FORMAT_OPTIONS[0].format, // MP4
+  format: VIDEO_FORMAT_OPTIONS[0].id,
   baseName: 'milktea'
 };
 
