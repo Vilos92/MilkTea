@@ -2,7 +2,7 @@ import type {RefObject} from 'preact';
 import {useCallback, useEffect, useRef, useState} from 'preact/hooks';
 
 import {VIDEO_FORMAT_OPTIONS, convertWebmToFormat} from '../lib/mediabunny';
-import {computeRecordingSize, computeVideoBitrate} from '../lib/video';
+import {RECORDING_OUTPUT_SIZE_1080P, computeVideoBitrate} from '../lib/video';
 import type {Size} from '../types/geometry';
 
 /*
@@ -26,7 +26,7 @@ type RecordState = 'idle' | 'recording' | 'processing' | 'error';
 
 /**
  * Orchestrates video recording in the main app:
- * 1. Resizes the butterchurn canvas to a recording resolution derived from the viewport aspect ratio.
+ * 1. Resizes the butterchurn canvas to 1080p (1920×1080) for capture.
  * 2. Captures the canvas stream + audio via MediaRecorder.
  * 3. On stop: restores the canvas to viewport size and auto-downloads the converted file.
  */
@@ -56,8 +56,7 @@ export function useRecording(
     chunksRef.current = [];
     setRecordError(undefined);
 
-    const viewport: Size = {width: window.innerWidth, height: window.innerHeight};
-    const recordingSize = computeRecordingSize(viewport);
+    const recordingSize = RECORDING_OUTPUT_SIZE_1080P;
 
     await resizeCanvas(recordingSize);
 
