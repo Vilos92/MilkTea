@@ -43,6 +43,10 @@ type HudProps = {
   presetName: string | undefined;
   // File playback (progress, play/pause). Only shown if audio source is file.
   filePlayback: AudioFilePlayback | undefined;
+  // Recording.
+  isRecording: boolean;
+  isProcessingRecord: boolean;
+  onRecord: () => void;
   // Preset staging.
   hasPresets: boolean;
   stagedPresetName: string | undefined;
@@ -71,6 +75,9 @@ export function Hud({
   trackName,
   presetName,
   filePlayback,
+  isRecording,
+  isProcessingRecord,
+  onRecord,
   hasPresets,
   stagedPresetName,
   onFireStagedPreset
@@ -123,8 +130,8 @@ export function Hud({
           filePlayback={filePlayback}
           onPrevTrack={undefined}
           onNextTrack={undefined}
-          isRecording={undefined}
-          onRecord={undefined}
+          isRecording={isRecording}
+          onRecord={isProcessingRecord ? undefined : onRecord}
           hasPresets={hasPresets}
           stagedPresetName={stagedPresetName}
           onFireStagedPreset={onFireStagedPreset}

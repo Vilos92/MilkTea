@@ -4,8 +4,8 @@ import {useCallback, useEffect, useMemo, useRef, useState} from 'preact/hooks';
 import {
   type Visualizer,
   type VisualizerContext,
-  createOscillatorVisualizerContext,
-  createVisualizer
+  createVisualizer,
+  createVisualizerAudioContext
 } from '../lib/butterchurn/butterchurn';
 import {
   fetchPresetByIndex,
@@ -39,7 +39,14 @@ type UseButterChurnResult = {
   filePlayback: AudioFilePlayback | undefined;
   isCanvasFullscreen: boolean;
   toggleFullscreen: () => void;
+  resizeCanvas: (size: Size) => Promise<void>;
+  /** Gain tap for MediaRecorder — same graph Butterchurn analyzes. */
+  getAudioStream: () => MediaStream | undefined;
 };
+
+/** Built-in saw (Oscillator source): stronger on idle canvas, quieter when chosen from the menu. */
+const BUILTIN_OSC_GAIN_BEFORE_START = 1.0;
+const BUILTIN_OSC_GAIN_FROM_MENU = 0.1;
 
 /*
  * Hook.
@@ -53,6 +60,7 @@ export function useButterchurn(): UseButterChurnResult {
   const visualizerRef = useRef<Visualizer | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
+  const streamDestRef = useRef<MediaStreamAudioDestinationNode | null>(null);
   const sourceNodeRef = useRef<AudioBufferSourceNode | OscillatorNode | MediaStreamAudioSourceNode | null>(
     null
   );
@@ -162,6 +170,30 @@ export function useButterchurn(): UseButterChurnResult {
     setFilePlaybackIsPlaying(false);
   }, []);
 
+  /** Built-in oscillator into `gainNode` — same path as choosing "Oscillator" in the UI. */
+  const connectBuiltinOscillator = useCallback(
+    (linearGain: number) => {
+      const ctx = audioContextRef.current;
+      const gainNode = gainNodeRef.current;
+      if (!ctx || !gainNode) {
+        return;
+      }
+
+      stopCurrentSource();
+
+      gainNode.gain.setTargetAtTime(linearGain, ctx.currentTime, 0.01);
+
+      const osc = ctx.createOscillator();
+      osc.type = 'sawtooth';
+      osc.frequency.value = 60;
+      osc.connect(gainNode);
+      osc.start();
+
+      sourceNodeRef.current = osc;
+    },
+    [stopCurrentSource]
+  );
+
   const isInitializingRef = useRef(false);
 
   // fetch preset data, create `AudioContext`, setup visualizer.
@@ -183,16 +215,23 @@ export function useButterchurn(): UseButterChurnResult {
     setPresetIndex(initialIndex);
     prefetchNeighborPresets(initialIndex, keys.length);
 
-    const context = createOscillatorVisualizerContext();
+    const context = createVisualizerAudioContext();
     audioContextRef.current = context.audioContext;
     gainNodeRef.current = context.gainNode;
+
+    const {audioContext, gainNode} = context;
+    const streamDest = audioContext.createMediaStreamDestination();
+    gainNode.connect(streamDest);
+    streamDestRef.current = streamDest;
 
     const {width, height} = viewportSize();
     canvas.width = width;
     canvas.height = height;
 
     setupVisualizer(canvas, context, width, height);
-  }, [setupVisualizer]);
+
+    connectBuiltinOscillator(BUILTIN_OSC_GAIN_BEFORE_START);
+  }, [setupVisualizer, connectBuiltinOscillator]);
 
   // Starts the visualizer (if needed) and dismisses the splash.
   const start = useCallback(async () => {
@@ -277,24 +316,8 @@ export function useButterchurn(): UseButterChurnResult {
   );
 
   const connectOscillator = useCallback((): void => {
-    const ctx = audioContextRef.current;
-    const gainNode = gainNodeRef.current;
-    if (!ctx || !gainNode) {
-      return;
-    }
-
-    stopCurrentSource();
-
-    gainNode.gain.setTargetAtTime(0.1, ctx.currentTime, 0.01);
-
-    const osc = ctx.createOscillator();
-    osc.type = 'sawtooth';
-    osc.frequency.value = 60;
-    osc.connect(gainNode);
-    osc.start();
-
-    sourceNodeRef.current = osc;
-  }, [stopCurrentSource]);
+    connectBuiltinOscillator(BUILTIN_OSC_GAIN_FROM_MENU);
+  }, [connectBuiltinOscillator]);
 
   const connectMediaStream = useCallback(
     (stream: MediaStream): void => {
@@ -364,6 +387,35 @@ export function useButterchurn(): UseButterChurnResult {
     if (containerRef.current) {
       toggleContainerFullscreen(containerRef.current);
     }
+  }, []);
+
+  const resizeCanvas = useCallback((size: Size): Promise<void> => {
+    return new Promise(resolve => {
+      const c = canvasRef.current;
+      const audioCtx = audioContextRef.current;
+      const gainNode = gainNodeRef.current;
+      if (!c || !audioCtx || !gainNode) {
+        resolve();
+        return;
+      }
+      requestAnimationFrame(() => {
+        visualizerRef.current = null;
+        c.width = size.width;
+        c.height = size.height;
+        visualizerRef.current = createVisualizer(
+          c,
+          {audioContext: audioCtx, gainNode},
+          currentPresetRef.current,
+          size.width,
+          size.height
+        );
+        resolve();
+      });
+    });
+  }, []);
+
+  const getAudioStream = useCallback((): MediaStream | undefined => {
+    return streamDestRef.current?.stream;
   }, []);
 
   // On mount: initialize visualizer for a splash preview.
@@ -451,7 +503,9 @@ export function useButterchurn(): UseButterChurnResult {
     connectMediaStream,
     filePlayback,
     isCanvasFullscreen,
-    toggleFullscreen
+    toggleFullscreen,
+    resizeCanvas,
+    getAudioStream
   };
 }
 

@@ -10,6 +10,7 @@ import {Splash} from './components/splash/splash';
 import {Visualizer} from './components/visualizer/visualizer';
 import {useAudioSource} from './hooks/useAudioSource';
 import {useButterchurn} from './hooks/useButterchurn';
+import {useRecording} from './hooks/useRecording';
 import {vibrateHeavy, vibrateLight, vibrateMedium} from './lib/vibrate';
 import {MilkTeaPanel, usePanelContext} from './providers/panel';
 import {useSettingsContext} from './providers/settings';
@@ -44,7 +45,9 @@ export function MilkTea() {
     connectMediaStream,
     filePlayback: filePlaybackRaw,
     isCanvasFullscreen,
-    toggleFullscreen: toggleFullscreenRaw
+    toggleFullscreen: toggleFullscreenRaw,
+    resizeCanvas,
+    getAudioStream
   } = useButterchurn();
 
   const changePreset = useCallback(
@@ -123,6 +126,12 @@ export function MilkTea() {
       }
     };
   }, [audioFilePlaybackRaw]);
+
+  const {
+    isRecording,
+    isProcessing: isProcessingRecord,
+    onRecord
+  } = useRecording(canvasRef, resizeCanvas, getAudioStream, presetName ?? 'milktea');
 
   useEffect(() => {
     if (started) {
@@ -235,6 +244,9 @@ export function MilkTea() {
           trackName={shouldShowTrackName ? trackName : undefined}
           presetName={shouldShowPresetName ? presetName : undefined}
           filePlayback={filePlayback}
+          isRecording={isRecording}
+          isProcessingRecord={isProcessingRecord}
+          onRecord={onRecord}
           hasPresets={presetKeys.length > 0}
           stagedPresetName={stagedPreset}
           onFireStagedPreset={fireStagedPreset}

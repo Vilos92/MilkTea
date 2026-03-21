@@ -44,22 +44,16 @@ export function createVisualizer(
 }
 
 /**
- * Create a visualizer context with an oscillator and gain node.
- * The oscillator is only used to feed the gain node for the visualizer.
- * There is no connection to the destination (no audio output).
+ * Creates an `AudioContext` and master `GainNode` for Butterchurn (`connectAudio`).
+ * The app must connect the active source (built-in oscillator, decoded file, mic, etc.) into `gainNode`.
+ * Nothing is wired to `destination` here — monitoring is handled in the hook.
  */
-export function createOscillatorVisualizerContext(): VisualizerContext {
+export function createVisualizerAudioContext(): VisualizerContext {
   const AudioContextClass = window.AudioContext;
 
   const ctx = new AudioContextClass();
-  const osc = ctx.createOscillator();
   const gain = ctx.createGain();
-
-  osc.type = 'sawtooth';
-  osc.frequency.value = 60;
   gain.gain.value = 1.0;
-  osc.connect(gain);
-  osc.start();
 
   return {audioContext: ctx, gainNode: gain};
 }
