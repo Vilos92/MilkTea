@@ -115,7 +115,6 @@ export const commandButtonActiveSplash = style({
   }
 });
 
-/** Brief touch-press highlight for command rows; use as ChromelessButton `pressActiveClass` (dark palette). */
 export const commandButtonTouchCoarse = style({
   '@media': {
     '(pointer: coarse)': {
@@ -124,7 +123,6 @@ export const commandButtonTouchCoarse = style({
   }
 });
 
-/** Same for adaptive (splash) palette. */
 export const commandButtonTouchCoarseSplash = style({
   '@media': {
     '(pointer: coarse) and (prefers-color-scheme: light)': {
