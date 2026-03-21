@@ -147,12 +147,20 @@ export const progressFill = style({
 });
 
 globalStyle(`${progressTrack}:hover ${progressBarInner}`, {
-  height: '5px',
-  background: 'rgba(255, 255, 255, 0.35)'
+  '@media': {
+    '(hover: hover) and (pointer: fine)': {
+      height: '5px',
+      background: 'rgba(255, 255, 255, 0.35)'
+    }
+  }
 });
 
 globalStyle(`${progressTrack}:hover ${progressFill}::after`, {
-  opacity: 1
+  '@media': {
+    '(hover: hover) and (pointer: fine)': {
+      opacity: 1
+    }
+  }
 });
 
 export const progressTrackDragging = style({
@@ -200,7 +208,7 @@ export const controlsRow = style({
   padding: '6px 10px',
   transition: 'background 0.15s',
   '@media': {
-    '(hover: hover)': {':hover': {background: 'rgba(30, 30, 30, 0.97)'}}
+    '(hover: hover) and (pointer: fine)': {':hover': {background: 'rgba(30, 30, 30, 0.97)'}}
   }
 });
 
@@ -238,7 +246,9 @@ export const controlBtn = style({
   background: 'transparent',
   color: 'rgba(255, 255, 255, 0.92)',
   '@media': {
-    '(hover: hover)': {':hover': {background: 'rgba(255, 255, 255, 0.15)', color: '#fff'}},
+    '(hover: hover) and (pointer: fine)': {
+      ':hover': {background: 'rgba(255, 255, 255, 0.15)', color: '#fff'}
+    },
     '(pointer: coarse)': {width: '52px', height: '52px'}
   }
 });
@@ -250,7 +260,7 @@ export const accentBtn = style({
   background: 'rgba(255, 255, 255, 0.12)',
   color: '#fff',
   '@media': {
-    '(hover: hover)': {':hover': {background: 'rgba(255, 255, 255, 0.2)'}},
+    '(hover: hover) and (pointer: fine)': {':hover': {background: 'rgba(255, 255, 255, 0.2)'}},
     '(pointer: coarse)': {width: '52px', height: '52px'}
   }
 });
@@ -262,7 +272,9 @@ export const recordBtn = style({
   background: 'transparent',
   color: 'rgba(255, 255, 255, 0.7)',
   '@media': {
-    '(hover: hover)': {':hover': {color: 'rgba(255, 90, 90, 0.95)', background: 'rgba(255, 90, 90, 0.15)'}},
+    '(hover: hover) and (pointer: fine)': {
+      ':hover': {color: 'rgba(255, 90, 90, 0.95)', background: 'rgba(255, 90, 90, 0.15)'}
+    },
     '(pointer: coarse)': {width: '52px', height: '52px'}
   }
 });
@@ -298,7 +310,9 @@ export const smallBtn = style({
   background: 'transparent',
   color: 'rgba(255, 255, 255, 0.92)',
   '@media': {
-    '(hover: hover)': {':hover': {background: 'rgba(255, 255, 255, 0.15)', color: '#fff'}},
+    '(hover: hover) and (pointer: fine)': {
+      ':hover': {background: 'rgba(255, 255, 255, 0.15)', color: '#fff'}
+    },
     '(pointer: coarse)': {width: '44px', height: '44px'}
   }
 });
@@ -334,7 +348,7 @@ export const stageBtn = style({
   color: 'rgba(255, 255, 255, 0.6)',
   transition: 'background 0.15s, color 0.15s, transform 0.1s, border-color 0.2s',
   '@media': {
-    '(hover: hover)': {
+    '(hover: hover) and (pointer: fine)': {
       ':hover': {
         background: 'rgba(255, 255, 255, 0.1)',
         color: '#fff',
@@ -351,7 +365,7 @@ export const stageBtnLoaded = style({
   background: 'rgba(255, 195, 80, 0.08)',
   animation: `${pulseRing} 2s ease-out infinite`,
   '@media': {
-    '(hover: hover)': {
+    '(hover: hover) and (pointer: fine)': {
       ':hover': {
         background: 'rgba(255, 195, 80, 0.15)',
         borderColor: 'rgba(255, 195, 80, 0.9)',
