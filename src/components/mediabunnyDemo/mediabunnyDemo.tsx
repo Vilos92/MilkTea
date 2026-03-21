@@ -5,7 +5,7 @@ import demoMp3 from '../../assets/needle-the-thread.mp3';
 import {type RenderConfig, useRecorder} from '../../hooks/useRecorder';
 import {createVisualizer} from '../../lib/butterchurn/butterchurn';
 import {fetchPresetByIndex, getPresetKeys} from '../../lib/butterchurn/butterchurnPresets';
-import {VIDEO_FORMAT_OPTIONS, type VideoFormatOption} from '../../lib/mediabunny';
+import {VIDEO_FORMAT_OPTIONS, type VideoFormatOption} from '../../lib/video';
 import {
   DEFAULT_VIDEO_FPS,
   DEFAULT_VIDEO_SIZE_PRESET,
@@ -173,7 +173,7 @@ function SetupForm({onConfirm}: SetupFormProps) {
 
   const handleSubmit = (event: Event) => {
     event.preventDefault();
-    onConfirm({width, height, fps, bpp, format: formatOption.format, baseName: DEMO_TRACK_BASENAME});
+    onConfirm({width, height, fps, bpp, formatId: formatOption.id, baseName: DEMO_TRACK_BASENAME});
   };
 
   return (
@@ -246,10 +246,10 @@ function SetupForm({onConfirm}: SetupFormProps) {
         <div class={qualityRow} role="group" aria-label="Format">
           {VIDEO_FORMAT_OPTIONS.map(option => (
             <button
-              key={option.label}
+              key={option.id}
               type="button"
-              class={formatOption === option ? qualityBtnActive : qualityBtn}
-              aria-pressed={formatOption === option}
+              class={formatOption.id === option.id ? qualityBtnActive : qualityBtn}
+              aria-pressed={formatOption.id === option.id}
               onClick={() => setFormatOption(option)}
             >
               {option.label}

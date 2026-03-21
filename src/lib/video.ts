@@ -11,6 +11,9 @@ export type VideoQualityPreset = {label: VideoQualityLabel; bpp: number};
 export type VideoSizeLabel = '1080p' | '4K' | 'Square' | 'Vertical';
 export type VideoSizePreset = {label: VideoSizeLabel; width: number; height: number};
 
+export type VideoFormatId = 'mp4' | 'mov' | 'mkv' | 'webm';
+export type VideoFormatOption = {id: VideoFormatId; label: string};
+
 /*
  * Constants.
  */
@@ -38,6 +41,14 @@ export const VIDEO_SIZE_PRESETS: readonly VideoSizePreset[] = [
   {label: 'Square', width: 1080, height: 1080},
   {label: 'Vertical', width: 1080, height: 1920}
 ] as const;
+
+/** Output container options for post-capture conversion (WebM -> target). */
+export const VIDEO_FORMAT_OPTIONS: readonly VideoFormatOption[] = [
+  {id: 'mp4', label: 'MP4'},
+  {id: 'mov', label: 'MOV'},
+  {id: 'mkv', label: 'MKV'},
+  {id: 'webm', label: 'WebM'}
+];
 
 /** First entry in {@link VIDEO_SIZE_PRESETS} (1080p). */
 export const DEFAULT_VIDEO_SIZE_PRESET: VideoSizePreset = VIDEO_SIZE_PRESETS[0];
