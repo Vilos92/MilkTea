@@ -14,6 +14,9 @@ const TRANSLATION_KEYS = new Set(Object.keys(ENGLISH_TRANSLATIONS));
 /** Match t('key') and capture the translation key. */
 const T_CALL_REGEX = /t\s*\(\s*'([^']+)'\s*\)/g;
 
+/** Match `return 'key'` to capture translations returned by functions. */
+const RETURN_TRANSLATION_KEY_REGEX = /return\s+'([^']+)'/g;
+
 /*
  * Types.
  */
@@ -142,6 +145,12 @@ function collectUsedTranslationKeys(srcDir: string): Set<string> {
     const content = readFileSync(filePath, 'utf-8');
     for (const match of content.matchAll(T_CALL_REGEX)) {
       translationKeys.add(match[1]);
+    }
+    for (const match of content.matchAll(RETURN_TRANSLATION_KEY_REGEX)) {
+      const key = match[1];
+      if (TRANSLATION_KEYS.has(key)) {
+        translationKeys.add(key);
+      }
     }
   }
   return translationKeys;
