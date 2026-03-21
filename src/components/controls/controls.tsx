@@ -57,7 +57,7 @@ type ControlsProps = {
   onPrevTrack: (() => void) | undefined;
   onNextTrack: (() => void) | undefined;
   // Recording.
-  isRecording: boolean | undefined;
+  isRecording: boolean;
   /** Shows the record button in a disabled “working” state (e.g. while encoding the file). */
   isProcessingRecord: boolean;
   onRecord: (() => void) | undefined;
