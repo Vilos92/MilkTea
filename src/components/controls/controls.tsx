@@ -4,6 +4,7 @@ import {useEffect, useRef, useState} from 'preact/hooks';
 import {useMobilePressFeedback} from '../../hooks/useMobilePressFeedback';
 import {Axis, useSwipe} from '../../hooks/useSwipe';
 import {supportsRequestFullscreen} from '../../lib/platform';
+import type {TranslationKey} from '../../lib/translations';
 import {MilkTeaPanel, usePanelContext} from '../../providers/panel';
 import {useTranslate} from '../../providers/translation';
 import type {AudioFilePlayback} from '../../types/audio';
@@ -85,7 +86,7 @@ export const Controls = ({
   onPrevTrack,
   onNextTrack,
   isRecording,
-  isProcessingRecord = false,
+  isProcessingRecord,
   onRecord,
   hasPresets,
   stagedPresetName,
@@ -321,20 +322,8 @@ export const Controls = ({
                     onPointerDown={isProcessingRecord ? undefined : recordPress.onPointerDown}
                     onPointerUp={isProcessingRecord ? undefined : recordPress.onPointerUp}
                     onPointerLeave={isProcessingRecord ? undefined : recordPress.onPointerLeave}
-                    aria-label={
-                      isProcessingRecord
-                        ? t('controls.processingRecord')
-                        : isRecording
-                          ? t('controls.stopRecord')
-                          : t('controls.record')
-                    }
-                    title={
-                      isProcessingRecord
-                        ? t('controls.processingRecord')
-                        : isRecording
-                          ? t('controls.stopRecord')
-                          : t('controls.record')
-                    }
+                    aria-label={t(formatRecordTranslationKey(isProcessingRecord, isRecording))}
+                    title={t(formatRecordTranslationKey(isProcessingRecord, isRecording))}
                   >
                     <Icon type="record" size="sm" />
                   </button>
@@ -490,6 +479,19 @@ function usePresetKeys(
 /*
  * Helpers.
  */
+
+function formatRecordTranslationKey(
+  isProcessingRecord: boolean,
+  isRecording: boolean | undefined
+): TranslationKey {
+  if (isProcessingRecord) {
+    return 'controls.processingRecord';
+  }
+  if (isRecording) {
+    return 'controls.stopRecord';
+  }
+  return 'controls.record';
+}
 
 function formatTime(seconds: number): string {
   const m = Math.floor(seconds / 60);

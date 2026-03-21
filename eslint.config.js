@@ -43,7 +43,10 @@ export default defineConfig([
       '@typescript-eslint/no-floating-promises': 'error',
 
       // Require object shorthand: {param} instead of {param: param}.
-      'object-shorthand': 'error'
+      'object-shorthand': 'error',
+
+      // Prevent nested ternary operators.
+      'no-nested-ternary': 'error'
     }
   },
   {
