@@ -19,31 +19,31 @@ export type RecordingProcessedPayload = {
   suggestedFilename: string;
 };
 
-export type UseRecorderOptions = {
-  /** Runs synchronously when `MediaRecorder` stops, before encode (e.g. restore canvas size). */
-  onRecordingStopped?: () => void;
-  /**
-   * When set, called with the encoded file after conversion.
-   */
-  onProcessed?: (payload: RecordingProcessedPayload) => void;
-};
-
 type RecordStatus = 'idle' | 'recording' | 'processing' | 'done' | 'error';
 
 /*
  * Hook.
  */
 
+/**
+ * Captures a canvas as video, muxes in audio from a `MediaStream`, and encodes a single output file
+ * (format/size/fps from `RenderConfig`).
+ */
 export function useRecorder(
   canvasRef: RefObject<HTMLCanvasElement>,
+  audioStreamRef: RefObject<MediaStream | undefined>,
   renderConfig: RenderConfig,
-  getAudioStream: (() => MediaStream | undefined) | undefined,
-  options?: UseRecorderOptions
+  /** Runs synchronously when `MediaRecorder` stops, before encode (e.g. restore canvas size). */
+  onRecordingStopped?: () => void,
+  /** When set, called with the encoded file after conversion. */
+  onProcessed?: (payload: RecordingProcessedPayload) => void
 ) {
   const {width, height, fps, bpp, format, baseName} = renderConfig;
 
-  const optionsRef = useRef(options);
-  optionsRef.current = options;
+  const onRecordingStoppedRef = useRef(onRecordingStopped);
+  const onProcessedRef = useRef(onProcessed);
+  onRecordingStoppedRef.current = onRecordingStopped;
+  onProcessedRef.current = onProcessed;
 
   const [recordState, setRecordState] = useState<RecordStatus>('idle');
   const [recordError, setRecordError] = useState<string | undefined>(undefined);
@@ -71,7 +71,7 @@ export function useRecorder(
     const videoBitrate = computeVideoBitrate(width, height, fps, bpp);
 
     const canvasStream = canvas.captureStream(fps);
-    const audioTracks = getAudioStream?.()?.getAudioTracks() ?? [];
+    const audioTracks = audioStreamRef.current?.getAudioTracks() ?? [];
     const stream = new MediaStream([...canvasStream.getVideoTracks(), ...audioTracks]);
     const recorder = new MediaRecorder(stream, {mimeType: 'video/webm', videoBitsPerSecond: videoBitrate});
 
@@ -82,7 +82,7 @@ export function useRecorder(
     };
 
     recorder.onstop = () => {
-      optionsRef.current?.onRecordingStopped?.();
+      onRecordingStoppedRef.current?.();
 
       void (async () => {
         setRecordState('processing');
@@ -92,10 +92,10 @@ export function useRecorder(
           const webmBlob = new Blob(chunksRef.current, {type: 'video/webm'});
           const blob = await convertWebmToFormat(webmBlob, format, videoBitrate);
           const suggestedFilename = formatAssetName(baseName, format.fileExtension.slice(1));
-          const onProcessed = optionsRef.current?.onProcessed;
+          const handleProcessed = onProcessedRef.current;
 
-          if (onProcessed) {
-            onProcessed({blob, suggestedFilename});
+          if (handleProcessed) {
+            handleProcessed({blob, suggestedFilename});
             setRecordingUrl(undefined);
             setRecordingFilename(suggestedFilename);
             setRecordState('done');
@@ -116,7 +116,7 @@ export function useRecorder(
     mediaRecorderRef.current = recorder;
     recorder.start();
     setRecordState('recording');
-  }, [canvasRef, getAudioStream, width, height, fps, bpp, format, baseName]);
+  }, [canvasRef, audioStreamRef, width, height, fps, bpp, format, baseName]);
 
   const stopRecord = useCallback(() => {
     mediaRecorderRef.current?.stop();

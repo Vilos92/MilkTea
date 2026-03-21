@@ -36,19 +36,12 @@ type UseButterChurnResult = {
   connectAudioBuffer: (arrayBuffer: ArrayBuffer) => Promise<void>;
   connectOscillator: () => void;
   connectMediaStream: (stream: MediaStream) => void;
-  /** Resolves a `MediaStream` that corresponds to the current audio source. */
-  getAudioStream: () => MediaStream | undefined;
+  audioStreamRef: RefObject<MediaStream | undefined>;
   filePlayback: AudioFilePlayback | undefined;
   isCanvasFullscreen: boolean;
   toggleFullscreen: () => void;
   resizeCanvas: (size: Size) => Promise<void>;
 };
-
-/*
- * Constants.
- */
-
-const OSCILLATOR_GAIN = 1.0;
 
 /*
  * Hook.
@@ -62,7 +55,7 @@ export function useButterchurn(): UseButterChurnResult {
   const visualizerRef = useRef<Visualizer | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
-  const streamDestRef = useRef<MediaStreamAudioDestinationNode | null>(null);
+  const audioStreamRef = useRef<MediaStream | undefined>(undefined);
   const sourceNodeRef = useRef<AudioBufferSourceNode | OscillatorNode | MediaStreamAudioSourceNode | null>(
     null
   );
@@ -84,7 +77,7 @@ export function useButterchurn(): UseButterChurnResult {
   const [presetIndex, setPresetIndex] = useState<number | undefined>(undefined);
   const [presetKeys, setPresetKeys] = useState<string[]>([]);
 
-  /** Preset name → index (for lookup). List of [name, index] for UI. */
+  /** Preset name -> index (for lookup). List of [name, index] for UI. */
   const presetNameToIndex = useMemo(() => new Map(presetKeys.map((name, i) => [name, i])), [presetKeys]);
   const presetEntries = useMemo<ReadonlyArray<readonly [string, number]>>(
     () => presetKeys.map((name, i) => [name, i] as const),
@@ -172,7 +165,7 @@ export function useButterchurn(): UseButterChurnResult {
     setFilePlaybackIsPlaying(false);
   }, []);
 
-  /** Built-in saw → `gainNode` (splash preview, Oscillator source in the UI, same behavior). */
+  /** Built-in saw -> `gainNode`. */
   const connectOscillator = useCallback((): void => {
     const ctx = audioContextRef.current;
     const gainNode = gainNodeRef.current;
@@ -182,7 +175,7 @@ export function useButterchurn(): UseButterChurnResult {
 
     stopCurrentSource();
 
-    gainNode.gain.setTargetAtTime(OSCILLATOR_GAIN, ctx.currentTime, 0.01);
+    gainNode.gain.setTargetAtTime(1.0, ctx.currentTime, 0.01);
 
     const osc = ctx.createOscillator();
     osc.type = 'sawtooth';
@@ -221,7 +214,7 @@ export function useButterchurn(): UseButterChurnResult {
     const {audioContext, gainNode} = context;
     const streamDest = audioContext.createMediaStreamDestination();
     gainNode.connect(streamDest);
-    streamDestRef.current = streamDest;
+    audioStreamRef.current = streamDest.stream;
 
     const {width, height} = viewportSize();
     canvas.width = width;
@@ -409,8 +402,6 @@ export function useButterchurn(): UseButterChurnResult {
     });
   }, []);
 
-  const getAudioStream = useMemo(() => (): MediaStream | undefined => streamDestRef.current?.stream, []);
-
   // On mount: initialize visualizer for a splash preview.
   // Do NOT signal as started. Only call `start` to exit splash
   // (manual or auto-start only).
@@ -494,7 +485,7 @@ export function useButterchurn(): UseButterChurnResult {
     connectAudioBuffer,
     connectOscillator,
     connectMediaStream,
-    getAudioStream,
+    audioStreamRef,
     filePlayback,
     isCanvasFullscreen,
     toggleFullscreen,

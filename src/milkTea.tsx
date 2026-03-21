@@ -29,7 +29,7 @@ import {AudioSource} from './types/audio';
 
 const HUD_FADE_DELAY_MS = 2500;
 
-const MILKTEA_RECORD_RENDER_CONFIG: RenderConfig = {
+const RENDER_CONFIG: RenderConfig = {
   ...sizeFromVideoPreset(DEFAULT_VIDEO_SIZE_PRESET),
   fps: DEFAULT_VIDEO_FPS,
   bpp: DEFAULT_MAIN_RECORD_BPP,
@@ -58,7 +58,7 @@ export function MilkTea() {
     connectAudioBuffer,
     connectOscillator,
     connectMediaStream,
-    getAudioStream,
+    audioStreamRef,
     filePlayback: filePlaybackRaw,
     isCanvasFullscreen,
     toggleFullscreen: toggleFullscreenRaw,
@@ -159,10 +159,7 @@ export function MilkTea() {
     recordState,
     startRecord: startRecordRaw,
     stopRecord
-  } = useRecorder(canvasRef, MILKTEA_RECORD_RENDER_CONFIG, getAudioStream, {
-    onProcessed: onRecordingProcessed,
-    onRecordingStopped
-  });
+  } = useRecorder(canvasRef, audioStreamRef, RENDER_CONFIG, onRecordingStopped, onRecordingProcessed);
 
   const startRecord = useCallback(async () => {
     await resizeCanvas(sizeFromVideoPreset(DEFAULT_VIDEO_SIZE_PRESET));

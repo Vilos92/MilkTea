@@ -46,7 +46,7 @@ export function createVisualizer(
 /**
  * Creates an `AudioContext` and master `GainNode` for Butterchurn (`connectAudio`).
  * The app must connect the active source (built-in oscillator, decoded file, mic, etc.) into `gainNode`.
- * Nothing is wired to `destination` here — monitoring is handled in the hook.
+ * Nothing is wired to `destination` here.
  */
 export function createVisualizerAudioContext(): VisualizerContext {
   const AudioContextClass = window.AudioContext;

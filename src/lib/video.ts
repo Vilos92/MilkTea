@@ -70,7 +70,7 @@ export function clampVideoFps(fps: number): number {
 }
 
 /**
- * Scales a logical render size down for on-screen preview so neither side exceeds `maxDisplayPx`
+ * Scales a logical render size down for on-screen preview so neither side exceeds `maxDisplayPx`, and
  * (unless already smaller). Preserves aspect ratio.
  */
 export function scaleVideoSizeToMaxDisplay(

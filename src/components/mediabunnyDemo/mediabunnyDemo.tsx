@@ -51,7 +51,7 @@ type DemoStatus = 'idle' | 'loading' | 'playing' | 'done' | 'error';
  * Constants.
  */
 
-/** Demo setup form default quality (Ultra); main app uses {@link DEFAULT_MAIN_RECORD_BPP} in `video.ts`. */
+/** Demo setup form default quality (Ultra). */
 const DEFAULT_DEMO_BPP: number = VIDEO_QUALITY_PRESETS.find(preset => preset.label === 'Ultra')!.bpp;
 const DEFAULT_VIDEO_FORMAT_OPTION: VideoFormatOption = VIDEO_FORMAT_OPTIONS[0];
 
@@ -86,15 +86,15 @@ function MediabunnyPlayer({renderConfig}: MediabunnyPlayerProps) {
   const {width: displayWidth, height: displayHeight} = scaleVideoSizeToMaxDisplay(renderConfig);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const {state, progress, errorMessage, start, stop, getAudioStream} = useAudioVisualizer(
+  const {state, progress, errorMessage, start, stop, audioStreamRef} = useAudioVisualizer(
     canvasRef,
     renderConfig.width,
     renderConfig.height
   );
   const {recordState, recordError, recordingUrl, recordingFilename, startRecord, stopRecord} = useRecorder(
     canvasRef,
-    renderConfig,
-    getAudioStream
+    audioStreamRef,
+    renderConfig
   );
 
   return (
@@ -413,7 +413,5 @@ function useAudioVisualizer(
     };
   }, []);
 
-  const getAudioStream = useCallback(() => audioStreamRef.current, []);
-
-  return {state, progress, errorMessage, start, stop, getAudioStream};
+  return {state, progress, errorMessage, start, stop, audioStreamRef};
 }
