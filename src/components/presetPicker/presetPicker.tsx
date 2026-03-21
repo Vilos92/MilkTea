@@ -96,14 +96,13 @@ export function PresetPicker({items, selectedItem, onSelect, onClose}: PresetPic
             const isSelected = item === selectedItem;
             return (
               <ChromelessButton
-                ref={isActive ? activeItemRef : undefined}
+                buttonRef={isActive ? activeItemRef : undefined}
                 key={item}
                 class={[commandButton, isActive && commandButtonActive, isSelected && selectedItemClass]
                   .filter(Boolean)
                   .join(' ')}
                 pressActiveClass={commandButtonTouchCoarse}
                 vibration={VibrationPattern.MEDIUM}
-                vibrationTrigger="click"
                 role="option"
                 aria-selected={isSelected}
                 onMouseEnter={() => setActiveIndex(index)}

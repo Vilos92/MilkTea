@@ -70,9 +70,6 @@ type ControlsProps = {
 
 /*
  * Component.
- *
- * ChromelessButton supplies touch haptics for on-screen controls. Horizontal swipe to change preset
- * calls vibrateLight here (touch path only; keyboard shortcuts skip vibration).
  */
 
 export const Controls = ({
@@ -342,7 +339,7 @@ export const Controls = ({
           {hasPresets && (
             <div class={stageWrap}>
               <ChromelessButton
-                ref={stageBtnRef}
+                buttonRef={stageBtnRef}
                 class={[stageBtn, stagedPresetName && stageBtnLoaded].filter(Boolean).join(' ')}
                 pressActiveClass={mobileBtnActive}
                 vibration={VibrationPattern.LIGHT}
