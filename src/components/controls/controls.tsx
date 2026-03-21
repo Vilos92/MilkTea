@@ -1,13 +1,14 @@
 import type {RefObject} from 'preact';
 import {useEffect, useRef, useState} from 'preact/hooks';
 
-import {useMobilePressFeedback} from '../../hooks/useMobilePressFeedback';
 import {Axis, useSwipe} from '../../hooks/useSwipe';
 import {supportsRequestFullscreen} from '../../lib/platform';
 import type {TranslationKey} from '../../lib/translations';
+import {VibrationPattern} from '../../lib/vibrate';
 import {MilkTeaPanel, usePanelContext} from '../../providers/panel';
 import {useTranslate} from '../../providers/translation';
 import type {AudioFilePlayback} from '../../types/audio';
+import {ChromelessButton} from '../chromelessButton/chromelessButton';
 import {Icon} from '../icon/icon';
 import {
   accentBtn,
@@ -94,15 +95,6 @@ export const Controls = ({
 }: ControlsProps) => {
   const t = useTranslate();
   const {openPanel, togglePanel} = usePanelContext();
-
-  const prevTrackPress = useMobilePressFeedback();
-  const playPress = useMobilePressFeedback();
-  const nextTrackPress = useMobilePressFeedback();
-  const recordPress = useMobilePressFeedback();
-  const prevPresetPress = useMobilePressFeedback();
-  const stagePress = useMobilePressFeedback();
-  const nextPresetPress = useMobilePressFeedback();
-  const fullscreenPress = useMobilePressFeedback();
 
   const pickerOpen = openPanel === MilkTeaPanel.PRESET_PICKER;
   const stageBtnRef = useRef<HTMLButtonElement>(null);
@@ -264,69 +256,60 @@ export const Controls = ({
             <div class={rowLabel}>{t('controls.rowPlayback')}</div>
             <div class={controlsRow}>
               {onPrevTrack !== undefined && (
-                <button
-                  type="button"
-                  class={[controlBtn, prevTrackPress.isActive && mobileBtnActive].filter(Boolean).join(' ')}
+                <ChromelessButton
+                  class={controlBtn}
+                  pressActiveClass={mobileBtnActive}
+                  vibration={VibrationPattern.LIGHT}
                   onClick={onPrevTrack}
-                  onPointerDown={prevTrackPress.onPointerDown}
-                  onPointerUp={prevTrackPress.onPointerUp}
-                  onPointerLeave={prevTrackPress.onPointerLeave}
                   aria-label={t('controls.prevTrack')}
                   title={t('controls.prevTrack')}
                 >
                   <Icon type="prev-track" size="sm" />
-                </button>
+                </ChromelessButton>
               )}
-              <button
-                type="button"
-                class={[accentBtn, playPress.isActive && mobileBtnActive].filter(Boolean).join(' ')}
+              <ChromelessButton
+                class={accentBtn}
+                pressActiveClass={mobileBtnActive}
+                vibration={VibrationPattern.LIGHT}
                 onClick={filePlayback.onPlayPause}
-                onPointerDown={playPress.onPointerDown}
-                onPointerUp={playPress.onPointerUp}
-                onPointerLeave={playPress.onPointerLeave}
                 aria-label={filePlayback.isPlaying ? t('controls.pause') : t('controls.play')}
                 title={filePlayback.isPlaying ? t('controls.pause') : t('controls.play')}
               >
                 <Icon type={filePlayback.isPlaying ? 'pause' : 'play'} size="md" />
-              </button>
+              </ChromelessButton>
               {onNextTrack !== undefined && (
-                <button
-                  type="button"
-                  class={[controlBtn, nextTrackPress.isActive && mobileBtnActive].filter(Boolean).join(' ')}
+                <ChromelessButton
+                  class={controlBtn}
+                  pressActiveClass={mobileBtnActive}
+                  vibration={VibrationPattern.LIGHT}
                   onClick={onNextTrack}
-                  onPointerDown={nextTrackPress.onPointerDown}
-                  onPointerUp={nextTrackPress.onPointerUp}
-                  onPointerLeave={nextTrackPress.onPointerLeave}
                   aria-label={t('controls.nextTrack')}
                   title={t('controls.nextTrack')}
                 >
                   <Icon type="next-track" size="sm" />
-                </button>
+                </ChromelessButton>
               )}
               {onRecord !== undefined && (
                 <>
                   <div class={divider} />
-                  <button
-                    type="button"
+                  <ChromelessButton
                     class={[
                       recordBtn,
                       isProcessingRecord && recordBtnProcessing,
-                      !isProcessingRecord && isRecording && recordBtnActive,
-                      !isProcessingRecord && recordPress.isActive && mobileBtnActive
+                      !isProcessingRecord && isRecording && recordBtnActive
                     ]
                       .filter(Boolean)
                       .join(' ')}
+                    pressActiveClass={mobileBtnActive}
+                    vibration={VibrationPattern.LIGHT}
                     disabled={isProcessingRecord}
                     aria-busy={isProcessingRecord}
                     onClick={onRecord}
-                    onPointerDown={isProcessingRecord ? undefined : recordPress.onPointerDown}
-                    onPointerUp={isProcessingRecord ? undefined : recordPress.onPointerUp}
-                    onPointerLeave={isProcessingRecord ? undefined : recordPress.onPointerLeave}
                     aria-label={t(formatRecordTranslationKey(isProcessingRecord, isRecording))}
                     title={t(formatRecordTranslationKey(isProcessingRecord, isRecording))}
                   >
                     <Icon type="record" size="sm" />
-                  </button>
+                  </ChromelessButton>
                 </>
               )}
             </div>
@@ -336,65 +319,55 @@ export const Controls = ({
         {/* Presets row */}
         <div class={rowLabel}>{t('controls.rowPresets')}</div>
         <div class={controlsRow}>
-          <button
-            type="button"
-            class={[smallBtn, prevPresetPress.isActive && mobileBtnActive].filter(Boolean).join(' ')}
+          <ChromelessButton
+            class={smallBtn}
+            pressActiveClass={mobileBtnActive}
+            vibration={VibrationPattern.LIGHT}
             onClick={() => changePreset(-1)}
-            onPointerDown={prevPresetPress.onPointerDown}
-            onPointerUp={prevPresetPress.onPointerUp}
-            onPointerLeave={prevPresetPress.onPointerLeave}
             aria-label={t('controls.prevPreset')}
             title={t('controls.prevPreset')}
           >
             <Icon type="chevron-left" size="sm" />
-          </button>
+          </ChromelessButton>
 
           {hasPresets && (
             <div class={stageWrap}>
-              <button
+              <ChromelessButton
                 ref={stageBtnRef}
-                type="button"
-                class={[stageBtn, stagedPresetName && stageBtnLoaded, stagePress.isActive && mobileBtnActive]
-                  .filter(Boolean)
-                  .join(' ')}
+                class={[stageBtn, stagedPresetName && stageBtnLoaded].filter(Boolean).join(' ')}
+                pressActiveClass={mobileBtnActive}
+                vibration={VibrationPattern.LIGHT}
                 onClick={handleStageClick}
-                onPointerDown={stagePress.onPointerDown}
-                onPointerUp={stagePress.onPointerUp}
-                onPointerLeave={stagePress.onPointerLeave}
                 aria-label={stagedPresetName ? t('controls.firePreset') : t('controls.stagePreset')}
                 title={stagedPresetName ? t('controls.firePreset') : t('controls.stagePreset')}
               >
                 <Icon type={stagedPresetName ? 'bookmark-check' : 'bookmark'} size="sm" />
-              </button>
+              </ChromelessButton>
             </div>
           )}
 
-          <button
-            type="button"
-            class={[smallBtn, nextPresetPress.isActive && mobileBtnActive].filter(Boolean).join(' ')}
+          <ChromelessButton
+            class={smallBtn}
+            pressActiveClass={mobileBtnActive}
+            vibration={VibrationPattern.LIGHT}
             onClick={() => changePreset(1)}
-            onPointerDown={nextPresetPress.onPointerDown}
-            onPointerUp={nextPresetPress.onPointerUp}
-            onPointerLeave={nextPresetPress.onPointerLeave}
             aria-label={t('controls.nextPreset')}
             title={t('controls.nextPreset')}
           >
             <Icon type="chevron-right" size="sm" />
-          </button>
+          </ChromelessButton>
 
           {supportsRequestFullscreen && (
-            <button
-              type="button"
-              class={[smallBtn, fullscreenPress.isActive && mobileBtnActive].filter(Boolean).join(' ')}
+            <ChromelessButton
+              class={smallBtn}
+              pressActiveClass={mobileBtnActive}
+              vibration={VibrationPattern.LIGHT}
               onClick={toggleFullscreen}
-              onPointerDown={fullscreenPress.onPointerDown}
-              onPointerUp={fullscreenPress.onPointerUp}
-              onPointerLeave={fullscreenPress.onPointerLeave}
               aria-label={isFullscreen ? t('controls.exitFullscreen') : t('controls.enterFullscreen')}
               title={isFullscreen ? t('controls.exitFullscreen') : t('controls.enterFullscreen')}
             >
               <Icon type={isFullscreen ? 'exit-fullscreen' : 'enter-fullscreen'} size="sm" />
-            </button>
+            </ChromelessButton>
           )}
         </div>
       </div>

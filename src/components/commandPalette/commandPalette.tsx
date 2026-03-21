@@ -3,9 +3,11 @@ import {useCallback, useEffect, useMemo, useRef} from 'preact/hooks';
 import {useHasFinePointer} from '../../hooks/useHasFinePointer';
 import {type GetSearchTerms, useSearchableList} from '../../hooks/useSearchableList';
 import {supportsRequestFullscreen} from '../../lib/platform';
+import {VibrationPattern} from '../../lib/vibrate';
 import {useSettingsContext} from '../../providers/settings';
 import {type Translate, useTranslate} from '../../providers/translation';
 import type {AudioFilePlayback} from '../../types/audio';
+import {ChromelessButton} from '../chromelessButton/chromelessButton';
 import {Icon, type IconType} from '../icon/icon';
 import {Picker} from '../picker/picker';
 import {Switch} from '../switch/switch';
@@ -14,6 +16,8 @@ import {
   commandButtonActive,
   commandButtonActiveSplash,
   commandButtonSplash,
+  commandButtonTouchCoarse,
+  commandButtonTouchCoarseSplash,
   groupHeading,
   groupHeadingSplash,
   paletteGroup,
@@ -127,6 +131,9 @@ export function CommandPalette({
   const groupHeadingClass = visualizerActive ? groupHeading : groupHeadingSplash;
   const commandButtonClass = visualizerActive ? commandButton : commandButtonSplash;
   const commandButtonActiveClass = visualizerActive ? commandButtonActive : commandButtonActiveSplash;
+  const commandButtonTouchClass = visualizerActive
+    ? commandButtonTouchCoarse
+    : commandButtonTouchCoarseSplash;
   const switchRowActiveClass = visualizerActive ? switchRowActive : switchRowActiveSplash;
 
   const allItems: readonly PaletteItem[] = usePaletteItems(
@@ -243,10 +250,11 @@ export function CommandPalette({
     }
 
     return (
-      <button
+      <ChromelessButton
         key={item.type}
-        type="button"
         class={[commandButtonClass, isActive && commandButtonActiveClass].filter(Boolean).join(' ')}
+        pressActiveClass={commandButtonTouchClass}
+        vibration={VibrationPattern.MEDIUM}
         onClick={() => {
           onClose();
           item.onSelect();
@@ -254,7 +262,7 @@ export function CommandPalette({
       >
         <Icon type={item.iconType} size="sm" />
         {item.label}
-      </button>
+      </ChromelessButton>
     );
   };
 

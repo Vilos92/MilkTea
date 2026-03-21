@@ -173,6 +173,10 @@ function renderDesktopHotkeys(t: Translate, isMac: boolean): preact.VNode[] {
       <span class={keyCell}>{t('help.keyFullscreenKeys')}</span>
       <span class={actionCell}>{t('help.keyFullscreenAction')}</span>
     </li>,
+    <li class={hotkeyRow}>
+      <span class={keyCell}>{t('help.keyRecordKeys')}</span>
+      <span class={actionCell}>{t('help.keyRecordAction')}</span>
+    </li>,
     renderCommandPaletteRow(t, isMac)
   ];
 }

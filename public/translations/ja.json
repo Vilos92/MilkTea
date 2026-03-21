@@ -37,6 +37,8 @@
   "help.keyNextAction": "次のプリセット",
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "全画面表示",
+  "help.keyRecordKeys": "R",
+  "help.keyRecordAction": "Start / stop recording",
   "help.keyCommandPaletteKeysMac": "⌘K",
   "help.keyCommandPaletteKeysWindows": "Ctrl+K",
   "help.keyCommandPaletteAction": "コマンドパレット",

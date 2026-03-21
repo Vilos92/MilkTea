@@ -37,6 +37,8 @@
   "help.keyNextAction": "Nästa förinställning",
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "Fullskärm",
+  "help.keyRecordKeys": "R",
+  "help.keyRecordAction": "Start / stop recording",
   "help.keyCommandPaletteKeysMac": "⌘K",
   "help.keyCommandPaletteKeysWindows": "Ctrl+K",
   "help.keyCommandPaletteAction": "Kommandopalett",

@@ -213,6 +213,28 @@ export function MilkTea() {
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [started, filePlayback]);
 
+  useEffect(() => {
+    if (!started || audioSource !== AudioSource.FILE) {
+      return;
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.repeat) {
+        return;
+      }
+      if (event.key !== 'r' && event.key !== 'R' && event.code !== 'KeyR') {
+        return;
+      }
+      const element = event.target as HTMLElement;
+      if (element?.closest?.('input, textarea') || element?.isContentEditable) {
+        return;
+      }
+      event.preventDefault();
+      onRecord();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [started, audioSource, onRecord]);
+
   const renderPanel = () => {
     switch (openPanel) {
       case MilkTeaPanel.COMMAND_PALETTE:

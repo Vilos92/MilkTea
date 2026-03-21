@@ -37,6 +37,8 @@
   "help.keyNextAction": "Sonraki ön ayar",
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "Tam ekran",
+  "help.keyRecordKeys": "R",
+  "help.keyRecordAction": "Start / stop recording",
   "help.keyCommandPaletteKeysMac": "⌘K",
   "help.keyCommandPaletteKeysWindows": "Ctrl+K",
   "help.keyCommandPaletteAction": "Komut Paleti",

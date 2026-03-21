@@ -37,6 +37,8 @@
   "help.keyNextAction": "Prését suivant",
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "Plein écran",
+  "help.keyRecordKeys": "R",
+  "help.keyRecordAction": "Start / stop recording",
   "help.keyCommandPaletteKeysMac": "⌘K",
   "help.keyCommandPaletteKeysWindows": "Ctrl+K",
   "help.keyCommandPaletteAction": "Palette de commandes",
