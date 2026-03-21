@@ -4,7 +4,7 @@ import {useEffect, useRef, useState} from 'preact/hooks';
 import {Axis, useSwipe} from '../../hooks/useSwipe';
 import {supportsRequestFullscreen} from '../../lib/platform';
 import type {TranslationKey} from '../../lib/translations';
-import {VibrationPattern, vibrateLight} from '../../lib/vibrate';
+import {VibrationPattern, vibrateMedium} from '../../lib/vibrate';
 import {MilkTeaPanel, usePanelContext} from '../../providers/panel';
 import {useTranslate} from '../../providers/translation';
 import type {AudioFilePlayback} from '../../types/audio';
@@ -102,11 +102,11 @@ export const Controls = ({
   useSwipe(swipeRef, {
     axis: Axis.HORIZONTAL,
     onSwipeLeft: () => {
-      vibrateLight();
+      vibrateMedium();
       changePreset(1);
     },
     onSwipeRight: () => {
-      vibrateLight();
+      vibrateMedium();
       changePreset(-1);
     }
   });
