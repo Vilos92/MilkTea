@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useRef, useState} from 'preact/hooks';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'preact/hooks';
 
 import {container, containerSplash, containerStarted, cursorHidden} from './app.css.ts';
 import {CommandPalette} from './components/commandPalette/commandPalette';
@@ -10,7 +10,7 @@ import {Splash} from './components/splash/splash';
 import {Visualizer} from './components/visualizer/visualizer';
 import {useAudioSource} from './hooks/useAudioSource';
 import {useButterchurn} from './hooks/useButterchurn';
-import {vibrateLight} from './lib/vibrate';
+import {vibrateHeavy, vibrateLight, vibrateMedium} from './lib/vibrate';
 import {MilkTeaPanel, usePanelContext} from './providers/panel';
 import {useSettingsContext} from './providers/settings';
 import {AudioSource} from './types/audio';
@@ -38,24 +38,35 @@ export function MilkTea() {
     presetKeys,
     presetNameToIndex,
     loadPresetByIndex,
-    changePreset,
+    changePreset: changePresetRaw,
     connectAudioBuffer,
     connectOscillator,
     connectMediaStream,
-    filePlayback,
+    filePlayback: filePlaybackRaw,
     isCanvasFullscreen,
-    toggleFullscreen
+    toggleFullscreen: toggleFullscreenRaw
   } = useButterchurn();
 
-  const changePresetWithHaptic = useCallback(
+  const changePreset = useCallback(
     (delta: number) => {
-      changePreset(delta);
+      changePresetRaw(delta);
       vibrateLight();
     },
-    [changePreset]
+    [changePresetRaw]
   );
 
-  const [stagedPreset, setStagedPreset] = useState<string | undefined>(undefined);
+  const toggleFullscreen = useCallback(() => {
+    toggleFullscreenRaw();
+    vibrateMedium();
+  }, [toggleFullscreenRaw]);
+
+  const [stagedPreset, setStagedPresetRaw] = useState<string | undefined>(undefined);
+
+  const stagePreset = useCallback((item: string) => {
+    setStagedPresetRaw(item);
+    vibrateLight();
+  }, []);
+
   const {hudVisible, handleControlsEnter, handleControlsLeave, forceVisible, scheduleFade} =
     useHudVisibility();
 
@@ -64,22 +75,29 @@ export function MilkTea() {
     scheduleFade();
   };
 
-  const handleFireStagedPreset = () => {
+  const fireStagedPresetRaw = useCallback(() => {
     if (!stagedPreset) {
-      return;
+      return false;
     }
     const targetIndex = presetNameToIndex.get(stagedPreset);
     if (targetIndex !== undefined) {
       loadPresetByIndex(targetIndex);
     }
-    setStagedPreset(undefined);
-  };
+    setStagedPresetRaw(undefined);
+    return targetIndex !== undefined;
+  }, [stagedPreset, presetNameToIndex, loadPresetByIndex]);
+
+  const fireStagedPreset = useCallback(() => {
+    if (fireStagedPresetRaw()) {
+      vibrateHeavy();
+    }
+  }, [fireStagedPresetRaw]);
 
   const {
     audioSource,
     pendingAudioSource,
     trackName,
-    audioFilePlayback: audioFilePlayback,
+    audioFilePlayback: audioFilePlaybackRaw,
     fileInputRef,
     onAudioFileChange,
     handleAudioFileDrop,
@@ -89,8 +107,22 @@ export function MilkTea() {
     connectOscillator,
     connectMediaStream,
     onAudioFile: start,
-    filePlayback
+    filePlayback: filePlaybackRaw
   });
+
+  const filePlayback = useMemo(() => {
+    if (!audioFilePlaybackRaw) {
+      return undefined;
+    }
+    const {onPlayPause: onPlayPauseRaw, ...rest} = audioFilePlaybackRaw;
+    return {
+      ...rest,
+      onPlayPause: () => {
+        onPlayPauseRaw();
+        vibrateMedium();
+      }
+    };
+  }, [audioFilePlaybackRaw]);
 
   useEffect(() => {
     if (started) {
@@ -107,7 +139,7 @@ export function MilkTea() {
   }, [started, start]);
 
   useEffect(() => {
-    if (!started || !audioFilePlayback) {
+    if (!started || !filePlayback) {
       return;
     }
     const onKeyDown = (event: KeyboardEvent) => {
@@ -119,11 +151,11 @@ export function MilkTea() {
         return;
       }
       event.preventDefault();
-      audioFilePlayback.onPlayPause();
+      filePlayback.onPlayPause();
     };
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
-  }, [started, audioFilePlayback]);
+  }, [started, filePlayback]);
 
   const renderPanel = () => {
     switch (openPanel) {
@@ -133,8 +165,8 @@ export function MilkTea() {
             visualizerActive={started}
             onClose={closePanel}
             onOpenHelp={() => setOpenPanel(MilkTeaPanel.HELP)}
-            onPrevPreset={() => changePresetWithHaptic(-1)}
-            onNextPreset={() => changePresetWithHaptic(1)}
+            onPrevPreset={() => changePreset(-1)}
+            onNextPreset={() => changePreset(1)}
             isFullscreen={isCanvasFullscreen}
             onFullScreen={toggleFullscreen}
             onOpenFilePicker={() => {
@@ -143,11 +175,11 @@ export function MilkTea() {
             onSelectOscillator={() => handleSourceChange(AudioSource.OSCILLATOR)}
             onSelectMic={() => handleSourceChange(AudioSource.MICROPHONE)}
             onSelectAudioCapture={() => handleSourceChange(AudioSource.SCREEN_CAPTURE)}
-            filePlayback={audioFilePlayback}
+            filePlayback={filePlayback}
             hasPresets={presetKeys.length > 0}
             stagedPresetName={stagedPreset}
             onOpenPresetPicker={() => setOpenPanel(MilkTeaPanel.PRESET_PICKER)}
-            onFireStagedPreset={handleFireStagedPreset}
+            onFireStagedPreset={fireStagedPreset}
           />
         );
       case MilkTeaPanel.HELP:
@@ -164,7 +196,7 @@ export function MilkTea() {
           <PresetPicker
             items={presetKeys}
             selectedItem={stagedPreset}
-            onSelect={setStagedPreset}
+            onSelect={stagePreset}
             onClose={closePanel}
           />
         );
@@ -190,7 +222,7 @@ export function MilkTea() {
           started={started}
           isCanvasFullscreen={isCanvasFullscreen}
           toggleFullscreen={toggleFullscreen}
-          changePreset={changePresetWithHaptic}
+          changePreset={changePreset}
           isHudVisible={hudVisible}
           onControlsEnter={handleControlsEnter}
           onControlsLeave={handleControlsLeave}
@@ -202,10 +234,10 @@ export function MilkTea() {
           onSourceChange={handleSourceChange}
           trackName={shouldShowTrackName ? trackName : undefined}
           presetName={shouldShowPresetName ? presetName : undefined}
-          filePlayback={audioFilePlayback}
+          filePlayback={filePlayback}
           hasPresets={presetKeys.length > 0}
           stagedPresetName={stagedPreset}
-          onFireStagedPreset={handleFireStagedPreset}
+          onFireStagedPreset={fireStagedPreset}
         />
         {renderPanel()}
       </div>
