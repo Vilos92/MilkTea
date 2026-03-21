@@ -1,4 +1,4 @@
-import type {ComponentProps} from 'preact';
+import type {ComponentProps, RefObject} from 'preact';
 import {useCallback, useEffect, useRef, useState} from 'preact/hooks';
 
 import {useHasFinePointer} from '../../hooks/useHasFinePointer';
@@ -17,11 +17,14 @@ const PRESS_FEEDBACK_MS = 50;
 
 export type ChromelessButtonProps = Omit<
   ComponentProps<'button'>,
-  'onPointerDown' | 'onPointerUp' | 'onPointerLeave' | 'type'
+  'onPointerDown' | 'onPointerUp' | 'onPointerLeave' | 'type' | 'onClick' | 'ref'
 > & {
   type?: 'button' | 'submit' | 'reset';
+  buttonRef?: RefObject<HTMLButtonElement>;
   pressActiveClass?: string;
+  /** If set, vibrates on `click` before your `onClick` runs (optimistic; skipped when `disabled`). */
   vibration?: VibrationPattern;
+  onClick?: ComponentProps<'button'>['onClick'];
   onPointerDown?: (event: PointerEvent) => void;
   onPointerUp?: (event: PointerEvent) => void;
   onPointerLeave?: (event: PointerEvent) => void;
@@ -32,7 +35,7 @@ export type ChromelessButtonProps = Omit<
  */
 
 export function ChromelessButton({
-  ref,
+  buttonRef,
   class: className,
   pressActiveClass,
   vibration,
@@ -41,6 +44,7 @@ export function ChromelessButton({
   onPointerDown,
   onPointerUp,
   onPointerLeave,
+  onClick,
   ...rest
 }: ChromelessButtonProps) {
   const hasFinePointer = useHasFinePointer();
@@ -65,14 +69,21 @@ export function ChromelessButton({
     }, PRESS_FEEDBACK_MS);
   }, [clearPending]);
 
+  const handleClick = useCallback(
+    (event: Parameters<NonNullable<ComponentProps<'button'>['onClick']>>[0]) => {
+      if (!disabled && vibration != null) {
+        navigator.vibrate?.(vibration);
+      }
+      onClick?.(event);
+    },
+    [onClick, disabled, vibration]
+  );
+
   const handlePointerDown = useCallback(
     (event: PointerEvent) => {
       onPointerDown?.(event);
       if (disabled) {
         return;
-      }
-      if (vibration != null && event.pointerType !== 'mouse') {
-        navigator.vibrate?.(vibration);
       }
       if (!pressEnabled || event.pointerType === 'mouse') {
         return;
@@ -80,7 +91,7 @@ export function ChromelessButton({
       clearPending();
       setIsPressActive(true);
     },
-    [onPointerDown, disabled, vibration, pressEnabled, clearPending]
+    [onPointerDown, disabled, pressEnabled, clearPending]
   );
 
   const handlePointerUp = useCallback(
@@ -111,11 +122,12 @@ export function ChromelessButton({
 
   return (
     <button
-      ref={ref}
       type={type}
       {...rest}
+      ref={buttonRef}
       class={mergedClass}
       disabled={disabled}
+      onClick={handleClick}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerLeave}

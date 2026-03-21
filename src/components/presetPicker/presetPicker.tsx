@@ -2,8 +2,14 @@ import {useEffect, useRef} from 'preact/hooks';
 
 import {useHasFinePointer} from '../../hooks/useHasFinePointer';
 import {type GetSearchTerms, useSearchableList} from '../../hooks/useSearchableList';
+import {VibrationPattern} from '../../lib/vibrate';
 import {useTranslate} from '../../providers/translation';
-import {commandButton, commandButtonActive} from '../commandPalette/commandPalette.css';
+import {ChromelessButton} from '../chromelessButton/chromelessButton';
+import {
+  commandButton,
+  commandButtonActive,
+  commandButtonTouchCoarse
+} from '../commandPalette/commandPalette.css';
 import {Picker} from '../picker/picker';
 import {selectedItem as selectedItemClass} from './presetPicker.css';
 
@@ -89,13 +95,14 @@ export function PresetPicker({items, selectedItem, onSelect, onClose}: PresetPic
             const isActive = index === activeIndex;
             const isSelected = item === selectedItem;
             return (
-              <button
-                ref={isActive ? activeItemRef : undefined}
+              <ChromelessButton
+                buttonRef={isActive ? activeItemRef : undefined}
                 key={item}
-                type="button"
                 class={[commandButton, isActive && commandButtonActive, isSelected && selectedItemClass]
                   .filter(Boolean)
                   .join(' ')}
+                pressActiveClass={commandButtonTouchCoarse}
+                vibration={VibrationPattern.MEDIUM}
                 role="option"
                 aria-selected={isSelected}
                 onMouseEnter={() => setActiveIndex(index)}
@@ -105,7 +112,7 @@ export function PresetPicker({items, selectedItem, onSelect, onClose}: PresetPic
                 }}
               >
                 {item}
-              </button>
+              </ChromelessButton>
             );
           })}
         </div>

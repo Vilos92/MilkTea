@@ -4,7 +4,7 @@ import {useEffect, useRef, useState} from 'preact/hooks';
 import {Axis, useSwipe} from '../../hooks/useSwipe';
 import {supportsRequestFullscreen} from '../../lib/platform';
 import type {TranslationKey} from '../../lib/translations';
-import {VibrationPattern} from '../../lib/vibrate';
+import {VibrationPattern, vibrateMedium} from '../../lib/vibrate';
 import {MilkTeaPanel, usePanelContext} from '../../providers/panel';
 import {useTranslate} from '../../providers/translation';
 import type {AudioFilePlayback} from '../../types/audio';
@@ -101,8 +101,14 @@ export const Controls = ({
 
   useSwipe(swipeRef, {
     axis: Axis.HORIZONTAL,
-    onSwipeLeft: () => changePreset(1),
-    onSwipeRight: () => changePreset(-1)
+    onSwipeLeft: () => {
+      vibrateMedium();
+      changePreset(1);
+    },
+    onSwipeRight: () => {
+      vibrateMedium();
+      changePreset(-1);
+    }
   });
 
   const handleStageClick = () => {
@@ -333,7 +339,7 @@ export const Controls = ({
           {hasPresets && (
             <div class={stageWrap}>
               <ChromelessButton
-                ref={stageBtnRef}
+                buttonRef={stageBtnRef}
                 class={[stageBtn, stagedPresetName && stageBtnLoaded].filter(Boolean).join(' ')}
                 pressActiveClass={mobileBtnActive}
                 vibration={VibrationPattern.LIGHT}
