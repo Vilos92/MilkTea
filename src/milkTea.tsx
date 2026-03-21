@@ -10,8 +10,15 @@ import {Splash} from './components/splash/splash';
 import {Visualizer} from './components/visualizer/visualizer';
 import {useAudioSource} from './hooks/useAudioSource';
 import {useButterchurn} from './hooks/useButterchurn';
-import {useRecording} from './hooks/useRecording';
+import {type RecordingProcessedPayload, type RenderConfig, useRecorder} from './hooks/useRecorder';
+import {VIDEO_FORMAT_OPTIONS} from './lib/mediabunny';
 import {vibrateHeavy, vibrateLight, vibrateMedium} from './lib/vibrate';
+import {
+  DEFAULT_MAIN_RECORD_BPP,
+  DEFAULT_VIDEO_FPS,
+  DEFAULT_VIDEO_SIZE_PRESET,
+  sizeFromVideoPreset
+} from './lib/video';
 import {MilkTeaPanel, usePanelContext} from './providers/panel';
 import {useSettingsContext} from './providers/settings';
 import {AudioSource} from './types/audio';
@@ -21,6 +28,14 @@ import {AudioSource} from './types/audio';
  */
 
 const HUD_FADE_DELAY_MS = 2500;
+
+const MILKTEA_RECORD_RENDER_CONFIG: RenderConfig = {
+  ...sizeFromVideoPreset(DEFAULT_VIDEO_SIZE_PRESET),
+  fps: DEFAULT_VIDEO_FPS,
+  bpp: DEFAULT_MAIN_RECORD_BPP,
+  format: VIDEO_FORMAT_OPTIONS[0].format, // MP4
+  baseName: 'milktea'
+};
 
 /*
  * MilkTea.
@@ -43,11 +58,11 @@ export function MilkTea() {
     connectAudioBuffer,
     connectOscillator,
     connectMediaStream,
+    getAudioStream,
     filePlayback: filePlaybackRaw,
     isCanvasFullscreen,
     toggleFullscreen: toggleFullscreenRaw,
-    resizeCanvas,
-    getAudioStream
+    resizeCanvas
   } = useButterchurn();
 
   const changePreset = useCallback(
@@ -127,11 +142,46 @@ export function MilkTea() {
     };
   }, [audioFilePlaybackRaw]);
 
+  const onRecordingStopped = useCallback(() => {
+    void resizeCanvas({width: window.innerWidth, height: window.innerHeight});
+  }, [resizeCanvas]);
+
+  const onRecordingProcessed = useCallback(({blob, suggestedFilename}: RecordingProcessedPayload) => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = suggestedFilename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, []);
+
   const {
-    isRecording,
-    isProcessing: isProcessingRecord,
-    onRecord
-  } = useRecording(canvasRef, resizeCanvas, getAudioStream, presetName ?? 'milktea');
+    recordState,
+    startRecord: startRecordRaw,
+    stopRecord
+  } = useRecorder(canvasRef, MILKTEA_RECORD_RENDER_CONFIG, getAudioStream, {
+    onProcessed: onRecordingProcessed,
+    onRecordingStopped
+  });
+
+  const startRecord = useCallback(async () => {
+    await resizeCanvas(sizeFromVideoPreset(DEFAULT_VIDEO_SIZE_PRESET));
+    startRecordRaw();
+  }, [resizeCanvas, startRecordRaw]);
+
+  const onRecord = useCallback(() => {
+    if (recordState === 'recording') {
+      stopRecord();
+      return;
+    }
+    if (recordState === 'processing') {
+      return;
+    }
+    void startRecord();
+  }, [recordState, startRecord, stopRecord]);
+
+  const isRecording = recordState === 'recording';
+  const isProcessingRecord = recordState === 'processing';
 
   useEffect(() => {
     if (started) {

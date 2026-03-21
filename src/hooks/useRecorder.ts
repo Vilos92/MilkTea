@@ -13,6 +13,21 @@ import type {Size} from '../types/geometry';
 /** The configuration that defines how the output video will be rendered. */
 export type RenderConfig = Size & {fps: number; bpp: number; format: VideoOutputFormat; baseName: string};
 
+export type RecordingProcessedPayload = {
+  blob: Blob;
+  /** Filename (with extension) derived from `RenderConfig`. */
+  suggestedFilename: string;
+};
+
+export type UseRecorderOptions = {
+  /** Runs synchronously when `MediaRecorder` stops, before encode (e.g. restore canvas size). */
+  onRecordingStopped?: () => void;
+  /**
+   * When set, called with the encoded file after conversion.
+   */
+  onProcessed?: (payload: RecordingProcessedPayload) => void;
+};
+
 type RecordStatus = 'idle' | 'recording' | 'processing' | 'done' | 'error';
 
 /*
@@ -22,9 +37,13 @@ type RecordStatus = 'idle' | 'recording' | 'processing' | 'done' | 'error';
 export function useRecorder(
   canvasRef: RefObject<HTMLCanvasElement>,
   renderConfig: RenderConfig,
-  getAudioStream: (() => MediaStream | undefined) | undefined
+  getAudioStream: (() => MediaStream | undefined) | undefined,
+  options?: UseRecorderOptions
 ) {
   const {width, height, fps, bpp, format, baseName} = renderConfig;
+
+  const optionsRef = useRef(options);
+  optionsRef.current = options;
 
   const [recordState, setRecordState] = useState<RecordStatus>('idle');
   const [recordError, setRecordError] = useState<string | undefined>(undefined);
@@ -39,6 +58,8 @@ export function useRecorder(
     if (!canvas) {
       return;
     }
+
+    setRecordError(undefined);
 
     if (prevUrlRef.current) {
       URL.revokeObjectURL(prevUrlRef.current);
@@ -61,6 +82,8 @@ export function useRecorder(
     };
 
     recorder.onstop = () => {
+      optionsRef.current?.onRecordingStopped?.();
+
       void (async () => {
         setRecordState('processing');
         setRecordError(undefined);
@@ -68,12 +91,21 @@ export function useRecorder(
         try {
           const webmBlob = new Blob(chunksRef.current, {type: 'video/webm'});
           const blob = await convertWebmToFormat(webmBlob, format, videoBitrate);
-          const url = URL.createObjectURL(blob);
-          prevUrlRef.current = url;
+          const suggestedFilename = formatAssetName(baseName, format.fileExtension.slice(1));
+          const onProcessed = optionsRef.current?.onProcessed;
 
-          setRecordingFilename(formatAssetName(baseName, format.fileExtension.slice(1)));
-          setRecordingUrl(url);
-          setRecordState('done');
+          if (onProcessed) {
+            onProcessed({blob, suggestedFilename});
+            setRecordingUrl(undefined);
+            setRecordingFilename(suggestedFilename);
+            setRecordState('done');
+          } else {
+            const url = URL.createObjectURL(blob);
+            prevUrlRef.current = url;
+            setRecordingFilename(suggestedFilename);
+            setRecordingUrl(url);
+            setRecordState('done');
+          }
         } catch (error) {
           setRecordError(error instanceof Error ? error.message : 'Processing failed.');
           setRecordState('error');
