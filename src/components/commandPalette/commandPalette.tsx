@@ -255,6 +255,7 @@ export function CommandPalette({
         class={[commandButtonClass, isActive && commandButtonActiveClass].filter(Boolean).join(' ')}
         pressActiveClass={commandButtonTouchClass}
         vibration={VibrationPattern.MEDIUM}
+        vibrationTrigger="click"
         onClick={() => {
           onClose();
           item.onSelect();

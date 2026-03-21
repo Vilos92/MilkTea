@@ -4,7 +4,7 @@ import {useEffect, useRef, useState} from 'preact/hooks';
 import {Axis, useSwipe} from '../../hooks/useSwipe';
 import {supportsRequestFullscreen} from '../../lib/platform';
 import type {TranslationKey} from '../../lib/translations';
-import {VibrationPattern} from '../../lib/vibrate';
+import {VibrationPattern, vibrateLight} from '../../lib/vibrate';
 import {MilkTeaPanel, usePanelContext} from '../../providers/panel';
 import {useTranslate} from '../../providers/translation';
 import type {AudioFilePlayback} from '../../types/audio';
@@ -70,6 +70,9 @@ type ControlsProps = {
 
 /*
  * Component.
+ *
+ * ChromelessButton supplies touch haptics for on-screen controls. Horizontal swipe to change preset
+ * calls vibrateLight here (touch path only; keyboard shortcuts skip vibration).
  */
 
 export const Controls = ({
@@ -101,8 +104,14 @@ export const Controls = ({
 
   useSwipe(swipeRef, {
     axis: Axis.HORIZONTAL,
-    onSwipeLeft: () => changePreset(1),
-    onSwipeRight: () => changePreset(-1)
+    onSwipeLeft: () => {
+      vibrateLight();
+      changePreset(1);
+    },
+    onSwipeRight: () => {
+      vibrateLight();
+      changePreset(-1);
+    }
   });
 
   const handleStageClick = () => {

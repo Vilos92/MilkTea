@@ -11,7 +11,7 @@ import {Visualizer} from './components/visualizer/visualizer';
 import {useAudioSource} from './hooks/useAudioSource';
 import {useButterchurn} from './hooks/useButterchurn';
 import {type RecordingProcessedPayload, type RenderConfig, useRecorder} from './hooks/useRecorder';
-import {vibrateHeavy, vibrateLight, vibrateMedium} from './lib/vibrate';
+import {vibrateHeavy} from './lib/vibrate';
 import {
   DEFAULT_MAIN_RECORD_BPP,
   DEFAULT_VIDEO_FPS,
@@ -68,21 +68,18 @@ export function MilkTea() {
   const changePreset = useCallback(
     (delta: number) => {
       changePresetRaw(delta);
-      vibrateLight();
     },
     [changePresetRaw]
   );
 
   const toggleFullscreen = useCallback(() => {
     toggleFullscreenRaw();
-    vibrateMedium();
   }, [toggleFullscreenRaw]);
 
   const [stagedPreset, setStagedPresetRaw] = useState<string | undefined>(undefined);
 
   const stagePreset = useCallback((item: string) => {
     setStagedPresetRaw(item);
-    vibrateLight();
   }, []);
 
   const {hudVisible, handleControlsEnter, handleControlsLeave, forceVisible, scheduleFade} =
@@ -137,7 +134,6 @@ export function MilkTea() {
       ...rest,
       onPlayPause: () => {
         onPlayPauseRaw();
-        vibrateMedium();
       }
     };
   }, [audioFilePlaybackRaw]);
