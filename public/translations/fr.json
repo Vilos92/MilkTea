@@ -14,6 +14,7 @@
   "controls.nextTrack": "Piste suivante",
   "controls.record": "Enregistrer",
   "controls.stopRecord": "Arrêter l'enregistrement",
+  "controls.processingRecord": "Traitement de l'enregistrement…",
   "controls.stagePreset": "Préparer le préréglage",
   "controls.firePreset": "Lancer le préréglage",
   "controls.presets": "Préréglages",

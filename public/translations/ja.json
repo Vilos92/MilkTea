@@ -14,6 +14,7 @@
   "controls.nextTrack": "次のトラック",
   "controls.record": "録音",
   "controls.stopRecord": "録音停止",
+  "controls.processingRecord": "録音を処理中…",
   "controls.stagePreset": "プリセットをステージ",
   "controls.firePreset": "プリセットを起動",
   "controls.presets": "プリセット",

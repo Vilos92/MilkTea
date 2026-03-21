@@ -14,6 +14,7 @@
   "controls.nextTrack": "المقطع التالي",
   "controls.record": "تسجيل",
   "controls.stopRecord": "إيقاف التسجيل",
+  "controls.processingRecord": "جارٍ معالجة التسجيل…",
   "controls.stagePreset": "تحضير الإعداد المسبق",
   "controls.firePreset": "تشغيل الإعداد المسبق",
   "controls.presets": "الإعدادات المسبقة",

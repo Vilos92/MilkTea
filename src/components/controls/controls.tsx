@@ -22,6 +22,7 @@ import {
   progressWrap,
   recordBtn,
   recordBtnActive,
+  recordBtnProcessing,
   rowLabel,
   smallBtn,
   stageBtn,
@@ -56,6 +57,8 @@ type ControlsProps = {
   onNextTrack: (() => void) | undefined;
   // Recording.
   isRecording: boolean | undefined;
+  /** Shows the record button in a disabled “working” state (e.g. while encoding the file). */
+  isProcessingRecord: boolean;
   onRecord: (() => void) | undefined;
   // Preset staging.
   hasPresets: boolean;
@@ -82,6 +85,7 @@ export const Controls = ({
   onPrevTrack,
   onNextTrack,
   isRecording,
+  isProcessingRecord = false,
   onRecord,
   hasPresets,
   stagedPresetName,
@@ -305,17 +309,32 @@ export const Controls = ({
                     type="button"
                     class={[
                       recordBtn,
-                      isRecording && recordBtnActive,
-                      recordPress.isActive && mobileBtnActive
+                      isProcessingRecord && recordBtnProcessing,
+                      !isProcessingRecord && isRecording && recordBtnActive,
+                      !isProcessingRecord && recordPress.isActive && mobileBtnActive
                     ]
                       .filter(Boolean)
                       .join(' ')}
+                    disabled={isProcessingRecord}
+                    aria-busy={isProcessingRecord}
                     onClick={onRecord}
-                    onPointerDown={recordPress.onPointerDown}
-                    onPointerUp={recordPress.onPointerUp}
-                    onPointerLeave={recordPress.onPointerLeave}
-                    aria-label={isRecording ? t('controls.stopRecord') : t('controls.record')}
-                    title={isRecording ? t('controls.stopRecord') : t('controls.record')}
+                    onPointerDown={isProcessingRecord ? undefined : recordPress.onPointerDown}
+                    onPointerUp={isProcessingRecord ? undefined : recordPress.onPointerUp}
+                    onPointerLeave={isProcessingRecord ? undefined : recordPress.onPointerLeave}
+                    aria-label={
+                      isProcessingRecord
+                        ? t('controls.processingRecord')
+                        : isRecording
+                          ? t('controls.stopRecord')
+                          : t('controls.record')
+                    }
+                    title={
+                      isProcessingRecord
+                        ? t('controls.processingRecord')
+                        : isRecording
+                          ? t('controls.stopRecord')
+                          : t('controls.record')
+                    }
                   >
                     <Icon type="record" size="sm" />
                   </button>

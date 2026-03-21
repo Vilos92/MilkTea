@@ -14,6 +14,7 @@
   "controls.nextTrack": "Volgende track",
   "controls.record": "Opnemen",
   "controls.stopRecord": "Opname stoppen",
+  "controls.processingRecord": "Opname wordt verwerkt…",
   "controls.stagePreset": "Preset voorbereiden",
   "controls.firePreset": "Preset starten",
   "controls.presets": "Presets",

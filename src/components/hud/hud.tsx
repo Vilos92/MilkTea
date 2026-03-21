@@ -131,7 +131,8 @@ export function Hud({
           onPrevTrack={undefined}
           onNextTrack={undefined}
           isRecording={isRecording}
-          onRecord={isProcessingRecord ? undefined : onRecord}
+          isProcessingRecord={isProcessingRecord}
+          onRecord={onRecord}
           hasPresets={hasPresets}
           stagedPresetName={stagedPresetName}
           onFireStagedPreset={onFireStagedPreset}

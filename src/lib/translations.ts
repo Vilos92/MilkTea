@@ -21,6 +21,7 @@ export type TranslationKey =
   | 'controls.nextTrack'
   | 'controls.record'
   | 'controls.stopRecord'
+  | 'controls.processingRecord'
   | 'controls.prevPreset'
   | 'controls.nextPreset'
   | 'controls.stagePreset'
@@ -93,6 +94,7 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'controls.nextTrack': 'Next track',
   'controls.record': 'Record',
   'controls.stopRecord': 'Stop recording',
+  'controls.processingRecord': 'Processing recording…',
   'controls.prevPreset': 'Previous preset',
   'controls.nextPreset': 'Next preset',
   'controls.stagePreset': 'Stage preset',
