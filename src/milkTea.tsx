@@ -33,7 +33,7 @@ const RENDER_CONFIG: RenderConfig = {
   ...sizeFromVideoPreset(DEFAULT_VIDEO_SIZE_PRESET),
   fps: DEFAULT_VIDEO_FPS,
   bpp: DEFAULT_MAIN_RECORD_BPP,
-  format: VIDEO_FORMAT_OPTIONS[0].id,
+  formatId: VIDEO_FORMAT_OPTIONS[0].id,
   baseName: 'milktea'
 };
 

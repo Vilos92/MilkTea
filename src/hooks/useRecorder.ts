@@ -12,7 +12,7 @@ import type {Size} from '../types/geometry';
  */
 
 /** The configuration that defines how the output video will be rendered. */
-export type RenderConfig = Size & {fps: number; bpp: number; format: VideoFormatId; baseName: string};
+export type RenderConfig = Size & {fps: number; bpp: number; formatId: VideoFormatId; baseName: string};
 
 export type RecordingProcessedPayload = {
   blob: Blob;
@@ -39,7 +39,7 @@ export function useRecorder(
   /** When set, called with the encoded file after conversion. */
   onProcessed?: (payload: RecordingProcessedPayload) => void
 ) {
-  const {width, height, fps, bpp, format, baseName} = renderConfig;
+  const {width, height, fps, bpp, formatId: format, baseName} = renderConfig;
 
   const onRecordingStoppedRef = useRef(onRecordingStopped);
   const onProcessedRef = useRef(onProcessed);

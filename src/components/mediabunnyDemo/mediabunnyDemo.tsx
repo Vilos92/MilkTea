@@ -173,7 +173,7 @@ function SetupForm({onConfirm}: SetupFormProps) {
 
   const handleSubmit = (event: Event) => {
     event.preventDefault();
-    onConfirm({width, height, fps, bpp, format: formatOption.id, baseName: DEMO_TRACK_BASENAME});
+    onConfirm({width, height, fps, bpp, formatId: formatOption.id, baseName: DEMO_TRACK_BASENAME});
   };
 
   return (
