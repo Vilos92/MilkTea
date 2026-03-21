@@ -38,7 +38,7 @@
   "help.keyFullscreenKeys": "F",
   "help.keyFullscreenAction": "Полный экран",
   "help.keyRecordKeys": "R",
-  "help.keyRecordAction": "Start / stop recording",
+  "help.keyRecordAction": "Начать запись / остановить запись",
   "help.keyCommandPaletteKeysMac": "⌘K",
   "help.keyCommandPaletteKeysWindows": "Ctrl+K",
   "help.keyCommandPaletteAction": "Палитра команд",

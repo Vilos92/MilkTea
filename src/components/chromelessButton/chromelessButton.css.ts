@@ -1,6 +1,6 @@
 import {style} from '@vanilla-extract/css';
 
-/** Strip default `<button>` chrome; consumer classes supply layout and visuals. */
+/** Strip default `<button>` chrome. */
 export const chromeless = style({
   appearance: 'none',
   background: 'transparent',
