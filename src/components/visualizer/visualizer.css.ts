@@ -7,6 +7,8 @@ export const canvas = style({
   zIndex: 0,
   width: '100vw',
   height: '100vh',
+  objectFit: 'contain',
+  objectPosition: 'center',
   background: '#000',
   display: 'block',
   border: 'none',

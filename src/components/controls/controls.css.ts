@@ -272,6 +272,25 @@ export const recordBtnActive = style({
   animation: `${recordPulse} 1.4s ease-in-out infinite`
 });
 
+const recordProcessingPulse = keyframes({
+  '0%, 100%': {opacity: 1},
+  '50%': {opacity: 0.55}
+});
+
+export const recordBtnProcessing = style({
+  color: 'rgba(255, 195, 80, 0.95)',
+  background: 'rgba(255, 195, 80, 0.14)',
+  cursor: 'wait',
+  animation: `${recordProcessingPulse} 1.1s ease-in-out infinite`,
+  selectors: {
+    '&:disabled': {
+      opacity: 1,
+      color: 'rgba(255, 195, 80, 0.95)',
+      background: 'rgba(255, 195, 80, 0.14)'
+    }
+  }
+});
+
 export const smallBtn = style({
   ...btnShared,
   width: '36px',

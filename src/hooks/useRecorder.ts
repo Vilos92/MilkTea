@@ -13,18 +13,37 @@ import type {Size} from '../types/geometry';
 /** The configuration that defines how the output video will be rendered. */
 export type RenderConfig = Size & {fps: number; bpp: number; format: VideoOutputFormat; baseName: string};
 
+export type RecordingProcessedPayload = {
+  blob: Blob;
+  /** Filename (with extension) derived from `RenderConfig`. */
+  suggestedFilename: string;
+};
+
 type RecordStatus = 'idle' | 'recording' | 'processing' | 'done' | 'error';
 
 /*
  * Hook.
  */
 
+/**
+ * Captures a canvas as video, muxes in audio from a `MediaStream`, and encodes a single output file
+ * (format/size/fps from `RenderConfig`).
+ */
 export function useRecorder(
   canvasRef: RefObject<HTMLCanvasElement>,
+  audioStreamRef: RefObject<MediaStream | undefined>,
   renderConfig: RenderConfig,
-  getAudioStream: (() => MediaStream | undefined) | undefined
+  /** Runs synchronously when `MediaRecorder` stops, before encode (e.g. restore canvas size). */
+  onRecordingStopped?: () => void,
+  /** When set, called with the encoded file after conversion. */
+  onProcessed?: (payload: RecordingProcessedPayload) => void
 ) {
   const {width, height, fps, bpp, format, baseName} = renderConfig;
+
+  const onRecordingStoppedRef = useRef(onRecordingStopped);
+  const onProcessedRef = useRef(onProcessed);
+  onRecordingStoppedRef.current = onRecordingStopped;
+  onProcessedRef.current = onProcessed;
 
   const [recordState, setRecordState] = useState<RecordStatus>('idle');
   const [recordError, setRecordError] = useState<string | undefined>(undefined);
@@ -40,6 +59,8 @@ export function useRecorder(
       return;
     }
 
+    setRecordError(undefined);
+
     if (prevUrlRef.current) {
       URL.revokeObjectURL(prevUrlRef.current);
       prevUrlRef.current = undefined;
@@ -50,7 +71,7 @@ export function useRecorder(
     const videoBitrate = computeVideoBitrate(width, height, fps, bpp);
 
     const canvasStream = canvas.captureStream(fps);
-    const audioTracks = getAudioStream?.()?.getAudioTracks() ?? [];
+    const audioTracks = audioStreamRef.current?.getAudioTracks() ?? [];
     const stream = new MediaStream([...canvasStream.getVideoTracks(), ...audioTracks]);
     const recorder = new MediaRecorder(stream, {mimeType: 'video/webm', videoBitsPerSecond: videoBitrate});
 
@@ -61,6 +82,8 @@ export function useRecorder(
     };
 
     recorder.onstop = () => {
+      onRecordingStoppedRef.current?.();
+
       void (async () => {
         setRecordState('processing');
         setRecordError(undefined);
@@ -68,12 +91,21 @@ export function useRecorder(
         try {
           const webmBlob = new Blob(chunksRef.current, {type: 'video/webm'});
           const blob = await convertWebmToFormat(webmBlob, format, videoBitrate);
-          const url = URL.createObjectURL(blob);
-          prevUrlRef.current = url;
+          const suggestedFilename = formatAssetName(baseName, format.fileExtension.slice(1));
+          const handleProcessed = onProcessedRef.current;
 
-          setRecordingFilename(formatAssetName(baseName, format.fileExtension.slice(1)));
-          setRecordingUrl(url);
-          setRecordState('done');
+          if (handleProcessed) {
+            handleProcessed({blob, suggestedFilename});
+            setRecordingUrl(undefined);
+            setRecordingFilename(suggestedFilename);
+            setRecordState('done');
+          } else {
+            const url = URL.createObjectURL(blob);
+            prevUrlRef.current = url;
+            setRecordingFilename(suggestedFilename);
+            setRecordingUrl(url);
+            setRecordState('done');
+          }
         } catch (error) {
           setRecordError(error instanceof Error ? error.message : 'Processing failed.');
           setRecordState('error');
@@ -84,7 +116,7 @@ export function useRecorder(
     mediaRecorderRef.current = recorder;
     recorder.start();
     setRecordState('recording');
-  }, [canvasRef, getAudioStream, width, height, fps, bpp, format, baseName]);
+  }, [canvasRef, audioStreamRef, width, height, fps, bpp, format, baseName]);
 
   const stopRecord = useCallback(() => {
     mediaRecorderRef.current?.stop();

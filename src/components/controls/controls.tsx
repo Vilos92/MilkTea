@@ -4,6 +4,7 @@ import {useEffect, useRef, useState} from 'preact/hooks';
 import {useMobilePressFeedback} from '../../hooks/useMobilePressFeedback';
 import {Axis, useSwipe} from '../../hooks/useSwipe';
 import {supportsRequestFullscreen} from '../../lib/platform';
+import type {TranslationKey} from '../../lib/translations';
 import {MilkTeaPanel, usePanelContext} from '../../providers/panel';
 import {useTranslate} from '../../providers/translation';
 import type {AudioFilePlayback} from '../../types/audio';
@@ -22,6 +23,7 @@ import {
   progressWrap,
   recordBtn,
   recordBtnActive,
+  recordBtnProcessing,
   rowLabel,
   smallBtn,
   stageBtn,
@@ -55,7 +57,9 @@ type ControlsProps = {
   onPrevTrack: (() => void) | undefined;
   onNextTrack: (() => void) | undefined;
   // Recording.
-  isRecording: boolean | undefined;
+  isRecording: boolean;
+  /** Shows the record button in a disabled “working” state (e.g. while encoding the file). */
+  isProcessingRecord: boolean;
   onRecord: (() => void) | undefined;
   // Preset staging.
   hasPresets: boolean;
@@ -82,6 +86,7 @@ export const Controls = ({
   onPrevTrack,
   onNextTrack,
   isRecording,
+  isProcessingRecord,
   onRecord,
   hasPresets,
   stagedPresetName,
@@ -305,17 +310,20 @@ export const Controls = ({
                     type="button"
                     class={[
                       recordBtn,
-                      isRecording && recordBtnActive,
-                      recordPress.isActive && mobileBtnActive
+                      isProcessingRecord && recordBtnProcessing,
+                      !isProcessingRecord && isRecording && recordBtnActive,
+                      !isProcessingRecord && recordPress.isActive && mobileBtnActive
                     ]
                       .filter(Boolean)
                       .join(' ')}
+                    disabled={isProcessingRecord}
+                    aria-busy={isProcessingRecord}
                     onClick={onRecord}
-                    onPointerDown={recordPress.onPointerDown}
-                    onPointerUp={recordPress.onPointerUp}
-                    onPointerLeave={recordPress.onPointerLeave}
-                    aria-label={isRecording ? t('controls.stopRecord') : t('controls.record')}
-                    title={isRecording ? t('controls.stopRecord') : t('controls.record')}
+                    onPointerDown={isProcessingRecord ? undefined : recordPress.onPointerDown}
+                    onPointerUp={isProcessingRecord ? undefined : recordPress.onPointerUp}
+                    onPointerLeave={isProcessingRecord ? undefined : recordPress.onPointerLeave}
+                    aria-label={t(formatRecordTranslationKey(isProcessingRecord, isRecording))}
+                    title={t(formatRecordTranslationKey(isProcessingRecord, isRecording))}
                   >
                     <Icon type="record" size="sm" />
                   </button>
@@ -471,6 +479,19 @@ function usePresetKeys(
 /*
  * Helpers.
  */
+
+function formatRecordTranslationKey(
+  isProcessingRecord: boolean,
+  isRecording: boolean | undefined
+): TranslationKey {
+  if (isProcessingRecord) {
+    return 'controls.processingRecord';
+  }
+  if (isRecording) {
+    return 'controls.stopRecord';
+  }
+  return 'controls.record';
+}
 
 function formatTime(seconds: number): string {
   const m = Math.floor(seconds / 60);

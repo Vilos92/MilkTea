@@ -6,8 +6,19 @@ import {type RenderConfig, useRecorder} from '../../hooks/useRecorder';
 import {createVisualizer} from '../../lib/butterchurn/butterchurn';
 import {fetchPresetByIndex, getPresetKeys} from '../../lib/butterchurn/butterchurnPresets';
 import {VIDEO_FORMAT_OPTIONS, type VideoFormatOption} from '../../lib/mediabunny';
-import {clamp} from '../../lib/number';
-import type {Size} from '../../types/geometry';
+import {
+  DEFAULT_VIDEO_FPS,
+  DEFAULT_VIDEO_SIZE_PRESET,
+  MAX_VIDEO_DIMENSION,
+  MAX_VIDEO_FPS,
+  MIN_VIDEO_DIMENSION,
+  MIN_VIDEO_FPS,
+  VIDEO_QUALITY_PRESETS,
+  VIDEO_SIZE_PRESETS,
+  clampVideoDimension,
+  clampVideoFps,
+  scaleVideoSizeToMaxDisplay
+} from '../../lib/video';
 import {
   actionRow,
   btn,
@@ -34,42 +45,14 @@ import {
  * Types.
  */
 
-type QualityLabel = 'Low' | 'Medium' | 'High' | 'Ultra';
-type QualityPreset = {label: QualityLabel; bpp: number};
-
-type SizeLabel = '1080p' | '4K' | 'Square' | 'Vertical';
-type SizePreset = {label: SizeLabel; width: number; height: number};
-
 type DemoStatus = 'idle' | 'loading' | 'playing' | 'done' | 'error';
 
 /*
  * Constants.
  */
 
-const MIN_DIMENSION = 1;
-const MAX_DIMENSION = 3840; // We do not allow more than 3840x3840.
-const MAX_DISPLAY = 480; // The canvas used to preview the video is scaled down below this size.
-
-const MIN_FPS = 1;
-const MAX_FPS = 120;
-const DEFAULT_FPS = 60;
-
-const QUALITY_PRESETS: readonly QualityPreset[] = [
-  {label: 'Low', bpp: 0.05},
-  {label: 'Medium', bpp: 0.1},
-  {label: 'High', bpp: 0.15},
-  {label: 'Ultra', bpp: 0.2}
-] as const;
-
-const SIZE_PRESETS: readonly SizePreset[] = [
-  {label: '1080p', width: 1920, height: 1080},
-  {label: '4K', width: 3840, height: 2160},
-  {label: 'Square', width: 1080, height: 1080},
-  {label: 'Vertical', width: 1080, height: 1920}
-] as const;
-
-const DEFAULT_PRESET: SizePreset = SIZE_PRESETS[0];
-const DEFAULT_BPP: number = QUALITY_PRESETS.find(preset => preset.label === 'Ultra')!.bpp;
+/** Demo setup form default quality (Ultra). */
+const DEFAULT_DEMO_BPP: number = VIDEO_QUALITY_PRESETS.find(preset => preset.label === 'Ultra')!.bpp;
 const DEFAULT_VIDEO_FORMAT_OPTION: VideoFormatOption = VIDEO_FORMAT_OPTIONS[0];
 
 const DEMO_TRACK_BASENAME = demoMp3
@@ -100,18 +83,18 @@ type MediabunnyPlayerProps = {
 };
 
 function MediabunnyPlayer({renderConfig}: MediabunnyPlayerProps) {
-  const {width: displayWidth, height: displayHeight} = scaleSizeToDisplay(renderConfig);
+  const {width: displayWidth, height: displayHeight} = scaleVideoSizeToMaxDisplay(renderConfig);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const {state, progress, errorMessage, start, stop, getAudioStream} = useAudioVisualizer(
+  const {state, progress, errorMessage, start, stop, audioStreamRef} = useAudioVisualizer(
     canvasRef,
     renderConfig.width,
     renderConfig.height
   );
   const {recordState, recordError, recordingUrl, recordingFilename, startRecord, stopRecord} = useRecorder(
     canvasRef,
-    renderConfig,
-    getAudioStream
+    audioStreamRef,
+    renderConfig
   );
 
   return (
@@ -167,15 +150,15 @@ type SetupFormProps = {
 };
 
 function SetupForm({onConfirm}: SetupFormProps) {
-  const [rawWidth, setRawWidth] = useState<number>(DEFAULT_PRESET.width);
-  const [rawHeight, setRawHeight] = useState<number>(DEFAULT_PRESET.height);
-  const [rawFps, setRawFps] = useState<number>(DEFAULT_FPS);
-  const [bpp, setRawBpp] = useState<number>(DEFAULT_BPP);
+  const [rawWidth, setRawWidth] = useState<number>(DEFAULT_VIDEO_SIZE_PRESET.width);
+  const [rawHeight, setRawHeight] = useState<number>(DEFAULT_VIDEO_SIZE_PRESET.height);
+  const [rawFps, setRawFps] = useState<number>(DEFAULT_VIDEO_FPS);
+  const [bpp, setRawBpp] = useState<number>(DEFAULT_DEMO_BPP);
   const [formatOption, setFormatOption] = useState<VideoFormatOption>(DEFAULT_VIDEO_FORMAT_OPTION);
 
-  const width = clampDimension(rawWidth);
-  const height = clampDimension(rawHeight);
-  const fps = clampFps(rawFps);
+  const width = clampVideoDimension(rawWidth);
+  const height = clampVideoDimension(rawHeight);
+  const fps = clampVideoFps(rawFps);
 
   const previewBitrate = (width * height * fps * bpp) / 1_000_000;
 
@@ -186,7 +169,7 @@ function SetupForm({onConfirm}: SetupFormProps) {
       : `${previewMbPerMin.toFixed(0)} MB/min`;
 
   const activePreset =
-    SIZE_PRESETS.find(sizePreset => sizePreset.width === width && sizePreset.height === height) ?? null;
+    VIDEO_SIZE_PRESETS.find(sizePreset => sizePreset.width === width && sizePreset.height === height) ?? null;
 
   const handleSubmit = (event: Event) => {
     event.preventDefault();
@@ -205,8 +188,8 @@ function SetupForm({onConfirm}: SetupFormProps) {
             type="number"
             class={inputField}
             value={rawWidth}
-            min={MIN_DIMENSION}
-            max={MAX_DIMENSION}
+            min={MIN_VIDEO_DIMENSION}
+            max={MAX_VIDEO_DIMENSION}
             onInput={event => setRawWidth(Number((event.target as HTMLInputElement).value))}
           />
         </div>
@@ -219,8 +202,8 @@ function SetupForm({onConfirm}: SetupFormProps) {
             type="number"
             class={inputField}
             value={rawHeight}
-            min={MIN_DIMENSION}
-            max={MAX_DIMENSION}
+            min={MIN_VIDEO_DIMENSION}
+            max={MAX_VIDEO_DIMENSION}
             onInput={event => setRawHeight(Number((event.target as HTMLInputElement).value))}
           />
         </div>
@@ -233,8 +216,8 @@ function SetupForm({onConfirm}: SetupFormProps) {
             type="number"
             class={inputField}
             value={rawFps}
-            min={MIN_FPS}
-            max={MAX_FPS}
+            min={MIN_VIDEO_FPS}
+            max={MAX_VIDEO_FPS}
             onInput={event => setRawFps(Number((event.target as HTMLInputElement).value))}
           />
         </div>
@@ -242,7 +225,7 @@ function SetupForm({onConfirm}: SetupFormProps) {
       <div class={inputGroup}>
         <span class={inputLabel}>Preset</span>
         <div class={qualityRow} role="group" aria-label="Preset">
-          {SIZE_PRESETS.map(sizePreset => (
+          {VIDEO_SIZE_PRESETS.map(sizePreset => (
             <button
               key={sizePreset.label}
               type="button"
@@ -277,7 +260,7 @@ function SetupForm({onConfirm}: SetupFormProps) {
       <div class={inputGroup}>
         <span class={inputLabel}>Quality</span>
         <div class={qualityRow} role="group" aria-label="Quality">
-          {QUALITY_PRESETS.map(qualityPreset => (
+          {VIDEO_QUALITY_PRESETS.map(qualityPreset => (
             <button
               key={qualityPreset.label}
               type="button"
@@ -430,33 +413,5 @@ function useAudioVisualizer(
     };
   }, []);
 
-  const getAudioStream = useCallback(() => audioStreamRef.current, []);
-
-  return {state, progress, errorMessage, start, stop, getAudioStream};
-}
-
-/*
- * Helpers.
- */
-
-function clampDimension(dimension: number): number {
-  const v = Number.isNaN(dimension) ? MIN_DIMENSION : Math.round(dimension);
-  return clamp(v, MIN_DIMENSION, MAX_DIMENSION);
-}
-
-function clampFps(fps: number): number {
-  const v = Number.isNaN(fps) ? MIN_FPS : Math.round(fps);
-  return clamp(v, MIN_FPS, MAX_FPS);
-}
-
-/**
- * Scales the input size to fit the bounds of the display. Neither dimension will exceed the display size,
- * but one (or both, if the input is square) will equal it exactly, and the other will be less.
- *
- * This allows us to scale a canvas being rendered at a higher resolution (i.e. for rendering to video) at a
- * smaller resolution (i.e. for previewing the render in the browser) without double-rendering the canvas.
- */
-function scaleSizeToDisplay(size: Size): Size {
-  const scale = Math.min(MAX_DISPLAY / size.width, MAX_DISPLAY / size.height, 1);
-  return {width: Math.round(size.width * scale), height: Math.round(size.height * scale)};
+  return {state, progress, errorMessage, start, stop, audioStreamRef};
 }

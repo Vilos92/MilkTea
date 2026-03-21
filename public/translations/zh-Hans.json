@@ -14,6 +14,7 @@
   "controls.nextTrack": "下一曲",
   "controls.record": "录制",
   "controls.stopRecord": "停止录制",
+  "controls.processingRecord": "正在处理录制…",
   "controls.stagePreset": "准备预设",
   "controls.firePreset": "启动预设",
   "controls.presets": "预设",

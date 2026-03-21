@@ -14,6 +14,7 @@
   "controls.nextTrack": "Nächster Titel",
   "controls.record": "Aufnehmen",
   "controls.stopRecord": "Aufnahme stoppen",
+  "controls.processingRecord": "Aufnahme wird verarbeitet…",
   "controls.stagePreset": "Preset vorbereiten",
   "controls.firePreset": "Preset starten",
   "controls.presets": "Presets",

@@ -14,6 +14,7 @@
   "controls.nextTrack": "Наступний трек",
   "controls.record": "Запис",
   "controls.stopRecord": "Зупинити запис",
+  "controls.processingRecord": "Обробка запису…",
   "controls.stagePreset": "Підготувати пресет",
   "controls.firePreset": "Запустити пресет",
   "controls.presets": "Пресети",

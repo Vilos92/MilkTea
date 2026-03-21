@@ -14,6 +14,7 @@
   "controls.nextTrack": "다음 트랙",
   "controls.record": "녹음",
   "controls.stopRecord": "녹음 중지",
+  "controls.processingRecord": "녹음 처리 중…",
   "controls.stagePreset": "프리셋 준비",
   "controls.firePreset": "프리셋 실행",
   "controls.presets": "프리셋",
