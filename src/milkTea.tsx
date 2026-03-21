@@ -10,6 +10,7 @@ import {Splash} from './components/splash/splash';
 import {Visualizer} from './components/visualizer/visualizer';
 import {useAudioSource} from './hooks/useAudioSource';
 import {useButterchurn} from './hooks/useButterchurn';
+import {vibrateLight} from './lib/vibrate';
 import {MilkTeaPanel, usePanelContext} from './providers/panel';
 import {useSettingsContext} from './providers/settings';
 import {AudioSource} from './types/audio';
@@ -45,6 +46,14 @@ export function MilkTea() {
     isCanvasFullscreen,
     toggleFullscreen
   } = useButterchurn();
+
+  const changePresetWithHaptic = useCallback(
+    (delta: number) => {
+      changePreset(delta);
+      vibrateLight();
+    },
+    [changePreset]
+  );
 
   const [stagedPreset, setStagedPreset] = useState<string | undefined>(undefined);
   const {hudVisible, handleControlsEnter, handleControlsLeave, forceVisible, scheduleFade} =
@@ -124,8 +133,8 @@ export function MilkTea() {
             visualizerActive={started}
             onClose={closePanel}
             onOpenHelp={() => setOpenPanel(MilkTeaPanel.HELP)}
-            onPrevPreset={() => changePreset(-1)}
-            onNextPreset={() => changePreset(1)}
+            onPrevPreset={() => changePresetWithHaptic(-1)}
+            onNextPreset={() => changePresetWithHaptic(1)}
             isFullscreen={isCanvasFullscreen}
             onFullScreen={toggleFullscreen}
             onOpenFilePicker={() => {
@@ -181,7 +190,7 @@ export function MilkTea() {
           started={started}
           isCanvasFullscreen={isCanvasFullscreen}
           toggleFullscreen={toggleFullscreen}
-          changePreset={changePreset}
+          changePreset={changePresetWithHaptic}
           isHudVisible={hudVisible}
           onControlsEnter={handleControlsEnter}
           onControlsLeave={handleControlsLeave}
