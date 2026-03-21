@@ -248,8 +248,8 @@ export function CommandPalette({
         type="button"
         class={[commandButtonClass, isActive && commandButtonActiveClass].filter(Boolean).join(' ')}
         onClick={() => {
-          item.onSelect();
           onClose();
+          item.onSelect();
         }}
       >
         <Icon type={item.iconType} size="sm" />
