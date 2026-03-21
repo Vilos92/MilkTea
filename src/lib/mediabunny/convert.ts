@@ -4,7 +4,7 @@ import type {VideoFormatId} from '../video';
  * Converts a WebM blob to another container format using Mediabunny.
  * The input blob is assumed to come from `MediaRecorder` (VP8/VP9-encoded WebM).
  *
- * Loads the `mediabunny` package on first call (async chunk).
+ * Dynamically imports the `mediabunny` package. This can be preloaded (see `preloadMediabunny`).
  */
 export async function convertWebmToFormat(
   webmBlob: Blob,
