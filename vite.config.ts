@@ -18,7 +18,15 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       devOptions: {enabled: true},
-      includeAssets: ['favicon.ico', 'favicon-16x16.png', 'favicon-32x32.png', 'apple-touch-icon.png'],
+      includeAssets: [
+        'favicon.ico',
+        'favicon.svg',
+        'pwa-64x64.png',
+        'pwa-192x192.png',
+        'pwa-512x512.png',
+        'maskable-icon-512x512.png',
+        'apple-touch-icon-180x180.png'
+      ],
       workbox: {
         // - globDirectory is `dist`.
         // - public/ is copied at repo root.
@@ -33,9 +41,10 @@ export default defineConfig({
         background_color: '#ffffff',
         display: 'standalone',
         icons: [
-          {src: 'android-chrome-192x192.png', sizes: '192x192', type: 'image/png', purpose: 'any'},
-          {src: 'android-chrome-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'any'},
-          {src: 'android-chrome-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable'}
+          {src: 'pwa-64x64.png', sizes: '64x64', type: 'image/png'},
+          {src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png'},
+          {src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'any'},
+          {src: 'maskable-icon-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable'}
         ]
       }
     })
