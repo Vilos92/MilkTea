@@ -21,10 +21,12 @@ import {
   groupHeading,
   groupHeadingSplash,
   paletteGroup,
+  paletteRowIconCell,
   switchRow,
   switchRowActive,
   switchRowActiveSplash,
-  switchRowLabel
+  switchRowLabel,
+  switchRowSwitch
 } from './commandPalette.css';
 
 /*
@@ -43,6 +45,8 @@ const PaletteItemType = {
   AUDIO_INPUT_OSCILLATOR: 'audio_input_oscillator',
   AUDIO_INPUT_AUDIO_CAPTURE: 'audio_input_audio_capture',
   SETTINGS_SKIP_SPLASH_ON_LOAD: 'settings_skip_splash_on_load',
+  SETTINGS_RANDOMIZE_PRESETS: 'settings_randomize_presets',
+  SETTINGS_CYCLE_PRESETS: 'settings_cycle_presets',
   SETTINGS_SHOW_PRESET_IN_CONTROLS: 'settings_show_preset_in_controls',
   SETTINGS_SHOW_TRACK_IN_CONTROLS: 'settings_show_track_in_controls'
 } as const;
@@ -239,12 +243,17 @@ export function CommandPalette({
           }}
         >
           <span class={switchRowLabel}>
-            <span>
+            <span class={paletteRowIconCell}>
               <Icon type={item.iconType} size="sm" />
             </span>
             <span>{item.label}</span>
           </span>
-          <Switch checked={item.checked} onChange={item.onChange} label={item.label} />
+          <Switch
+            class={switchRowSwitch}
+            checked={item.checked}
+            onChange={item.onChange}
+            label={item.label}
+          />
         </div>
       );
     }
@@ -260,7 +269,9 @@ export function CommandPalette({
           item.onSelect();
         }}
       >
-        <Icon type={item.iconType} size="sm" />
+        <span class={paletteRowIconCell}>
+          <Icon type={item.iconType} size="sm" />
+        </span>
         {item.label}
       </ChromelessButton>
     );
@@ -316,6 +327,10 @@ function usePaletteItems(
   const {
     shouldSkipSplashOnLoad,
     setShouldSkipSplashOnLoad,
+    shouldRandomizePresets,
+    setShouldRandomizePresets,
+    shouldCyclePresets,
+    setShouldCyclePresets,
     shouldShowPresetName,
     setShouldShowPresetName,
     shouldShowTrackName,
@@ -331,6 +346,20 @@ function usePaletteItems(
           label: t('settings.autoStart'),
           checked: shouldSkipSplashOnLoad,
           onChange: setShouldSkipSplashOnLoad,
+          iconType: 'settings' as IconType
+        },
+        {
+          type: PaletteItemType.SETTINGS_RANDOMIZE_PRESETS,
+          label: 'Randomize presets',
+          checked: shouldRandomizePresets,
+          onChange: setShouldRandomizePresets,
+          iconType: 'settings' as IconType
+        },
+        {
+          type: PaletteItemType.SETTINGS_CYCLE_PRESETS,
+          label: 'Auto-change preset on interval',
+          checked: shouldCyclePresets,
+          onChange: setShouldCyclePresets,
           iconType: 'settings' as IconType
         },
         {
@@ -420,6 +449,10 @@ function usePaletteItems(
       t,
       shouldSkipSplashOnLoad,
       setShouldSkipSplashOnLoad,
+      shouldRandomizePresets,
+      setShouldRandomizePresets,
+      shouldCyclePresets,
+      setShouldCyclePresets,
       shouldShowPresetName,
       setShouldShowPresetName,
       shouldShowTrackName,

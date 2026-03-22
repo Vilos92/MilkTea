@@ -172,5 +172,20 @@ export const switchRow = style({
 export const switchRowLabel = style({
   display: 'flex',
   alignItems: 'center',
-  gap: '10px'
+  gap: '10px',
+  flex: 1,
+  minWidth: 0
+});
+
+export const paletteRowIconCell = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flexShrink: 0,
+  lineHeight: 0
+});
+
+export const switchRowSwitch = style({
+  flexShrink: 0,
+  alignSelf: 'center'
 });
