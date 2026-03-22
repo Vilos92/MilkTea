@@ -17,7 +17,8 @@ export default defineConfig({
     vanillaExtractPlugin(),
     VitePWA({
       registerType: 'autoUpdate',
-      devOptions: {enabled: true},
+      // Use `bun run dev:pwa` when debugging the SW.
+      devOptions: {enabled: process.env.PWA_DEV === '1'},
       includeAssets: [
         'favicon.ico',
         'favicon.svg',

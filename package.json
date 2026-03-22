@@ -9,6 +9,7 @@
     "build-storybook": "storybook build",
     "predev": "bun export-presets",
     "dev": "vite",
+    "dev:pwa": "PWA_DEV=1 bun run dev",
     "export-presets": "bun run scripts/export-butterchurn-presets.ts",
     "generate-pwa-assets": "pwa-assets-generator",
     "lint": "eslint .",
