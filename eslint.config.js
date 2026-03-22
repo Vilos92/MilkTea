@@ -50,7 +50,7 @@ export default defineConfig([
     }
   },
   {
-    ignores: ['dist/**', 'node_modules/**']
+    ignores: ['dist/**', 'dev-dist/**', 'node_modules/**']
   },
   ...storybook.configs['flat/recommended']
 ]);

@@ -6,12 +6,50 @@ import {playwright} from '@vitest/browser-playwright';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {defineConfig} from 'vite';
+import {VitePWA} from 'vite-plugin-pwa';
 
 const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
-  plugins: [preact(), vanillaExtractPlugin()],
+  plugins: [
+    preact(),
+    vanillaExtractPlugin(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      // Use `bun run dev:pwa` when debugging the SW.
+      devOptions: {enabled: process.env.PWA_DEV === '1'},
+      includeAssets: [
+        'favicon.ico',
+        'favicon.svg',
+        'pwa-64x64.png',
+        'pwa-192x192.png',
+        'pwa-512x512.png',
+        'maskable-icon-512x512.png',
+        'apple-touch-icon-180x180.png'
+      ],
+      workbox: {
+        // - globDirectory is `dist`.
+        // - public/ is copied at repo root.
+        // - Pre-cache translations and butterchurn presets, which VitePWA does not do by default.
+        globPatterns: ['**/*.{js,wasm,css,html}', 'translations/*.json', 'butterchurn/presets/*.json']
+      },
+      manifest: {
+        name: 'MilkTea',
+        short_name: 'MilkTea',
+        description: 'MilkTea — visual music in the browser.',
+        theme_color: '#ffffff',
+        background_color: '#ffffff',
+        display: 'standalone',
+        icons: [
+          {src: 'pwa-64x64.png', sizes: '64x64', type: 'image/png'},
+          {src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png'},
+          {src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'any'},
+          {src: 'maskable-icon-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable'}
+        ]
+      }
+    })
+  ],
   test: {
     projects: [
       {

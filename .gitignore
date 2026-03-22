@@ -29,3 +29,6 @@ storybook-static
 
 # Auto-generated files
 public/butterchurn/
+
+# PWA files
+dev-dist/
