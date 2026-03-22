@@ -6,12 +6,40 @@ import {playwright} from '@vitest/browser-playwright';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {defineConfig} from 'vite';
+import {VitePWA} from 'vite-plugin-pwa';
 
 const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
-  plugins: [preact(), vanillaExtractPlugin()],
+  plugins: [
+    preact(),
+    vanillaExtractPlugin(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      devOptions: {enabled: true},
+      includeAssets: ['favicon.ico', 'favicon-16x16.png', 'favicon-32x32.png', 'apple-touch-icon.png'],
+      workbox: {
+        // - globDirectory is `dist`.
+        // - public/ is copied at repo root.
+        // - Pre-cache translations and butterchurn presets, which VitePWA does not do by default.
+        globPatterns: ['**/*.{js,wasm,css,html}', 'translations/*.json', 'butterchurn/presets/*.json']
+      },
+      manifest: {
+        name: 'MilkTea',
+        short_name: 'MilkTea',
+        description: 'MilkTea — visual music in the browser.',
+        theme_color: '#ffffff',
+        background_color: '#ffffff',
+        display: 'standalone',
+        icons: [
+          {src: 'android-chrome-192x192.png', sizes: '192x192', type: 'image/png', purpose: 'any'},
+          {src: 'android-chrome-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'any'},
+          {src: 'android-chrome-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable'}
+        ]
+      }
+    })
+  ],
   test: {
     projects: [
       {
