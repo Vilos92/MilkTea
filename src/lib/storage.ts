@@ -1,5 +1,7 @@
 import type {Locale} from './locale';
 import {
+  DEFAULT_CYCLE_PRESETS,
+  DEFAULT_RANDOMIZE_PRESETS,
   DEFAULT_SHOW_PRESET_IN_CONTROLS,
   DEFAULT_SHOW_TRACK_IN_CONTROLS,
   DEFAULT_SKIP_SPLASH_ON_LOAD
@@ -15,7 +17,9 @@ type StorageKey =
   | 'translations'
   | 'skipSplashOnLoad'
   | 'showPresetNameInControls'
-  | 'showTrackNameInControls';
+  | 'showTrackNameInControls'
+  | 'randomizePresets'
+  | 'cyclePresets';
 
 type MilkTeaStorageKey = `milktea:${StorageKey}`;
 
@@ -61,6 +65,20 @@ export function setStorageShowTrackNameInControls(value: boolean): void {
 }
 export function getStorageShowTrackNameInControls(): boolean | undefined {
   return getStorageItem<boolean>('showTrackNameInControls');
+}
+
+export function setStorageRandomizePresets(value: boolean): void {
+  setStorageItem('randomizePresets', value === DEFAULT_RANDOMIZE_PRESETS ? undefined : value);
+}
+export function getStorageRandomizePresets(): boolean | undefined {
+  return getStorageItem<boolean>('randomizePresets');
+}
+
+export function setStorageCyclePresets(value: boolean): void {
+  setStorageItem('cyclePresets', value === DEFAULT_CYCLE_PRESETS ? undefined : value);
+}
+export function getStorageCyclePresets(): boolean | undefined {
+  return getStorageItem<boolean>('cyclePresets');
 }
 
 /*
