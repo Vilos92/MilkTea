@@ -10,6 +10,7 @@ import {Splash} from './components/splash/splash';
 import {Visualizer} from './components/visualizer/visualizer';
 import {useAudioSource} from './hooks/useAudioSource';
 import {useButterchurn} from './hooks/useButterchurn';
+import {useCyclePresets} from './hooks/useCyclePresets';
 import {type RecordingProcessedPayload, type RenderConfig, useRecorder} from './hooks/useRecorder';
 import {vibrateHeavy} from './lib/vibrate';
 import {
@@ -43,7 +44,7 @@ const RENDER_CONFIG: RenderConfig = {
 
 export function MilkTea() {
   const {openPanel, setOpenPanel} = usePanelContext();
-  const {shouldShowTrackName, shouldShowPresetName} = useSettingsContext();
+  const {shouldShowTrackName, shouldShowPresetName, shouldCyclePresets} = useSettingsContext();
 
   const {
     containerRef,
@@ -54,6 +55,7 @@ export function MilkTea() {
     presetKeys,
     presetNameToIndex,
     loadPresetByIndex,
+    presetIndex,
     changePreset,
     connectAudioBuffer,
     connectOscillator,
@@ -64,6 +66,14 @@ export function MilkTea() {
     toggleFullscreen,
     resizeCanvas
   } = useButterchurn();
+
+  const {restartPresetCycle} = useCyclePresets({
+    started,
+    presetKeysLength: presetKeys.length,
+    presetIndex,
+    changePreset,
+    loadPresetByIndex
+  });
 
   const [stagedPreset, setStagedPreset] = useState<string | undefined>(undefined);
 
@@ -90,9 +100,12 @@ export function MilkTea() {
     const targetIndex = presetNameToIndex.get(stagedPreset);
     if (targetIndex !== undefined) {
       loadPresetByIndex(targetIndex);
+      if (shouldCyclePresets) {
+        restartPresetCycle();
+      }
     }
     setStagedPreset(undefined);
-  }, [stagedPreset, presetNameToIndex, loadPresetByIndex]);
+  }, [stagedPreset, presetNameToIndex, loadPresetByIndex, shouldCyclePresets, restartPresetCycle]);
 
   const {
     audioSource,

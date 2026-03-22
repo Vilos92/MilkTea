@@ -349,17 +349,17 @@ function usePaletteItems(
           iconType: 'settings' as IconType
         },
         {
-          type: PaletteItemType.SETTINGS_RANDOMIZE_PRESETS,
-          label: 'Randomize presets',
-          checked: shouldRandomizePresets,
-          onChange: setShouldRandomizePresets,
+          type: PaletteItemType.SETTINGS_CYCLE_PRESETS,
+          label: 'Cycle presets automatically',
+          checked: shouldCyclePresets,
+          onChange: setShouldCyclePresets,
           iconType: 'settings' as IconType
         },
         {
-          type: PaletteItemType.SETTINGS_CYCLE_PRESETS,
-          label: 'Auto-change preset on interval',
-          checked: shouldCyclePresets,
-          onChange: setShouldCyclePresets,
+          type: PaletteItemType.SETTINGS_RANDOMIZE_PRESETS,
+          label: 'Randomize cycled presets',
+          checked: shouldRandomizePresets,
+          onChange: setShouldRandomizePresets,
           iconType: 'settings' as IconType
         },
         {
