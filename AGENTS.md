@@ -76,7 +76,6 @@ Top-down: entry first, **Helpers.** last. Skip section markers on lean single-ex
 - **JSDoc** on exports and non-trivial helpers when the contract is not obvious—often one crisp line is enough. Do not document module-private types (see **Exports**).
 - In prose, backtick **identifiers** (`presetIndex`), not section headers.
 - **Section blocks** (see **File layout**) label structure only — no extra explanation inside the marker.
-- **`@sideEffect` (house tag):** flag non-pure functions, even when prose is trimmed to the tag alone. Terse clause names the effect (e.g. "Mutates canvas.", "Async I/O.", "Registers listener."). On exports and closures, use a multi-line block: why line, then `@sideEffect`. Covers mutation, async I/O, non-determinism, and DOM/event registration. Not standard JSDoc/TSDoc. Pure functions get **no** tag.
 
 ## Naming
 
