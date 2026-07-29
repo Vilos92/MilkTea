@@ -3,7 +3,9 @@ description: Install bun followed by the project dependencies
 runs:
   using: composite
   steps:
-    - uses: actions/checkout@v4
+    # No checkout here: every job checks out first, since `./.github/actions/…` cannot resolve
+    # otherwise. A second checkout would reset the job's own fetch depth, which the `fallow` job
+    # needs at full depth to find a merge base.
     - uses: actions/cache@v4
       with:
         path: ~/.bun/install/cache
