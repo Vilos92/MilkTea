@@ -1,15 +1,25 @@
 name: Continuous Integration
 
 on:
-  - push
-  - pull_request
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   fmt:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/install-bun-and-dependencies
       - name: Format
         run: bun run fmt:check
@@ -18,7 +28,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/install-bun-and-dependencies
       - name: Lint
         run: bun run lint
@@ -27,7 +39,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/install-bun-and-dependencies
       - name: Typecheck
         run: bun run typecheck
@@ -36,7 +50,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/install-bun-and-dependencies
       # The Storybook project runs in a real browser, so the runner needs one.
       - name: Install Playwright browsers
@@ -48,8 +64,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
+          persist-credentials: false
           # audit needs a merge base; depth-1 checkout has no local main ref
           fetch-depth: 0
       - uses: ./.github/actions/install-bun-and-dependencies
