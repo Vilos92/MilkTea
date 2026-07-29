@@ -8,6 +8,7 @@ import {AudioSourceButtons} from '../audioSourceButtons/audioSourceButtons';
 import {CommandPaletteButton} from '../commandPalette/commandPaletteButton';
 import {Controls} from '../controls/controls';
 import {HelpButton} from '../help/helpButton';
+
 import {
   hudFaded as fadedClass,
   topCorner,

@@ -1,4 +1,5 @@
 import {useTranslate} from '../../providers/translation';
+
 import {previewLabel, splashOverlay} from './splashOverlay.css';
 
 /*

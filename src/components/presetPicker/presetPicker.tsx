@@ -5,12 +5,13 @@ import {type GetSearchTerms, useSearchableList} from '../../hooks/useSearchableL
 import {VibrationPattern} from '../../lib/vibrate';
 import {useTranslate} from '../../providers/translation';
 import {ChromelessButton} from '../chromelessButton/chromelessButton';
+import {Picker} from '../picker/picker';
+
 import {
   commandButton,
   commandButtonActive,
   commandButtonTouchCoarse
 } from '../commandPalette/commandPalette.css';
-import {Picker} from '../picker/picker';
 import {selectedItem as selectedItemClass} from './presetPicker.css';
 
 /*

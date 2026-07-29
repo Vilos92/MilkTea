@@ -5,23 +5,14 @@ on:
   - pull_request
 
 jobs:
-  package-json:
+  fmt:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-bun-and-dependencies
-      - name: Package JSON
-        run: bun run sort-package-json:check
-
-  prettier:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/install-bun-and-dependencies
-      - name: Prettier
-        run: bun run prettier:check
+      - name: Format
+        run: bun run fmt:check
 
   lint:
     runs-on: ubuntu-latest
@@ -47,5 +38,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-bun-and-dependencies
+      # The Storybook project runs in a real browser, so the runner needs one.
+      - name: Install Playwright browsers
+        run: bunx playwright install --with-deps chromium chromium-headless-shell
       - name: Test
         run: bun run test
+
+  fallow:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # audit needs a merge base; depth-1 checkout has no local main ref
+          fetch-depth: 0
+      - uses: ./.github/actions/install-bun-and-dependencies
+      - name: Fallow audit
+        run: bun run fallow:audit -- --base ${{ github.event.pull_request.base.sha || 'origin/main' }}

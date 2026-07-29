@@ -1,6 +1,7 @@
-import {describe, expect, test} from 'bun:test';
 import {readFileSync, readdirSync, statSync} from 'node:fs';
 import {join} from 'node:path';
+
+import {describe, expect, test} from 'vitest';
 
 import {Locale} from './locale';
 import {ENGLISH_TRANSLATIONS} from './translations';
@@ -59,7 +60,7 @@ describe('translations', () => {
   });
 
   test('every locale JSON file has exact same keys as ENGLISH_TRANSLATIONS and string values', async () => {
-    const repoRoot = join(import.meta.dir, '..', '..');
+    const repoRoot = join(import.meta.dirname, '..', '..');
     const translationsDir = join(repoRoot, 'public', 'translations');
 
     const localesWithJson = (Object.values(Locale) as string[]).filter(l => l !== 'en');
@@ -67,7 +68,7 @@ describe('translations', () => {
 
     for (const locale of localesWithJson) {
       const path = join(translationsDir, `${locale}.json`);
-      const data = (await Bun.file(path).json()) as Translations;
+      const data = JSON.parse(readFileSync(path, 'utf-8')) as Translations;
       const result = validateTranslations(data);
       if (!result.ok) {
         failures.push(`${locale}: ${result.errors.join('; ')}`);
@@ -78,7 +79,7 @@ describe('translations', () => {
   });
 
   test('every translation key is used at least once in app source', () => {
-    const srcDir = join(import.meta.dir, '..');
+    const srcDir = join(import.meta.dirname, '..');
     const usedKeys = collectUsedTranslationKeys(srcDir);
     const unused = [...TRANSLATION_KEYS].filter(k => !usedKeys.has(k));
     expect(unused).toEqual([]);
