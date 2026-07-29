@@ -1,10 +1,28 @@
+<!--VITE PLUS START-->
+
+# Using Vite+, the Unified Toolchain for the Web
+
+This project is using Vite+, a unified toolchain built on top of Vite, Rolldown, Vitest, tsdown, Oxlint, Oxfmt, and Vite Task. Vite+ wraps runtime management, package management, and frontend tooling in a single global CLI called `vp`. Vite+ is distinct from Vite, and it invokes Vite through `vp dev` and `vp build`. Run `vp help` to print a list of commands and `vp <command> --help` for information about a specific command.
+
+Docs are local at `node_modules/vite-plus/docs` or online at https://viteplus.dev/guide/.
+
+## Review Checklist
+
+- [ ] Run `vp install` after pulling remote changes and before getting started.
+- [ ] Run `vp check` and `vp test` to format, lint, type check and test changes.
+- [ ] Check if there are `vite.config.ts` tasks or `package.json` scripts necessary for validation, run via `vp run <script>`.
+- [ ] If setup, runtime, or package-manager behavior looks wrong, run `vp env doctor` and include its output when asking for help.
+
+<!--VITE PLUS END-->
+
 # Agent notes
 
 Living conventions for this repo. Ask whether new habits belong here vs `README.md`.
 
 ## Bun
 
-- **Bun-first** for installs and scripts (`bun install`, `bun run …`, `bun test …`). Prefer Bun equivalents when upstream docs use npm/pnpm/npx. Run **`bun install`** after pulling.
+- **Bun-first** for installs and scripts (`bun install`, `bun run …`). Day-to-day app tooling uses **`vp`** (`vp dev`, `vp check`, `vp test`) per Vite+ above.
+- Prefer Bun (or **`vp`**) equivalents when upstream docs use npm/pnpm/npx. Run **`bun install`** after pulling.
 - **`bun export-presets`** runs via **`predev`** / **`prebuild`** — do not skip when validating a full build locally.
 
 ## TypeScript
@@ -48,14 +66,22 @@ Living conventions for this repo. Ask whether new habits belong here vs `README.
 type Foo = …;
 ```
 
+Do **not** collapse these to single-line `/* Types. */`.
+
 Top-down: entry first, **Helpers.** last. Skip section markers on lean single-export files where they add ceremony only.
 
 **Order** (omit unused; no empty **Types.** / **Helpers.**):
 
-1. **Types.** · **Enums.** · **Constants.**
+1. **Types.** · **Enums.** · **Constants.** · **Scratch.**
 2. Entry: **Script.** (`main.tsx`) | **Component.** | **Styles.** | **Config.**
 3. **Hooks.**
 4. **Helpers.**
+
+**Scratch.** holds module-scope state that gets mutated — including a `const` whose properties are mutated. It sits directly above the entry section.
+
+**Config** (`vite.config.ts`, `pwa-assets.config.ts`): **Constants.** → **Config.** (default export). Module-level `const` above the entry; only `function` helpers may follow (hoisting).
+
+**Lean files** (one export, few lines): one matching entry block is enough.
 
 **Tests:** colocate **`{module}.spec.ts`** or **`{module}.test.ts`**; **Constants.** (fixtures) → **Tests.** when the file uses section blocks.
 
@@ -65,8 +91,8 @@ Top-down: entry first, **Helpers.** last. Skip section markers on lean single-ex
 
 - Functional style; early returns; small helpers over deep nesting.
 - Prefer **`map` / `filter` / `reduce`**; no **`forEach`**—use **`for`…`of`** (or indexed `for`) when imperative.
-- **`no-nested-ternary`** and **`curly: all`** are ESLint errors—always brace blocks; no nested ternaries.
-- **`@typescript-eslint/no-floating-promises`** is an error—void or await async work explicitly.
+- **`no-nested-ternary`** and **`curly: all`** are Oxlint errors (via `vp check`)—always brace blocks; no nested ternaries.
+- **`typescript/no-floating-promises`** is an error—void or await async work explicitly. It runs type-aware through `tsgolint`, so it needs `lint.options.typeAware` in `vite.config.ts`.
 
 ## Comments
 
@@ -75,6 +101,8 @@ Top-down: entry first, **Helpers.** last. Skip section markers on lean single-ex
 - **Layer once.** Put shared why on a constant, type field, or entry closure. Do not repeat the same rationale at every call site.
 - **JSDoc** on exports and non-trivial helpers when the contract is not obvious—often one crisp line is enough. Do not document module-private types (see **Exports**).
 - In prose, backtick **identifiers** (`presetIndex`), not section headers.
+- Default to **separate sentences** over semicolons or em dashes joining clauses. Either is fine occasionally for a tight parenthetical, but overuse gives the codebase a heavy editorial voice.
+- **Balance line widths** in multi-line comments, and never wrap mid-token (`display: none` stays on one line).
 - **Section blocks** (see **File layout**) label structure only — no extra explanation inside the marker.
 
 ## Naming
@@ -96,21 +124,30 @@ Top-down: entry first, **Helpers.** last. Skip section markers on lean single-ex
 
 **Loop** (stop on first failure):
 
-1. `bun run prettier:check`
-2. `bun run sort-package-json:check`
-3. `bun run lint`
-4. `bun run typecheck`
-5. `bun run test`
+1. `vp check` — fmt, lint, typecheck
+2. `vp test`
+3. `bun run fallow:audit` (CI: `--base` on PRs; see workflow)
+
+`vp fmt` also sorts `package.json` and import blocks, which is why there is no separate Prettier or `sort-package-json` step.
 
 **CI job → local command:**
 
-| Job            | Local                             |
-| -------------- | --------------------------------- |
-| `package-json` | `bun run sort-package-json:check` |
-| `prettier`     | `bun run prettier:check`          |
-| `lint`         | `bun run lint`                    |
-| `typecheck`    | `bun run typecheck`               |
-| `test`         | `bun run test`                    |
+| Job         | Local                  |
+| ----------- | ---------------------- |
+| `fmt`       | `bun run fmt:check`    |
+| `lint`      | `bun run lint`         |
+| `typecheck` | `bun run typecheck`    |
+| `test`      | `bun run test`         |
+| `fallow`    | `bun run fallow:audit` |
+
+## Fallow
+
+Oxlint (`vp lint`) does **not** replace Fallow for cross-file unused exports.
+
+- Fix, add an **`entry`** in **`.fallowrc.jsonc`**, or delete—no greenwash. Ask the human before permanent ignores or baselines.
+- Track suppressions in **`.fallowrc.jsonc`**, not as inline `fallow-ignore` comments.
+- Baselines **`.fallow/dupes-baseline.json`** / **`.fallow/health-baseline.json`** are versioned. Refresh with `fallow health --save-baseline <path>` / `fallow dupes --save-baseline <path>` after human review—not by default when audit fails.
+- **`private-type-leaks`** and **`duplicate-exports`** are off by house rule; see the comments in **`.fallowrc.jsonc`**.
 
 ## Keeping this file useful
 
