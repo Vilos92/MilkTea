@@ -19,6 +19,7 @@ import {
   clampVideoFps,
   scaleVideoSizeToMaxDisplay
 } from '../../lib/video';
+
 import {
   actionRow,
   btn,
@@ -168,8 +169,9 @@ function SetupForm({onConfirm}: SetupFormProps) {
       ? `${(previewMbPerMin / 1000).toFixed(2)} GB/min`
       : `${previewMbPerMin.toFixed(0)} MB/min`;
 
-  const activePreset =
-    VIDEO_SIZE_PRESETS.find(sizePreset => sizePreset.width === width && sizePreset.height === height) ?? null;
+  const activePreset = VIDEO_SIZE_PRESETS.find(
+    sizePreset => sizePreset.width === width && sizePreset.height === height
+  );
 
   const handleSubmit = (event: Event) => {
     event.preventDefault();

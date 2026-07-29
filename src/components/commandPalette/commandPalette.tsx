@@ -11,6 +11,7 @@ import {ChromelessButton} from '../chromelessButton/chromelessButton';
 import {Icon, type IconType} from '../icon/icon';
 import {Picker} from '../picker/picker';
 import {Switch} from '../switch/switch';
+
 import {
   commandButton,
   commandButtonActive,
@@ -233,7 +234,7 @@ export function CommandPalette({
   const renderPaletteItem = (item: PaletteItem, isActive: boolean) => {
     if (isSwitchPaletteItem(item)) {
       return (
-        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+        // oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
         <div
           key={item.type}
           class={[switchRow, isActive && switchRowActiveClass].filter(Boolean).join(' ')}
@@ -488,7 +489,7 @@ function formatGroupHeading(t: Translate, group: PaletteGroup): string {
     case 'settings':
       return t('commandPalette.group.settings');
     default:
-      throw new Error(`Unknown palette group: ${group}`);
+      throw new Error(`Unknown palette group: ${String(group)}`);
   }
 }
 

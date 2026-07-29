@@ -6,6 +6,7 @@ import {useSettingsContext} from '../../providers/settings';
 import {useTranslate} from '../../providers/translation';
 import {useDragArea} from '../dragArea/useDragArea';
 import {LocaleSwitcher} from '../locale/localeSwitcher';
+
 import {
   btn,
   btnSolid,

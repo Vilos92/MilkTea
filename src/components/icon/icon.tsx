@@ -45,7 +45,7 @@ export type IconType =
   | 'command-palette'
   | 'settings';
 
-export type IconSize = 'sm' | 'md' | 'lg';
+type IconSize = 'sm' | 'md' | 'lg';
 
 type IconProps = {
   type: IconType;
@@ -122,6 +122,6 @@ function renderPaths(type: IconType) {
     case 'settings':
       return <Settings />;
     default:
-      throw new Error(`Unknown icon type: ${type}`);
+      throw new Error(`Unknown icon type: ${String(type)}`);
   }
 }

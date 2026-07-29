@@ -10,6 +10,7 @@ import {useTranslate} from '../../providers/translation';
 import type {AudioFilePlayback} from '../../types/audio';
 import {ChromelessButton} from '../chromelessButton/chromelessButton';
 import {Icon} from '../icon/icon';
+
 import {
   accentBtn,
   controlBtn,

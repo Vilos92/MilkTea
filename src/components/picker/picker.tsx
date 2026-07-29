@@ -3,6 +3,7 @@ import type {ComponentChildren, RefObject} from 'preact';
 import {useTranslate} from '../../providers/translation';
 import type {IconType} from '../icon/icon';
 import {Icon} from '../icon/icon';
+
 import {
   closeBtnAdaptive,
   closeBtnDark,

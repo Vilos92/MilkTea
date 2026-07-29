@@ -82,7 +82,7 @@ export function TranslateProvider({children}: {children: preact.ComponentChildre
  */
 
 /** Returns the current translation map (last-known until new locale loads). */
-export function useTranslateContext(): Translations {
+function useTranslateContext(): Translations {
   return useContext(TranslateContext);
 }
 

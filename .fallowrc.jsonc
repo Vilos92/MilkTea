@@ -1,0 +1,58 @@
+{
+  "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
+  "entry": [
+    "src/main.tsx",
+    // Storybook loads these config modules through its own CLI, not a traced import.
+    ".storybook/main.ts",
+    ".storybook/preview.ts",
+    ".storybook/vitest.setup.ts",
+    // Read by the `pwa-assets-generator` CLI, which no module imports.
+    "pwa-assets.config.ts",
+    // Run directly by `bun` from the `export-presets` script.
+    "scripts/export-butterchurn-presets.ts",
+    // Built but never wired up: a faint preview watermark for the visualizer. Kept as a root so
+    // reachability does not report it while the feature is still on the shelf.
+    "src/components/visualizer/splashOverlay.tsx",
+    // Deliberate light/medium/heavy API. Call sites reach `LIGHT` through `ChromelessButton`'s
+    // `vibration` prop, so `vibrateLight` alone has no direct consumer; the trio ships together.
+    "src/lib/vibrate.ts"
+  ],
+  // Referenced by name from `lint.overrides[].jsPlugins` in `vite.config.ts`, which is a string
+  // Oxlint resolves at runtime rather than an import Fallow can trace.
+  "ignoreDependencies": ["eslint-plugin-storybook"],
+  "audit": {
+    "healthBaseline": ".fallow/health-baseline.json",
+    "dupesBaseline": ".fallow/dupes-baseline.json"
+  },
+  "rules": {
+    "boundary-violation": "error",
+    "circular-dependencies": "error",
+    "coverage-gaps": "error",
+    // Off because the risk it guards against needs a barrel to occur, and `src/` has none. Each
+    // `*.css.ts` is imported directly, and Vanilla Extract scopes every `style()` per file, so
+    // sibling components may both name a class `content`.
+    "duplicate-exports": "off",
+    "empty-catalog-groups": "error",
+    "feature-flags": "error",
+    "misconfigured-dependency-overrides": "error",
+    // Off by house rule: `AGENTS.md` keeps props and option types module-private until another
+    // file imports them, so every exported component legitimately references a private type.
+    "private-type-leaks": "off",
+    "stale-suppressions": "error",
+    "test-only-dependencies": "error",
+    "type-only-dependencies": "error",
+    "unlisted-dependencies": "error",
+    "unresolved-catalog-references": "error",
+    "unresolved-imports": "error",
+    "unused-catalog-entries": "error",
+    "unused-class-members": "error",
+    "unused-dependencies": "error",
+    "unused-dependency-overrides": "error",
+    "unused-dev-dependencies": "error",
+    "unused-enum-members": "error",
+    "unused-exports": "error",
+    "unused-files": "error",
+    "unused-optional-dependencies": "error",
+    "unused-types": "error"
+  }
+}

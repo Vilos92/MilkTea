@@ -165,7 +165,7 @@ export const actionCell = style({
   minWidth: 0
 });
 
-export const blueskyWrap = style({
+const blueskyWrap = style({
   display: 'inline-flex',
   justifyContent: 'center',
   marginTop: '4px',

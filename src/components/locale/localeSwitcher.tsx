@@ -2,6 +2,7 @@ import type {Locale} from '../../lib/locale';
 import {LOCALE_OPTIONS} from '../../lib/locale';
 import {useLocaleContext} from '../../providers/locale';
 import {useTranslate} from '../../providers/translation';
+
 import {
   globe,
   globeWrapper,

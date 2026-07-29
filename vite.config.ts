@@ -1,18 +1,71 @@
-/// <reference types="vitest/config" />
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+
+/// <reference types="vite-plus" />
 import preact from '@preact/preset-vite';
 import {storybookTest} from '@storybook/addon-vitest/vitest-plugin';
 import {vanillaExtractPlugin} from '@vanilla-extract/vite-plugin';
-import {playwright} from '@vitest/browser-playwright';
-import path from 'node:path';
-import {fileURLToPath} from 'node:url';
-import {defineConfig} from 'vite';
 import {VitePWA} from 'vite-plugin-pwa';
+import {defineConfig, lazyPlugins} from 'vite-plus';
+import {playwright} from 'vite-plus/test/browser-playwright';
+
+/*
+ * Constants.
+ */
 
 const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 
-// More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
+const REPO_TS_FMT_OPTIONS = {
+  arrowParens: 'avoid' as const,
+  bracketSpacing: false,
+  printWidth: 110,
+  trailingComma: 'none' as const,
+  tabWidth: 2,
+  semi: true,
+  singleQuote: true,
+  sortImports: true,
+  sortPackageJson: true
+};
+
+/*
+ * Config.
+ */
+
 export default defineConfig({
-  plugins: [
+  staged: {
+    '*': 'vp check --fix'
+  },
+  fmt: {
+    ...REPO_TS_FMT_OPTIONS,
+    ignorePatterns: ['dist/**', 'dev-dist/**', 'public/butterchurn/**']
+  },
+  lint: {
+    plugins: ['typescript', 'react', 'jsx-a11y', 'import'],
+    options: {typeAware: true, typeCheck: true},
+    ignorePatterns: ['dist/**', 'dev-dist/**'],
+    rules: {
+      curly: ['error', 'all'],
+      'no-nested-ternary': 'error',
+      'object-shorthand': 'error',
+      // Preact uses `class` instead of `className`.
+      'react/no-unknown-property': ['error', {ignore: ['class']}],
+      // Off because native `<dialog>` only earns its behaviour through `showModal()`, and these
+      // overlays are deliberately rendered and dismissed by the components themselves. The
+      // existing `role`/`aria-modal`/`aria-labelledby` markup is already screen-reader complete.
+      'jsx-a11y/prefer-tag-over-role': 'off',
+      'react/rules-of-hooks': 'error',
+      'react/exhaustive-deps': 'error',
+      'typescript/no-floating-promises': 'error'
+    },
+    overrides: [
+      {
+        // Storybook has no Oxlint port, so its ESLint plugin runs through the JS bridge.
+        files: ['**/*.stories.tsx', '.storybook/main.ts'],
+        jsPlugins: ['eslint-plugin-storybook']
+      }
+    ]
+  },
+  plugins: lazyPlugins(() => [
     preact(),
     vanillaExtractPlugin(),
     VitePWA({
@@ -49,9 +102,17 @@ export default defineConfig({
         ]
       }
     })
-  ],
+  ]),
   test: {
     projects: [
+      {
+        extends: true,
+        test: {
+          name: 'unit',
+          include: ['src/**/*.spec.ts'],
+          environment: 'node'
+        }
+      },
       {
         extends: true,
         plugins: [

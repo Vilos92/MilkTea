@@ -3,6 +3,7 @@ import {useCallback, useEffect, useRef, useState} from 'preact/hooks';
 
 import {useHasFinePointer} from '../../hooks/useHasFinePointer';
 import type {VibrationPattern} from '../../lib/vibrate';
+
 import {chromeless} from './chromelessButton.css';
 
 /*
