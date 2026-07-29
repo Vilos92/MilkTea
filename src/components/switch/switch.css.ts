@@ -66,16 +66,3 @@ export const thumb = style({
     }
   }
 });
-
-export const label = style({
-  fontSize: '0.875rem',
-  lineHeight: 1.5,
-  color: 'hsl(240 6% 10%)',
-  userSelect: 'none',
-
-  selectors: {
-    [`${root}[data-disabled] &`]: {
-      color: 'hsl(240 4% 46%)'
-    }
-  }
-});

@@ -49,7 +49,9 @@ export function useAudioSource({
   const screenCaptureStreamRef = useRef<MediaStream | null>(null);
 
   const stopMicHardware = useCallback(() => {
-    micStreamRef.current?.getTracks().forEach(track => track.stop());
+    for (const track of micStreamRef.current?.getTracks() ?? []) {
+      track.stop();
+    }
     micStreamRef.current = null;
   }, []);
 
@@ -134,7 +136,9 @@ export function useAudioSource({
             .then(stream => {
               const audioTracks = stream.getAudioTracks();
               if (audioTracks.length === 0) {
-                stream.getVideoTracks().forEach(track => track.stop());
+                for (const track of stream.getVideoTracks()) {
+                  track.stop();
+                }
                 throw new Error('Could not capture audio from screen capture');
               }
 

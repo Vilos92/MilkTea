@@ -26,7 +26,7 @@ export const MAX_VIDEO_FPS = 120;
 export const DEFAULT_VIDEO_FPS = 60;
 
 /** When fitting a large render into UI, neither side exceeds this (CSS px). */
-export const MAX_VIDEO_PREVIEW_DISPLAY_PX = 480;
+const MAX_VIDEO_PREVIEW_DISPLAY_PX = 480;
 
 export const VIDEO_QUALITY_PRESETS: readonly VideoQualityPreset[] = [
   {label: 'Low', bpp: 0.05},

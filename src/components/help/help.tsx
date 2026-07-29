@@ -5,7 +5,6 @@ import {isMac} from '../../lib/platform';
 import {type Translate, useTranslate} from '../../providers/translation';
 import {Icon} from '../icon/icon';
 import {LocaleSwitcher} from '../locale/localeSwitcher';
-import {closeBtnAdaptive, closeBtnDark, headingRow} from '../picker/picker.css';
 import {
   actionCell,
   blueskyWrapActive,
@@ -25,6 +24,8 @@ import {
   scrollArea,
   section
 } from './help.css.ts';
+
+import {closeBtnAdaptive, closeBtnDark, headingRow} from '../picker/picker.css';
 
 /*
  * Types.
@@ -136,11 +137,11 @@ export function Help({visualizerActive, presetName, trackName, onClose}: HelpPro
 
 function renderMobileHotkeys(t: Translate): preact.VNode[] {
   return [
-    <li class={hotkeyRow}>
+    <li key="swipePrev" class={hotkeyRow}>
       <span class={keyCell}>{t('help.swipePrevKeys')}</span>
       <span class={actionCell}>{t('help.swipePrevAction')}</span>
     </li>,
-    <li class={hotkeyRow}>
+    <li key="swipeNext" class={hotkeyRow}>
       <span class={keyCell}>{t('help.swipeNextKeys')}</span>
       <span class={actionCell}>{t('help.swipeNextAction')}</span>
     </li>
@@ -149,31 +150,31 @@ function renderMobileHotkeys(t: Translate): preact.VNode[] {
 
 function renderDesktopHotkeys(t: Translate, isMac: boolean): preact.VNode[] {
   return [
-    <li class={hotkeyRow}>
+    <li key="keyHelp" class={hotkeyRow}>
       <span class={keyCell}>{t('help.keyHelpKeys')}</span>
       <span class={actionCell}>{t('help.keyHelpAction')}</span>
     </li>,
-    <li class={hotkeyRow}>
+    <li key="keyPrev" class={hotkeyRow}>
       <span class={keyCell}>{t('help.keyPrevKeys')}</span>
       <span class={actionCell}>{t('help.keyPrevAction')}</span>
     </li>,
-    <li class={hotkeyRow}>
+    <li key="keyNext" class={hotkeyRow}>
       <span class={keyCell}>{t('help.keyNextKeys')}</span>
       <span class={actionCell}>{t('help.keyNextAction')}</span>
     </li>,
-    <li class={hotkeyRow}>
+    <li key="keySemicolon" class={hotkeyRow}>
       <span class={keyCell}>{t('help.keySemicolonKeys')}</span>
       <span class={actionCell}>{t('help.keySemicolonAction')}</span>
     </li>,
-    <li class={hotkeyRow}>
+    <li key="keySpace" class={hotkeyRow}>
       <span class={keyCell}>{t('help.keySpaceKeys')}</span>
       <span class={actionCell}>{t('help.keySpaceAction')}</span>
     </li>,
-    <li class={hotkeyRow}>
+    <li key="keyFullscreen" class={hotkeyRow}>
       <span class={keyCell}>{t('help.keyFullscreenKeys')}</span>
       <span class={actionCell}>{t('help.keyFullscreenAction')}</span>
     </li>,
-    <li class={hotkeyRow}>
+    <li key="keyRecord" class={hotkeyRow}>
       <span class={keyCell}>{t('help.keyRecordKeys')}</span>
       <span class={actionCell}>{t('help.keyRecordAction')}</span>
     </li>,
@@ -184,14 +185,14 @@ function renderDesktopHotkeys(t: Translate, isMac: boolean): preact.VNode[] {
 function renderCommandPaletteRow(t: Translate, isMac: boolean): preact.VNode {
   if (isMac) {
     return (
-      <li class={hotkeyRow}>
+      <li key="keyCommandPalette" class={hotkeyRow}>
         <span class={keyCell}>{t('help.keyCommandPaletteKeysMac')}</span>
         <span class={actionCell}>{t('help.keyCommandPaletteAction')}</span>
       </li>
     );
   }
   return (
-    <li class={hotkeyRow}>
+    <li key="keyCommandPalette" class={hotkeyRow}>
       <span class={keyCell}>{t('help.keyCommandPaletteKeysWindows')}</span>
       <span class={actionCell}>{t('help.keyCommandPaletteAction')}</span>
     </li>

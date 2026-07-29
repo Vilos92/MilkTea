@@ -1,0 +1,148 @@
+{
+  "finding_counts": {
+    "scripts/export-butterchurn-presets.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "src/components/audioSourceButtons/audioSourceButtons.tsx": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "src/components/chromelessButton/chromelessButton.tsx": {
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "src/components/commandPalette/commandPalette.tsx": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "src/components/commandPalette/commandPaletteButton.tsx": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "src/components/controls/controls.stories.tsx": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "src/components/controls/controls.tsx": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "src/components/help/help.tsx": {
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "src/components/help/helpButton.tsx": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "src/components/hud/hud.tsx": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "src/components/icon/icon.tsx": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "src/components/mediabunnyDemo/mediabunnyDemo.tsx": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "src/components/picker/picker.tsx": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "src/components/presetPicker/presetPicker.tsx": {
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "src/components/splash/splash.tsx": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "src/components/switch/switch.tsx": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "src/hooks/useAudioSource.ts": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "src/hooks/useButterchurn.ts": {
+      "crap_moderate": {
+        "count": 3
+      }
+    },
+    "src/hooks/useSwipe.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "src/lib/mediabunny/convert.ts": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "src/lib/translations.ts": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "src/milkTea.tsx": {
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "src/providers/panel.tsx": {
+      "crap_high": {
+        "count": 1
+      }
+    }
+  },
+  "runtime_coverage_findings": [],
+  "target_keys": []
+}

@@ -149,12 +149,6 @@ export const switchRowActiveSplash = style({
   }
 });
 
-export const section = style({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '16px'
-});
-
 export const switchRow = style({
   display: 'flex',
   alignItems: 'center',

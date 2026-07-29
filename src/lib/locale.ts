@@ -33,7 +33,7 @@ export function isLocale(value: string): value is Locale {
 
 export const DEFAULT_LOCALE: Locale = Locale.ENGLISH;
 
-export const LOCALE_LABELS: Record<Locale, string> = {
+const LOCALE_LABELS: Record<Locale, string> = {
   [Locale.ENGLISH]: 'English',
   [Locale.SPANISH]: 'Español',
   [Locale.FRENCH]: 'Français',
@@ -60,7 +60,7 @@ export const LOCALE_LABELS: Record<Locale, string> = {
   [Locale.TURKISH]: 'Türkçe'
 };
 
-export const LOCALE_ORDER: ReadonlyArray<Locale> = [
+const LOCALE_ORDER: ReadonlyArray<Locale> = [
   'en',
   'es',
   'fr',

@@ -9,7 +9,7 @@ export const Axis = {
   HORIZONTAL: 'horizontal',
   VERTICAL: 'vertical'
 } as const;
-export type Axis = (typeof Axis)[keyof typeof Axis];
+type Axis = (typeof Axis)[keyof typeof Axis];
 
 type SwipeConfigHorizontal = {
   axis: typeof Axis.HORIZONTAL;

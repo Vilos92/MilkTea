@@ -1,0 +1,10 @@
+{
+  "clone_groups": [
+    "src/components/commandPalette/commandPalette.css.ts:39-64|src/components/commandPalette/commandPalette.css.ts:68-93",
+    "src/components/commandPalette/commandPalette.tsx:184-202|src/components/presetPicker/presetPicker.tsx:39-60",
+    "src/components/commandPalette/commandPalette.tsx:202-231|src/components/presetPicker/presetPicker.tsx:64-88",
+    "src/components/commandPalette/commandPaletteButton.css.ts:3-58|src/components/help/helpButton.css.ts:8-63",
+    "src/components/commandPalette/commandPaletteButton.css.ts:60-102|src/components/help/helpButton.css.ts:65-107",
+    "src/components/help/help.tsx:53-64|src/components/presetPicker/presetPicker.tsx:44-60"
+  ]
+}
