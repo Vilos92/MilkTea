@@ -19,37 +19,37 @@ clone:
 
 steps:
   - name: install
-    image: greg-zone/bun-git:1.3.14
+    image: greg-zone/bun-git:1.4.0
     commands:
       - bun install --frozen-lockfile
 
   - name: fmt
-    image: greg-zone/bun-git:1.3.14
+    image: greg-zone/bun-git:1.4.0
     depends_on: [install]
     commands:
       - bun run fmt:check
 
   - name: lint
-    image: greg-zone/bun-git:1.3.14
+    image: greg-zone/bun-git:1.4.0
     depends_on: [install]
     commands:
       - bun run lint
 
   - name: typecheck
-    image: greg-zone/bun-git:1.3.14
+    image: greg-zone/bun-git:1.4.0
     depends_on: [install]
     commands:
       - bun run typecheck
 
   - name: test
-    image: greg-zone/bun-git:1.3.14
+    image: greg-zone/bun-git:1.4.0
     depends_on: [install]
     commands:
       - bunx playwright install --with-deps chromium chromium-headless-shell
       - bun run test
 
   - name: fallow
-    image: greg-zone/bun-git:1.3.14
+    image: greg-zone/bun-git:1.4.0
     depends_on: [install]
     when:
       - event: pull_request
