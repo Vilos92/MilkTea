@@ -47,6 +47,20 @@ Living conventions for this repo. Ask whether new habits belong here vs `README.
 - **`class`** (Preact), not `className` — omit when unused; prefer Vanilla Extract `class={styles.foo}`.
 - **Providers** live in **`src/providers/`**; cross-cutting hooks in **`src/hooks/`**; shared logic in **`src/lib/`**.
 
+## Visualizer and media
+
+- Keep resource ownership local: `useButterchurn` owns the interactive visualizer and audio graph, `useAudioSource` owns acquired hardware streams, and `useRecorder` owns recording streams and output URLs. Extend the relevant owner instead of duplicating its state or cleanup elsewhere.
+- A canvas has one active animation owner. `useButterchurn` owns interactive rendering. An export flow must use a separate canvas or make an explicit handoff before it drives frames itself.
+- Give media and rendering jobs one teardown path for completion, failure, cancellation, source replacement, and unmount. Release animation frames, media tracks, audio nodes, encoders, and object URLs from that path.
+- Reuse one capability predicate at every entry point. Do not offer a source or action from the command palette when its control is unavailable in the active browser.
+- Offline rendering advances from explicit frame duration and frame count, not wall-clock playback time.
+
+## Interaction design
+
+- Compose new controls, panels, and long-running flows from the existing MilkTea component family and its colocated Vanilla Extract styles. Do not introduce an unrelated visual language.
+- Use stable, honest states for long-running work. Preserve the overlay's layout while it progresses through `Preparing`, `Rendering`, `Cancelling`, `Finishing`, `Complete`, or `Failed`; never imply that incomplete work is ready.
+- Preact owns discrete interaction state. For visualizer, recording, or encoding loops, batch progress updates and prefer refs or CSS variables for tight-path values rather than re-rendering once per frame.
+
 ## Vanilla Extract
 
 - **`*.css.ts`** colocated with UI; shared globals in **`src/global.css.ts`** and **`src/app.css.ts`**.
