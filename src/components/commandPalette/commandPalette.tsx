@@ -226,8 +226,8 @@ export function CommandPalette({
         return;
       }
 
-      activeItem.onSelect();
       onClose();
+      activeItem.onSelect();
     }
   };
 
