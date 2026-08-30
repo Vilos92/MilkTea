@@ -2,7 +2,7 @@ import {useCallback, useEffect, useMemo, useRef} from 'preact/hooks';
 
 import {useHasFinePointer} from '../../hooks/useHasFinePointer';
 import {type GetSearchTerms, useSearchableList} from '../../hooks/useSearchableList';
-import {supportsRequestFullscreen} from '../../lib/platform';
+import {likelySupportsDisplayAudio, supportsRequestFullscreen} from '../../lib/platform';
 import {VibrationPattern} from '../../lib/vibrate';
 import {useSettingsContext} from '../../providers/settings';
 import {type Translate, useTranslate} from '../../providers/translation';
@@ -439,12 +439,14 @@ function usePaletteItems(
           onSelect: onSelectMic,
           iconType: 'microphone' as IconType
         },
-        {
-          type: PaletteItemType.AUDIO_INPUT_AUDIO_CAPTURE,
-          label: t('source.audio-capture'),
-          onSelect: onSelectAudioCapture,
-          iconType: 'screen-capture' as IconType
-        }
+        likelySupportsDisplayAudio
+          ? {
+              type: PaletteItemType.AUDIO_INPUT_AUDIO_CAPTURE,
+              label: t('source.audio-capture'),
+              onSelect: onSelectAudioCapture,
+              iconType: 'screen-capture' as IconType
+            }
+          : undefined
       ].filter(item => item !== undefined),
     [
       t,
