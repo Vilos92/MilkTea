@@ -164,6 +164,14 @@ export function useOfflineExport({
   return {state, progress, start, cancel, dismissError};
 }
 
+function useLatestRef<T>(value: T) {
+  const valueRef = useRef(value);
+  useEffect(() => {
+    valueRef.current = value;
+  }, [value]);
+  return valueRef;
+}
+
 /*
  * Helpers.
  */
@@ -257,11 +265,4 @@ function createExportJob(id: number): ExportJob {
 
 function createOutputFormat(formatId: VideoFormatId): OutputFormat {
   return OUTPUT_FORMAT_FACTORIES[formatId]();
-}
-function useLatestRef<T>(value: T) {
-  const valueRef = useRef(value);
-  useEffect(() => {
-    valueRef.current = value;
-  }, [value]);
-  return valueRef;
 }
