@@ -47,6 +47,7 @@ type HudProps = {
   // Recording.
   isRecording: boolean;
   isProcessingRecord: boolean;
+  recordProgress: number | undefined;
   onRecord: () => void;
   // Preset staging.
   hasPresets: boolean;
@@ -78,6 +79,7 @@ export function Hud({
   filePlayback,
   isRecording,
   isProcessingRecord,
+  recordProgress,
   onRecord,
   hasPresets,
   stagedPresetName,
@@ -133,6 +135,7 @@ export function Hud({
           onNextTrack={undefined}
           isRecording={isRecording}
           isProcessingRecord={isProcessingRecord}
+          recordProgress={recordProgress}
           onRecord={onRecord}
           hasPresets={hasPresets}
           stagedPresetName={stagedPresetName}

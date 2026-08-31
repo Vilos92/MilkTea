@@ -3,6 +3,7 @@ import {useCallback, useEffect, useRef, useState} from 'preact/hooks';
 import {container, containerSplash, containerStarted, cursorHidden} from './app.css.ts';
 import {CommandPalette} from './components/commandPalette/commandPalette';
 import {DragArea} from './components/dragArea/dragArea';
+import {ExportOverlay} from './components/exportOverlay/exportOverlay';
 import {Help} from './components/help/help';
 import {Hud} from './components/hud/hud';
 import {PresetPicker} from './components/presetPicker/presetPicker';
@@ -11,7 +12,8 @@ import {Visualizer} from './components/visualizer/visualizer';
 import {useAudioSource} from './hooks/useAudioSource';
 import {useButterchurn} from './hooks/useButterchurn';
 import {useCyclePresets} from './hooks/useCyclePresets';
-import {type RecordingProcessedPayload, type RenderConfig, useRecorder} from './hooks/useRecorder';
+import {useOfflineExport} from './hooks/useOfflineExport';
+import type {RenderConfig} from './hooks/useRecorder';
 import {vibrateHeavy} from './lib/vibrate';
 import {
   DEFAULT_MAIN_RECORD_BPP,
@@ -60,11 +62,10 @@ export function MilkTea() {
     connectAudioBuffer,
     connectOscillator,
     connectMediaStream,
-    audioStreamRef,
+    audioBuffer,
     filePlayback: filePlaybackRaw,
     isCanvasFullscreen,
-    toggleFullscreen,
-    resizeCanvas
+    toggleFullscreen
   } = useButterchurn();
 
   const {restartPresetCycle} = useCyclePresets({
@@ -124,43 +125,58 @@ export function MilkTea() {
     filePlayback: filePlaybackRaw
   });
 
-  const onRecordingStopped = useCallback(() => {
-    void resizeCanvas({width: window.innerWidth, height: window.innerHeight});
-  }, [resizeCanvas]);
+  const exportCanvasRef = useRef<HTMLCanvasElement>(null);
+  const [exportDownload, setExportDownload] = useState<{url: string; filename: string} | undefined>(
+    undefined
+  );
 
-  const onRecordingProcessed = useCallback(({blob, suggestedFilename}: RecordingProcessedPayload) => {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = suggestedFilename;
-    a.click();
-    URL.revokeObjectURL(url);
+  const onExportProcessed = useCallback((blob: Blob, suggestedFilename: string) => {
+    setExportDownload({url: URL.createObjectURL(blob), filename: suggestedFilename});
   }, []);
 
-  const {
-    recordState,
-    startRecord: startRecordRaw,
-    stopRecord
-  } = useRecorder(canvasRef, audioStreamRef, RENDER_CONFIG, onRecordingStopped, onRecordingProcessed);
+  const closeExportDownload = useCallback(() => {
+    if (!exportDownload) {
+      return;
+    }
 
-  const startRecord = useCallback(async () => {
-    await resizeCanvas(sizeFromVideoPreset(DEFAULT_VIDEO_SIZE_PRESET));
-    startRecordRaw();
-  }, [resizeCanvas, startRecordRaw]);
+    URL.revokeObjectURL(exportDownload.url);
+    setExportDownload(undefined);
+  }, [exportDownload]);
+
+  const {
+    state: exportState,
+    progress: exportProgress,
+    start: startExport,
+    cancel: cancelExport
+  } = useOfflineExport({
+    canvasRef: exportCanvasRef,
+    audioBuffer,
+    presetIndex,
+    renderConfig: RENDER_CONFIG,
+    onProcessed: onExportProcessed
+  });
 
   const onRecord = useCallback(() => {
-    if (recordState === 'recording') {
-      stopRecord();
+    if (exportState === 'preparing' || exportState === 'rendering') {
+      cancelExport();
       return;
     }
-    if (recordState === 'processing') {
+    if (exportState === 'finishing' || exportState === 'cancelling') {
       return;
     }
-    void startRecord();
-  }, [recordState, startRecord, stopRecord]);
+    if (exportDownload) {
+      URL.revokeObjectURL(exportDownload.url);
+      setExportDownload(undefined);
+    }
+    if (audioFilePlayback?.isPlaying) {
+      audioFilePlayback.onPlayPause();
+    }
+    startExport();
+  }, [audioFilePlayback, cancelExport, exportDownload, exportState, startExport]);
 
-  const isRecording = recordState === 'recording';
-  const isProcessingRecord = recordState === 'processing';
+  const isRecording = exportState === 'preparing' || exportState === 'rendering';
+  const isProcessingRecord = exportState === 'cancelling' || exportState === 'finishing';
+  const isExportPreviewVisible = exportState !== 'idle' && exportState !== 'error';
 
   useEffect(() => {
     if (started) {
@@ -200,7 +216,7 @@ export function MilkTea() {
       return;
     }
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.repeat) {
+      if (event.repeat || event.metaKey || event.ctrlKey || event.altKey) {
         return;
       }
       if (event.key !== 'r' && event.key !== 'R' && event.code !== 'KeyR') {
@@ -276,6 +292,17 @@ export function MilkTea() {
     <DragArea handleDrop={handleAudioFileDrop}>
       <div ref={containerRef} class={containerClassName}>
         <Visualizer canvasRef={canvasRef} />
+        {isExportPreviewVisible && <Visualizer canvasRef={exportCanvasRef} />}
+        {(isExportPreviewVisible || exportDownload) && (
+          <ExportOverlay
+            progress={exportProgress}
+            duration={audioBuffer?.duration ?? 0}
+            isFinishing={exportState === 'finishing'}
+            onCancel={cancelExport}
+            onClose={closeExportDownload}
+            download={exportDownload}
+          />
+        )}
         {!started && <Splash start={start} />}
         <Hud
           swipeRef={containerRef}
@@ -297,6 +324,7 @@ export function MilkTea() {
           filePlayback={audioFilePlayback}
           isRecording={isRecording}
           isProcessingRecord={isProcessingRecord}
+          recordProgress={isExportPreviewVisible ? exportProgress : undefined}
           onRecord={onRecord}
           hasPresets={presetKeys.length > 0}
           stagedPresetName={stagedPreset}

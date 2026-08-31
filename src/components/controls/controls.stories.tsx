@@ -99,6 +99,7 @@ const ControlsWrapper = ({
         onNextTrack={() => {}}
         isRecording={isRecording}
         isProcessingRecord={false}
+        recordProgress={undefined}
         onRecord={showRecord ? () => setIsRecording(v => !v) : undefined}
         hasPresets={showStage && presetNames.length > 0}
         stagedPresetName={stagedPresetName}

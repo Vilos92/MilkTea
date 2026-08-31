@@ -62,6 +62,7 @@ type ControlsProps = {
   isRecording: boolean;
   /** Shows the record button in a disabled “working” state (e.g. while encoding the file). */
   isProcessingRecord: boolean;
+  recordProgress: number | undefined;
   onRecord: (() => void) | undefined;
   // Preset staging.
   hasPresets: boolean;
@@ -89,6 +90,7 @@ export const Controls = ({
   onNextTrack,
   isRecording,
   isProcessingRecord,
+  recordProgress,
   onRecord,
   hasPresets,
   stagedPresetName,
@@ -217,44 +219,64 @@ export const Controls = ({
           </div>
         )}
 
-        {/* Progress bar (only when playing a file). */}
-        {filePlayback != null && hasProgress && (
+        {/* Progress bar (file playback or offline export). */}
+        {filePlayback != null && recordProgress !== undefined ? (
           <div class={progressWrap}>
-            <span class={timeLabel}>{formatTime(filePlayback.currentTime)}</span>
+            <span class={timeLabel}>{formatTime(filePlayback.duration * recordProgress)}</span>
             <div
-              ref={progressTrackRef}
-              class={isDragging ? [progressTrack, progressTrackDragging].join(' ') : progressTrack}
-              role="slider"
-              aria-label="Seek"
+              class={progressTrack}
+              role="progressbar"
+              aria-label={t('controls.processingRecord')}
               aria-valuemin={0}
-              aria-valuemax={filePlayback.duration}
-              aria-valuenow={filePlayback.currentTime}
-              tabIndex={0}
-              onMouseDown={handleTrackMouseDown}
-              onTouchStart={handleTrackTouchStart}
-              onKeyDown={e => {
-                if (!filePlayback.onSeek) {
-                  return;
-                }
-                if (e.key === 'ArrowRight') {
-                  filePlayback.onSeek(Math.min(filePlayback.currentTime + 5, filePlayback.duration));
-                }
-                if (e.key === 'ArrowLeft') {
-                  filePlayback.onSeek(Math.max(filePlayback.currentTime - 5, 0));
-                }
-              }}
+              aria-valuemax={1}
+              aria-valuenow={recordProgress}
             >
               <div class={progressBarInner}>
-                <div
-                  class={progressFill}
-                  style={{
-                    width: `${Math.min((filePlayback.currentTime / filePlayback.duration) * 100, 100)}%`
-                  }}
-                />
+                <div class={progressFill} style={{width: `${recordProgress * 100}%`}} />
               </div>
             </div>
             <span class={[timeLabel, timeLabelRight].join(' ')}>{formatTime(filePlayback.duration)}</span>
           </div>
+        ) : (
+          filePlayback != null &&
+          hasProgress && (
+            <div class={progressWrap}>
+              <span class={timeLabel}>{formatTime(filePlayback.currentTime)}</span>
+              <div
+                ref={progressTrackRef}
+                class={isDragging ? [progressTrack, progressTrackDragging].join(' ') : progressTrack}
+                role="slider"
+                aria-label="Seek"
+                aria-valuemin={0}
+                aria-valuemax={filePlayback.duration}
+                aria-valuenow={filePlayback.currentTime}
+                tabIndex={0}
+                onMouseDown={handleTrackMouseDown}
+                onTouchStart={handleTrackTouchStart}
+                onKeyDown={e => {
+                  if (!filePlayback.onSeek) {
+                    return;
+                  }
+                  if (e.key === 'ArrowRight') {
+                    filePlayback.onSeek(Math.min(filePlayback.currentTime + 5, filePlayback.duration));
+                  }
+                  if (e.key === 'ArrowLeft') {
+                    filePlayback.onSeek(Math.max(filePlayback.currentTime - 5, 0));
+                  }
+                }}
+              >
+                <div class={progressBarInner}>
+                  <div
+                    class={progressFill}
+                    style={{
+                      width: `${Math.min((filePlayback.currentTime / filePlayback.duration) * 100, 100)}%`
+                    }}
+                  />
+                </div>
+              </div>
+              <span class={[timeLabel, timeLabelRight].join(' ')}>{formatTime(filePlayback.duration)}</span>
+            </div>
+          )
         )}
 
         {/* Playback row (only when playing a file). */}
