@@ -1,18 +1,23 @@
+import type {RefObject} from 'preact';
 import {useCallback, useEffect, useRef, useState} from 'preact/hooks';
 
 import {container, containerSplash, containerStarted, cursorHidden} from './app.css.ts';
 import {CommandPalette} from './components/commandPalette/commandPalette';
 import {DragArea} from './components/dragArea/dragArea';
+import {ExportOverlay} from './components/exportOverlay/exportOverlay';
 import {Help} from './components/help/help';
 import {Hud} from './components/hud/hud';
 import {PresetPicker} from './components/presetPicker/presetPicker';
 import {Splash} from './components/splash/splash';
 import {Visualizer} from './components/visualizer/visualizer';
+import type {OfflineExportState} from './hooks/offlineExportTypes';
 import {useAudioSource} from './hooks/useAudioSource';
 import {useButterchurn} from './hooks/useButterchurn';
 import {useCyclePresets} from './hooks/useCyclePresets';
-import {type RecordingProcessedPayload, type RenderConfig, useRecorder} from './hooks/useRecorder';
+import {useExportController} from './hooks/useExportController';
+import {useMilkTeaKeyboard} from './hooks/useMilkTeaKeyboard';
 import {vibrateHeavy} from './lib/vibrate';
+import type {RenderConfig} from './lib/video';
 import {
   DEFAULT_MAIN_RECORD_BPP,
   DEFAULT_VIDEO_FPS,
@@ -23,6 +28,58 @@ import {
 import {MilkTeaPanel, usePanelContext} from './providers/panel';
 import {useSettingsContext} from './providers/settings';
 import {AudioSource} from './types/audio';
+import type {AudioFilePlayback} from './types/audio';
+
+/*
+ * Types.
+ */
+
+type ExportLayerProps = {
+  canvasRef: RefObject<HTMLCanvasElement>;
+  isPreviewVisible: boolean;
+  isOverlayVisible: boolean;
+  progress: number;
+  duration: number | undefined;
+  state: OfflineExportState;
+  cancel: () => void;
+  onRetry: () => void;
+  closeDownload: () => void;
+  download: {url: string; filename: string} | undefined;
+};
+
+type CommandPanelProps = {
+  started: boolean;
+  closePanel: () => void;
+  setOpenPanel: (panel: MilkTeaPanel) => void;
+  changePreset: (delta: number) => void;
+  isCanvasFullscreen: boolean;
+  toggleFullscreen: () => void;
+  openFilePicker: () => void;
+  handleSourceChange: (source: AudioSource) => void;
+  audioFilePlayback: AudioFilePlayback | undefined;
+  hasPresets: boolean;
+  stagedPreset: string | undefined;
+  fireStagedPreset: () => void;
+};
+
+type PanelContentProps = {
+  openPanel: MilkTeaPanel;
+  started: boolean;
+  closePanel: () => void;
+  presetName: string | undefined;
+  trackName: string | undefined;
+  presetKeys: string[];
+  stagedPreset: string | undefined;
+  stagePreset: (item: string) => void;
+  command: CommandPanelProps;
+};
+
+type UseStagedPresetOptions = {
+  presetNameToIndex: ReadonlyMap<string, number>;
+  loadPresetByIndex: (index: number) => void;
+  shouldCyclePresets: boolean;
+  restartPresetCycle: () => void;
+};
 
 /*
  * Constants.
@@ -60,11 +117,10 @@ export function MilkTea() {
     connectAudioBuffer,
     connectOscillator,
     connectMediaStream,
-    audioStreamRef,
+    audioBuffer,
     filePlayback: filePlaybackRaw,
     isCanvasFullscreen,
-    toggleFullscreen,
-    resizeCanvas
+    toggleFullscreen
   } = useButterchurn();
 
   const {restartPresetCycle} = useCyclePresets({
@@ -75,11 +131,12 @@ export function MilkTea() {
     loadPresetByIndex
   });
 
-  const [stagedPreset, setStagedPreset] = useState<string | undefined>(undefined);
-
-  const stagePreset = useCallback((item: string) => {
-    setStagedPreset(item);
-  }, []);
+  const {stagedPreset, stagePreset, fireStagedPreset} = useStagedPreset({
+    presetNameToIndex,
+    loadPresetByIndex,
+    shouldCyclePresets,
+    restartPresetCycle
+  });
 
   const {hudVisible, handleControlsEnter, handleControlsLeave, forceVisible, scheduleFade} =
     useHudVisibility();
@@ -88,24 +145,7 @@ export function MilkTea() {
     setOpenPanel(MilkTeaPanel.NONE);
     scheduleFade();
   };
-
-  const fireStagedPreset = useCallback(() => {
-    if (!stagedPreset) {
-      return;
-    }
-
-    // Vibrate optimistically.
-    vibrateHeavy();
-
-    const targetIndex = presetNameToIndex.get(stagedPreset);
-    if (targetIndex !== undefined) {
-      loadPresetByIndex(targetIndex);
-      if (shouldCyclePresets) {
-        restartPresetCycle();
-      }
-    }
-    setStagedPreset(undefined);
-  }, [stagedPreset, presetNameToIndex, loadPresetByIndex, shouldCyclePresets, restartPresetCycle]);
+  const hasPresets = presetKeys.length > 0;
 
   const {
     audioSource,
@@ -124,159 +164,54 @@ export function MilkTea() {
     filePlayback: filePlaybackRaw
   });
 
-  const onRecordingStopped = useCallback(() => {
-    void resizeCanvas({width: window.innerWidth, height: window.innerHeight});
-  }, [resizeCanvas]);
-
-  const onRecordingProcessed = useCallback(({blob, suggestedFilename}: RecordingProcessedPayload) => {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = suggestedFilename;
-    a.click();
-    URL.revokeObjectURL(url);
-  }, []);
-
   const {
-    recordState,
-    startRecord: startRecordRaw,
-    stopRecord
-  } = useRecorder(canvasRef, audioStreamRef, RENDER_CONFIG, onRecordingStopped, onRecordingProcessed);
+    canvasRef: exportCanvasRef,
+    cancel: cancelExport,
+    closeDownload: closeExportDownload,
+    download: exportDownload,
+    isOverlayVisible: isExportOverlayVisible,
+    isPreviewVisible: isExportPreviewVisible,
+    isProcessingRecord,
+    isRecording,
+    onRecord,
+    progress: exportProgress,
+    state: exportState
+  } = useExportController({
+    audioBuffer,
+    presetIndex,
+    renderConfig: RENDER_CONFIG,
+    filePlayback: audioFilePlayback
+  });
 
-  const startRecord = useCallback(async () => {
-    await resizeCanvas(sizeFromVideoPreset(DEFAULT_VIDEO_SIZE_PRESET));
-    startRecordRaw();
-  }, [resizeCanvas, startRecordRaw]);
+  useMilkTeaKeyboard({
+    started,
+    audioSource,
+    filePlayback: audioFilePlayback,
+    start,
+    onRecord
+  });
 
-  const onRecord = useCallback(() => {
-    if (recordState === 'recording') {
-      stopRecord();
-      return;
-    }
-    if (recordState === 'processing') {
-      return;
-    }
-    void startRecord();
-  }, [recordState, startRecord, stopRecord]);
-
-  const isRecording = recordState === 'recording';
-  const isProcessingRecord = recordState === 'processing';
-
-  useEffect(() => {
-    if (started) {
-      return;
-    }
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        start();
-      }
-    };
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
-  }, [started, start]);
-
-  useEffect(() => {
-    if (!started || !audioFilePlayback) {
-      return;
-    }
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== ' ') {
-        return;
-      }
-      const el = event.target as HTMLElement;
-      if (el?.closest?.('input, textarea') || el?.isContentEditable) {
-        return;
-      }
-      event.preventDefault();
-      audioFilePlayback.onPlayPause();
-    };
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
-  }, [started, audioFilePlayback]);
-
-  useEffect(() => {
-    if (!started || audioSource !== AudioSource.FILE) {
-      return;
-    }
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.repeat) {
-        return;
-      }
-      if (event.key !== 'r' && event.key !== 'R' && event.code !== 'KeyR') {
-        return;
-      }
-      const element = event.target as HTMLElement;
-      if (element?.closest?.('input, textarea') || element?.isContentEditable) {
-        return;
-      }
-      event.preventDefault();
-      onRecord();
-    };
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
-  }, [started, audioSource, onRecord]);
-
-  const renderPanel = () => {
-    switch (openPanel) {
-      case MilkTeaPanel.COMMAND_PALETTE:
-        return (
-          <CommandPalette
-            visualizerActive={started}
-            onClose={closePanel}
-            onOpenHelp={() => setOpenPanel(MilkTeaPanel.HELP)}
-            onPrevPreset={() => changePreset(-1)}
-            onNextPreset={() => changePreset(1)}
-            isFullscreen={isCanvasFullscreen}
-            onFullScreen={toggleFullscreen}
-            onOpenFilePicker={() => {
-              fileInputRef.current?.click();
-            }}
-            onSelectOscillator={() => handleSourceChange(AudioSource.OSCILLATOR)}
-            onSelectMic={() => handleSourceChange(AudioSource.MICROPHONE)}
-            onSelectAudioCapture={() => handleSourceChange(AudioSource.SCREEN_CAPTURE)}
-            filePlayback={audioFilePlayback}
-            hasPresets={presetKeys.length > 0}
-            stagedPresetName={stagedPreset}
-            onOpenPresetPicker={() => setOpenPanel(MilkTeaPanel.PRESET_PICKER)}
-            onFireStagedPreset={fireStagedPreset}
-          />
-        );
-      case MilkTeaPanel.HELP:
-        return (
-          <Help
-            visualizerActive={started}
-            presetName={presetName}
-            trackName={trackName}
-            onClose={closePanel}
-          />
-        );
-      case MilkTeaPanel.PRESET_PICKER:
-        return (
-          <PresetPicker
-            items={presetKeys}
-            selectedItem={stagedPreset}
-            onSelect={stagePreset}
-            onClose={closePanel}
-          />
-        );
-      case MilkTeaPanel.NONE:
-      default:
-        return null;
-    }
-  };
-
-  const containerClass = [container, started ? containerStarted : containerSplash];
-  if (started && !hudVisible && openPanel === MilkTeaPanel.NONE) {
-    containerClass.push(cursorHidden);
-  }
-  const containerClassName = containerClass.join(' ');
-
+  const containerClassName = computeContainerClass(started, hudVisible, openPanel);
+  const visibleTrackName = getVisibleValue(shouldShowTrackName, trackName);
+  const visiblePresetName = getVisibleValue(shouldShowPresetName, presetName);
+  const visibleRecordProgress = getVisibleValue(isExportPreviewVisible, exportProgress);
   return (
     <DragArea handleDrop={handleAudioFileDrop}>
       <div ref={containerRef} class={containerClassName}>
         <Visualizer canvasRef={canvasRef} />
-        {!started && <Splash start={start} />}
+        <ExportLayer
+          canvasRef={exportCanvasRef}
+          isPreviewVisible={isExportPreviewVisible}
+          isOverlayVisible={isExportOverlayVisible}
+          progress={exportProgress}
+          duration={audioBuffer?.duration}
+          state={exportState}
+          cancel={cancelExport}
+          onRetry={onRecord}
+          closeDownload={closeExportDownload}
+          download={exportDownload}
+        />
+        <SplashLayer started={started} start={start} />
         <Hud
           swipeRef={containerRef}
           started={started}
@@ -292,25 +227,177 @@ export function MilkTea() {
           audioSource={audioSource}
           pendingAudioSource={pendingAudioSource}
           onSourceChange={handleSourceChange}
-          trackName={shouldShowTrackName ? trackName : undefined}
-          presetName={shouldShowPresetName ? presetName : undefined}
+          trackName={visibleTrackName}
+          presetName={visiblePresetName}
           filePlayback={audioFilePlayback}
           isRecording={isRecording}
           isProcessingRecord={isProcessingRecord}
+          recordProgress={visibleRecordProgress}
           onRecord={onRecord}
-          hasPresets={presetKeys.length > 0}
+          hasPresets={hasPresets}
           stagedPresetName={stagedPreset}
           onFireStagedPreset={fireStagedPreset}
         />
-        {renderPanel()}
+        <PanelContent
+          openPanel={openPanel}
+          started={started}
+          closePanel={closePanel}
+          presetName={presetName}
+          trackName={trackName}
+          presetKeys={presetKeys}
+          stagedPreset={stagedPreset}
+          stagePreset={stagePreset}
+          command={{
+            started,
+            closePanel,
+            setOpenPanel,
+            changePreset,
+            isCanvasFullscreen,
+            toggleFullscreen,
+            openFilePicker: () => fileInputRef.current?.click(),
+            handleSourceChange,
+            audioFilePlayback,
+            hasPresets,
+            stagedPreset,
+            fireStagedPreset
+          }}
+        />
       </div>
     </DragArea>
+  );
+}
+
+function ExportLayer({
+  canvasRef,
+  isPreviewVisible,
+  isOverlayVisible,
+  progress,
+  duration,
+  state,
+  cancel,
+  onRetry,
+  closeDownload,
+  download
+}: ExportLayerProps) {
+  return (
+    <>
+      {isPreviewVisible && <Visualizer canvasRef={canvasRef} />}
+      <ExportDialog
+        isOverlayVisible={isOverlayVisible}
+        progress={progress}
+        duration={duration}
+        state={state}
+        cancel={cancel}
+        onRetry={onRetry}
+        closeDownload={closeDownload}
+        download={download}
+      />
+    </>
+  );
+}
+
+function ExportDialog({
+  isOverlayVisible,
+  progress,
+  duration,
+  state,
+  cancel,
+  onRetry,
+  closeDownload,
+  download
+}: Omit<ExportLayerProps, 'canvasRef' | 'isPreviewVisible'>) {
+  if (!isOverlayVisible && !download) {
+    return null;
+  }
+  return (
+    <ExportOverlay
+      progress={progress}
+      duration={duration ?? 0}
+      state={state}
+      onCancel={cancel}
+      onRetry={onRetry}
+      onClose={closeDownload}
+      download={download}
+    />
+  );
+}
+
+function SplashLayer({started, start}: {started: boolean; start: () => void}) {
+  if (started) {
+    return null;
+  }
+  return <Splash start={start} />;
+}
+
+function PanelContent(props: PanelContentProps) {
+  switch (props.openPanel) {
+    case MilkTeaPanel.COMMAND_PALETTE:
+      return <CommandPanel {...props.command} />;
+    case MilkTeaPanel.HELP:
+      return (
+        <Help
+          visualizerActive={props.started}
+          presetName={props.presetName}
+          trackName={props.trackName}
+          onClose={props.closePanel}
+        />
+      );
+    case MilkTeaPanel.PRESET_PICKER:
+      return (
+        <PresetPicker
+          items={props.presetKeys}
+          selectedItem={props.stagedPreset}
+          onSelect={props.stagePreset}
+          onClose={props.closePanel}
+        />
+      );
+    case MilkTeaPanel.NONE:
+      return null;
+  }
+}
+
+function CommandPanel(props: CommandPanelProps) {
+  return (
+    <CommandPalette
+      visualizerActive={props.started}
+      onClose={props.closePanel}
+      onOpenHelp={() => props.setOpenPanel(MilkTeaPanel.HELP)}
+      onPrevPreset={() => props.changePreset(-1)}
+      onNextPreset={() => props.changePreset(1)}
+      isFullscreen={props.isCanvasFullscreen}
+      onFullScreen={props.toggleFullscreen}
+      onOpenFilePicker={props.openFilePicker}
+      onSelectOscillator={() => props.handleSourceChange(AudioSource.OSCILLATOR)}
+      onSelectMic={() => props.handleSourceChange(AudioSource.MICROPHONE)}
+      onSelectAudioCapture={() => props.handleSourceChange(AudioSource.SCREEN_CAPTURE)}
+      filePlayback={props.audioFilePlayback}
+      hasPresets={props.hasPresets}
+      stagedPresetName={props.stagedPreset}
+      onOpenPresetPicker={() => props.setOpenPanel(MilkTeaPanel.PRESET_PICKER)}
+      onFireStagedPreset={props.fireStagedPreset}
+    />
   );
 }
 
 /*
  * Hooks.
  */
+
+function useStagedPreset({
+  presetNameToIndex,
+  loadPresetByIndex,
+  shouldCyclePresets,
+  restartPresetCycle
+}: UseStagedPresetOptions) {
+  const [stagedPreset, setStagedPreset] = useState<string | undefined>(undefined);
+  const stagePreset = useCallback((item: string) => setStagedPreset(item), []);
+  const fireStagedPreset = useCallback(() => {
+    firePreset(stagedPreset, presetNameToIndex, loadPresetByIndex, shouldCyclePresets, restartPresetCycle);
+    setStagedPreset(undefined);
+  }, [stagedPreset, presetNameToIndex, loadPresetByIndex, shouldCyclePresets, restartPresetCycle]);
+
+  return {stagedPreset, stagePreset, fireStagedPreset};
+}
 
 function useHudVisibility() {
   const [hudVisible, setHudVisible] = useState(true);
@@ -374,4 +461,41 @@ function useHudVisibility() {
   }, []);
 
   return {hudVisible, handleControlsEnter, handleControlsLeave, forceVisible, scheduleFade};
+}
+
+/*
+ * Helpers.
+ */
+
+function computeContainerClass(started: boolean, isHudVisible: boolean, openPanel: MilkTeaPanel): string {
+  const classNames = [container, started ? containerStarted : containerSplash];
+  if (started && !isHudVisible && openPanel === MilkTeaPanel.NONE) {
+    classNames.push(cursorHidden);
+  }
+  return classNames.join(' ');
+}
+
+function getVisibleValue<T>(isVisible: boolean, value: T): T | undefined {
+  return isVisible ? value : undefined;
+}
+
+function firePreset(
+  stagedPreset: string | undefined,
+  presetNameToIndex: ReadonlyMap<string, number>,
+  loadPresetByIndex: (index: number) => void,
+  shouldCyclePresets: boolean,
+  restartPresetCycle: () => void
+): void {
+  if (!stagedPreset) {
+    return;
+  }
+  vibrateHeavy();
+  const targetIndex = presetNameToIndex.get(stagedPreset);
+  if (targetIndex === undefined) {
+    return;
+  }
+  loadPresetByIndex(targetIndex);
+  if (shouldCyclePresets) {
+    restartPresetCycle();
+  }
 }

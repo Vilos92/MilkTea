@@ -31,6 +31,50 @@ import {
 } from './commandPalette.css';
 
 /*
+ * Types.
+ */
+
+type PaletteItemType = (typeof PaletteItemType)[keyof typeof PaletteItemType];
+
+type PaletteGroup = 'command' | 'audio' | 'settings';
+
+type CommandPaletteItem = {
+  type: PaletteItemType;
+  label: string;
+  onSelect: () => void;
+  iconType: IconType;
+};
+
+type SwitchPaletteItem = {
+  type: PaletteItemType;
+  label: string;
+  checked: boolean;
+  onChange: (value: boolean) => void;
+  iconType: IconType;
+};
+
+type PaletteItem = CommandPaletteItem | SwitchPaletteItem;
+
+type CommandPaletteProps = {
+  visualizerActive: boolean;
+  onClose: () => void;
+  onOpenHelp: () => void;
+  onPrevPreset: () => void;
+  onNextPreset: () => void;
+  isFullscreen: boolean;
+  onFullScreen: () => void;
+  onOpenFilePicker: () => void;
+  onSelectOscillator: () => void;
+  onSelectMic: () => void;
+  onSelectAudioCapture: () => void;
+  filePlayback: AudioFilePlayback | undefined;
+  hasPresets: boolean;
+  stagedPresetName: string | undefined;
+  onOpenPresetPicker: () => void;
+  onFireStagedPreset: () => void;
+};
+
+/*
  * Enums.
  */
 
@@ -51,59 +95,12 @@ const PaletteItemType = {
   SETTINGS_SHOW_PRESET_IN_CONTROLS: 'settings_show_preset_in_controls',
   SETTINGS_SHOW_TRACK_IN_CONTROLS: 'settings_show_track_in_controls'
 } as const;
-type PaletteItemType = (typeof PaletteItemType)[keyof typeof PaletteItemType];
-
-type PaletteGroup = 'command' | 'audio' | 'settings';
 
 /*
  * Constants.
  */
 
 const groupOrder: readonly PaletteGroup[] = ['settings', 'command', 'audio'];
-
-/*
- * Types.
- */
-
-type CommandPaletteItem = {
-  type: PaletteItemType;
-  label: string;
-  onSelect: () => void;
-  iconType: IconType;
-};
-
-type SwitchPaletteItem = {
-  type: PaletteItemType;
-  label: string;
-  checked: boolean;
-  onChange: (value: boolean) => void;
-  iconType: IconType;
-};
-
-type PaletteItem = CommandPaletteItem | SwitchPaletteItem;
-
-function isSwitchPaletteItem(item: PaletteItem): item is SwitchPaletteItem {
-  return 'onChange' in item;
-}
-
-type CommandPaletteProps = {
-  visualizerActive: boolean;
-  onClose: () => void;
-  onOpenHelp: () => void;
-  onPrevPreset: () => void;
-  onNextPreset: () => void;
-  isFullscreen: boolean;
-  onFullScreen: () => void;
-  onOpenFilePicker: () => void;
-  onSelectOscillator: () => void;
-  onSelectMic: () => void;
-  onSelectAudioCapture: () => void;
-  filePlayback: AudioFilePlayback | undefined;
-  hasPresets: boolean;
-  stagedPresetName: string | undefined;
-  onOpenPresetPicker: () => void;
-  onFireStagedPreset: () => void;
-};
 
 /*
  * Component.
@@ -481,6 +478,10 @@ function usePaletteItems(
 /*
  * Helpers.
  */
+
+function isSwitchPaletteItem(item: PaletteItem): item is SwitchPaletteItem {
+  return 'onChange' in item;
+}
 
 function formatGroupHeading(t: Translate, group: PaletteGroup): string {
   switch (group) {

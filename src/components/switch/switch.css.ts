@@ -1,5 +1,9 @@
 import {style} from '@vanilla-extract/css';
 
+/*
+ * Styles.
+ */
+
 export const root = style({
   all: 'unset',
   display: 'inline-flex',

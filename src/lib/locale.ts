@@ -1,3 +1,18 @@
+/*
+ * Types.
+ */
+
+export type Locale = (typeof Locale)[keyof typeof Locale];
+
+type LocaleOption = {
+  value: Locale;
+  label: string;
+};
+
+/*
+ * Enums.
+ */
+
 export const Locale = {
   ENGLISH: 'en',
   SPANISH: 'es',
@@ -25,11 +40,9 @@ export const Locale = {
   TURKISH: 'tr'
 } as const;
 
-export type Locale = (typeof Locale)[keyof typeof Locale];
-
-export function isLocale(value: string): value is Locale {
-  return Object.values(Locale).includes(value as Locale);
-}
+/*
+ * Constants.
+ */
 
 export const DEFAULT_LOCALE: Locale = Locale.ENGLISH;
 
@@ -87,12 +100,15 @@ const LOCALE_ORDER: ReadonlyArray<Locale> = [
   'tr'
 ] as const;
 
-type LocaleOption = {
-  value: Locale;
-  label: string;
-};
-
 export const LOCALE_OPTIONS: ReadonlyArray<LocaleOption> = LOCALE_ORDER.map(locale => ({
   value: locale,
   label: LOCALE_LABELS[locale]
 }));
+
+/*
+ * Helpers.
+ */
+
+export function isLocale(value: string): value is Locale {
+  return Object.values(Locale).includes(value as Locale);
+}

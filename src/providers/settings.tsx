@@ -39,6 +39,10 @@ export type SettingsContextValue = {
   setShouldShowTrackName: (shouldShow: boolean) => void;
 };
 
+type SettingsProviderProps = {
+  children: ComponentChildren;
+};
+
 /*
  * Context.
  */
@@ -59,10 +63,6 @@ const SettingsContextValue = createContext<SettingsContextValue>({
 /*
  * Provider.
  */
-
-type SettingsProviderProps = {
-  children: ComponentChildren;
-};
 
 export function SettingsProvider({children}: SettingsProviderProps) {
   const [shouldSkipSplashOnLoad, setShouldSkipSplashOnLoad] = useState(

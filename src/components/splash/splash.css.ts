@@ -1,5 +1,9 @@
 import {style} from '@vanilla-extract/css';
 
+/*
+ * Styles.
+ */
+
 export const splashOverlay = style({
   position: 'fixed',
   top: 0,

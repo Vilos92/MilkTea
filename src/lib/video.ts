@@ -6,13 +6,19 @@ import {clamp} from './number';
  */
 
 export type VideoQualityLabel = 'Low' | 'Medium' | 'High' | 'Ultra';
+
 export type VideoQualityPreset = {label: VideoQualityLabel; bpp: number};
 
 export type VideoSizeLabel = '1080p' | '4K' | 'Square' | 'Vertical';
+
 export type VideoSizePreset = {label: VideoSizeLabel; width: number; height: number};
 
 export type VideoFormatId = 'mp4' | 'mov' | 'mkv' | 'webm';
+
 export type VideoFormatOption = {id: VideoFormatId; label: string};
+
+/** The configuration that defines how the output video will be rendered. */
+export type RenderConfig = Size & {fps: number; bpp: number; formatId: VideoFormatId; baseName: string};
 
 /*
  * Constants.

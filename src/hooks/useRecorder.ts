@@ -4,15 +4,11 @@ import {useCallback, useEffect, useRef, useState} from 'preact/hooks';
 import {convertWebmToFormat} from '../lib/mediabunny/convert';
 import {preloadMediabunny} from '../lib/mediabunny/preload';
 import {computeVideoBitrate} from '../lib/video';
-import type {VideoFormatId} from '../lib/video';
-import type {Size} from '../types/geometry';
+import type {RenderConfig} from '../lib/video';
 
 /*
  * Types.
  */
-
-/** The configuration that defines how the output video will be rendered. */
-export type RenderConfig = Size & {fps: number; bpp: number; formatId: VideoFormatId; baseName: string};
 
 export type RecordingProcessedPayload = {
   blob: Blob;

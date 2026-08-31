@@ -1,5 +1,9 @@
 import {style} from '@vanilla-extract/css';
 
+/*
+ * Styles.
+ */
+
 const baseOverlay = style({
   position: 'fixed',
   inset: 0,

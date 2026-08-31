@@ -22,6 +22,7 @@ export type TranslationKey =
   | 'controls.record'
   | 'controls.stopRecord'
   | 'controls.processingRecord'
+  | 'controls.seek'
   | 'controls.prevPreset'
   | 'controls.nextPreset'
   | 'controls.stagePreset'
@@ -30,6 +31,14 @@ export type TranslationKey =
   | 'controls.searchPresets'
   | 'controls.enterFullscreen'
   | 'controls.exitFullscreen'
+  | 'export.download'
+  | 'export.cancel'
+  | 'export.retry'
+  | 'export.complete'
+  | 'export.failed'
+  | 'export.cancelling'
+  | 'export.finishing'
+  | 'export.rendering'
   | 'locale.ariaSelectLanguage'
   | 'help.about'
   | 'help.aboutText'
@@ -97,6 +106,7 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'controls.record': 'Record',
   'controls.stopRecord': 'Stop recording',
   'controls.processingRecord': 'Processing recording…',
+  'controls.seek': 'Seek',
   'controls.prevPreset': 'Previous preset',
   'controls.nextPreset': 'Next preset',
   'controls.stagePreset': 'Stage preset',
@@ -105,6 +115,14 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'controls.searchPresets': 'Search presets\u2026',
   'controls.enterFullscreen': 'Enter fullscreen',
   'controls.exitFullscreen': 'Exit fullscreen',
+  'export.download': 'Download',
+  'export.cancel': 'Cancel export',
+  'export.retry': 'Retry export',
+  'export.complete': 'Export complete',
+  'export.failed': 'Export failed',
+  'export.cancelling': 'Cancelling export…',
+  'export.finishing': 'Finishing export…',
+  'export.rendering': 'Rendering full track',
   'locale.ariaSelectLanguage': 'Select language',
   'help.about': 'About',
   'help.aboutText': 'MilkTea. A browser visualizer for MilkDrop',

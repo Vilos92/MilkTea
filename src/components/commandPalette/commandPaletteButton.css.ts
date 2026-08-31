@@ -1,5 +1,9 @@
 import {style} from '@vanilla-extract/css';
 
+/*
+ * Styles.
+ */
+
 export const commandPaletteButton = style({
   display: 'inline-flex',
   alignItems: 'center',

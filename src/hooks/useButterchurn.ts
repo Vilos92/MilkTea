@@ -37,6 +37,7 @@ type UseButterChurnResult = {
   connectOscillator: () => void;
   connectMediaStream: (stream: MediaStream) => void;
   audioStreamRef: RefObject<MediaStream | undefined>;
+  audioBuffer: AudioBuffer | undefined;
   filePlayback: AudioFilePlayback | undefined;
   isCanvasFullscreen: boolean;
   toggleFullscreen: () => void;
@@ -486,6 +487,7 @@ export function useButterchurn(): UseButterChurnResult {
     connectOscillator,
     connectMediaStream,
     audioStreamRef,
+    audioBuffer: audioBufferRef.current ?? undefined,
     filePlayback,
     isCanvasFullscreen,
     toggleFullscreen,
