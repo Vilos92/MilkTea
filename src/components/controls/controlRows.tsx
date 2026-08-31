@@ -26,6 +26,10 @@ import {
   stageWrap
 } from './controls.css';
 
+/*
+ * Types.
+ */
+
 type PlaybackControlsProps = {
   filePlayback: AudioFilePlayback;
   onPrevTrack: (() => void) | undefined;
@@ -43,6 +47,10 @@ type PresetControlsProps = {
   stagedPresetName: string | undefined;
   onFireStagedPreset: () => void;
 };
+
+/*
+ * Component.
+ */
 
 export function PlaybackControls({
   filePlayback,
@@ -187,19 +195,6 @@ function RecordButton({
   );
 }
 
-function usePresetStage(stagedPresetName: string | undefined, onFireStagedPreset: () => void) {
-  const {openPanel, togglePanel} = usePanelContext();
-  const stageBtnRef = useRef<HTMLButtonElement>(null);
-  const stagePreset = () => {
-    if (stagedPresetName) {
-      onFireStagedPreset();
-      return;
-    }
-    togglePanel(MilkTeaPanel.PRESET_PICKER);
-  };
-  return {stagePreset, pickerOpen: openPanel === MilkTeaPanel.PRESET_PICKER, stageBtnRef};
-}
-
 function StagePresetButton({
   stagedPresetName,
   stagePreset,
@@ -300,6 +295,27 @@ function PresetButton({
     </ChromelessButton>
   );
 }
+
+/*
+ * Hooks.
+ */
+
+function usePresetStage(stagedPresetName: string | undefined, onFireStagedPreset: () => void) {
+  const {openPanel, togglePanel} = usePanelContext();
+  const stageBtnRef = useRef<HTMLButtonElement>(null);
+  const stagePreset = () => {
+    if (stagedPresetName) {
+      onFireStagedPreset();
+      return;
+    }
+    togglePanel(MilkTeaPanel.PRESET_PICKER);
+  };
+  return {stagePreset, pickerOpen: openPanel === MilkTeaPanel.PRESET_PICKER, stageBtnRef};
+}
+
+/*
+ * Helpers.
+ */
 
 function getRecordTranslationKey(isProcessingRecord: boolean, isRecording: boolean) {
   if (isProcessingRecord) {

@@ -37,10 +37,12 @@ import type {AudioFilePlayback} from './types/audio';
 type ExportLayerProps = {
   canvasRef: RefObject<HTMLCanvasElement>;
   isPreviewVisible: boolean;
+  isOverlayVisible: boolean;
   progress: number;
   duration: number | undefined;
   state: OfflineExportState;
   cancel: () => void;
+  onRetry: () => void;
   closeDownload: () => void;
   download: {url: string; filename: string} | undefined;
 };
@@ -167,6 +169,7 @@ export function MilkTea() {
     cancel: cancelExport,
     closeDownload: closeExportDownload,
     download: exportDownload,
+    isOverlayVisible: isExportOverlayVisible,
     isPreviewVisible: isExportPreviewVisible,
     isProcessingRecord,
     isRecording,
@@ -199,10 +202,12 @@ export function MilkTea() {
         <ExportLayer
           canvasRef={exportCanvasRef}
           isPreviewVisible={isExportPreviewVisible}
+          isOverlayVisible={isExportOverlayVisible}
           progress={exportProgress}
           duration={audioBuffer?.duration}
           state={exportState}
           cancel={cancelExport}
+          onRetry={onRecord}
           closeDownload={closeExportDownload}
           download={exportDownload}
         />
@@ -265,10 +270,12 @@ export function MilkTea() {
 function ExportLayer({
   canvasRef,
   isPreviewVisible,
+  isOverlayVisible,
   progress,
   duration,
   state,
   cancel,
+  onRetry,
   closeDownload,
   download
 }: ExportLayerProps) {
@@ -276,11 +283,12 @@ function ExportLayer({
     <>
       {isPreviewVisible && <Visualizer canvasRef={canvasRef} />}
       <ExportDialog
-        isPreviewVisible={isPreviewVisible}
+        isOverlayVisible={isOverlayVisible}
         progress={progress}
         duration={duration}
         state={state}
         cancel={cancel}
+        onRetry={onRetry}
         closeDownload={closeDownload}
         download={download}
       />
@@ -289,24 +297,25 @@ function ExportLayer({
 }
 
 function ExportDialog({
-  isPreviewVisible,
+  isOverlayVisible,
   progress,
   duration,
   state,
   cancel,
+  onRetry,
   closeDownload,
   download
-}: Omit<ExportLayerProps, 'canvasRef'>) {
-  if (!isPreviewVisible && !download) {
+}: Omit<ExportLayerProps, 'canvasRef' | 'isPreviewVisible'>) {
+  if (!isOverlayVisible && !download) {
     return null;
   }
   return (
     <ExportOverlay
       progress={progress}
       duration={duration ?? 0}
-      isFinishing={state === 'finishing'}
-      isCancelling={state === 'cancelling'}
+      state={state}
       onCancel={cancel}
+      onRetry={onRetry}
       onClose={closeDownload}
       download={download}
     />

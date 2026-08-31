@@ -2,10 +2,18 @@ import {useEffect, useRef} from 'preact/hooks';
 
 import {supportsRequestFullscreen} from '../../lib/platform';
 
+/*
+ * Types.
+ */
+
 type PresetStageKeyOptions = {
   onStageKey: () => void;
   presetPickerOpen: boolean;
 };
+
+/*
+ * Constants.
+ */
 
 const PRESET_DELTAS: Record<string, -1 | 1 | undefined> = {
   ArrowLeft: -1,
@@ -24,6 +32,10 @@ const PRESET_DELTAS: Record<string, -1 | 1 | undefined> = {
   KeyL: 1
 };
 
+/*
+ * Hooks.
+ */
+
 export function usePresetKeys(
   changePreset: (delta: number) => void,
   toggleFullscreen: () => void,
@@ -40,7 +52,7 @@ export function usePresetKeys(
 
   useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
-      if (isEditableTarget(event.target)) {
+      if (hasCommandModifier(event) || isEditableTarget(event.target)) {
         return;
       }
 
@@ -56,6 +68,10 @@ export function usePresetKeys(
     return () => window.removeEventListener('keydown', handleKeydown, true);
   }, []);
 }
+
+/*
+ * Helpers.
+ */
 
 function handlePresetNavigation(event: KeyboardEvent, changePreset: (delta: number) => void): boolean {
   const delta = getPresetDelta(event);
@@ -86,6 +102,10 @@ function handleFullscreenKey(event: KeyboardEvent, toggleFullscreen: () => void)
   event.preventDefault();
   toggleFullscreen();
   return true;
+}
+
+function hasCommandModifier(event: KeyboardEvent): boolean {
+  return event.ctrlKey || event.metaKey || event.altKey;
 }
 
 function getPresetDelta(event: KeyboardEvent): -1 | 1 | undefined {

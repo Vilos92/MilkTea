@@ -1,5 +1,9 @@
 import {style} from '@vanilla-extract/css';
 
+/*
+ * Styles.
+ */
+
 export const panel = style({
   width: 'min(420px, calc(100vw - 48px))',
   display: 'flex',

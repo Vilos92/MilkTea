@@ -1,5 +1,9 @@
 import type {Output} from 'mediabunny';
 
+/*
+ * Types.
+ */
+
 export type OfflineExportState = 'idle' | 'preparing' | 'rendering' | 'cancelling' | 'finishing' | 'error';
 
 export type ExportJob = {

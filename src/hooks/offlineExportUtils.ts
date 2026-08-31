@@ -1,10 +1,22 @@
-const AUDIO_SAMPLE_COUNT = 1024;
+/*
+ * Types.
+ */
 
 export type AudioLevels = {
   timeByteArray: Uint8Array;
   timeByteArrayL: Uint8Array;
   timeByteArrayR: Uint8Array;
 };
+
+/*
+ * Constants.
+ */
+
+const AUDIO_SAMPLE_COUNT = 1024;
+
+/*
+ * Helpers.
+ */
 
 export function createAudioLevels(): AudioLevels {
   return {

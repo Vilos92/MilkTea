@@ -15,12 +15,30 @@ import {
   timeLabelRight
 } from './controls.css';
 
+/*
+ * Types.
+ */
+
 type PlaybackProgressProps = {
   filePlayback: AudioFilePlayback;
   recordProgress: number | undefined;
   onControlsEnter: () => void;
   onDragChange: (isDragging: boolean) => void;
 };
+type ProgressSliderProps = {
+  duration: number;
+  currentTime: number;
+  onSeek: ((time: number) => void) | undefined;
+  onControlsEnter: () => void;
+  isDragging: boolean;
+  setIsDragging: (isDragging: boolean) => void;
+  progressTrackRef: RefObject<HTMLDivElement>;
+  seekFromClientX: (clientX: number) => void;
+};
+
+/*
+ * Component.
+ */
 
 export function PlaybackProgress({
   filePlayback,
@@ -109,17 +127,6 @@ function SeekProgress({
   );
 }
 
-type ProgressSliderProps = {
-  duration: number;
-  currentTime: number;
-  onSeek: ((time: number) => void) | undefined;
-  onControlsEnter: () => void;
-  isDragging: boolean;
-  setIsDragging: (isDragging: boolean) => void;
-  progressTrackRef: RefObject<HTMLDivElement>;
-  seekFromClientX: (clientX: number) => void;
-};
-
 function ProgressSlider({
   duration,
   currentTime,
@@ -130,6 +137,7 @@ function ProgressSlider({
   progressTrackRef,
   seekFromClientX
 }: ProgressSliderProps) {
+  const t = useTranslate();
   const onMouseDown = (event: MouseEvent) => {
     if (!onSeek || duration <= 0) {
       return;
@@ -172,7 +180,7 @@ function ProgressSlider({
         ref={progressTrackRef}
         class={isDragging ? [progressTrack, progressTrackDragging].join(' ') : progressTrack}
         role="slider"
-        aria-label="Seek"
+        aria-label={t('controls.seek')}
         aria-valuemin={0}
         aria-valuemax={duration}
         aria-valuenow={currentTime}
@@ -189,6 +197,10 @@ function ProgressSlider({
     </div>
   );
 }
+
+/*
+ * Helpers.
+ */
 
 function addMouseDragListeners(
   seekFromClientX: (clientX: number) => void,

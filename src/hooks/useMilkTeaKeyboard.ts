@@ -3,6 +3,10 @@ import {useEffect} from 'preact/hooks';
 import {AudioSource} from '../types/audio';
 import type {AudioFilePlayback} from '../types/audio';
 
+/*
+ * Types.
+ */
+
 type UseMilkTeaKeyboardOptions = {
   started: boolean;
   audioSource: AudioSource;
@@ -10,6 +14,10 @@ type UseMilkTeaKeyboardOptions = {
   start: () => void;
   onRecord: () => void;
 };
+
+/*
+ * Hooks.
+ */
 
 export function useMilkTeaKeyboard({
   started,
@@ -47,7 +55,7 @@ function usePlaybackKey(started: boolean, filePlayback: AudioFilePlayback | unde
     }
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== ' ' || isEditableTarget(event.target)) {
+      if (event.key !== ' ' || isInteractiveTarget(event.target)) {
         return;
       }
       event.preventDefault();
@@ -70,6 +78,10 @@ function useRecordKey(started: boolean, audioSource: AudioSource, onRecord: () =
   }, [started, audioSource, onRecord]);
 }
 
+/*
+ * Helpers.
+ */
+
 function handleRecordKey(event: KeyboardEvent, onRecord: () => void): void {
   if (shouldIgnoreRecordKey(event)) {
     return;
@@ -84,6 +96,15 @@ function shouldIgnoreRecordKey(event: KeyboardEvent): boolean {
 
 function hasCommandModifier(event: KeyboardEvent): boolean {
   return event.metaKey || event.ctrlKey || event.altKey;
+}
+
+function isInteractiveTarget(target: EventTarget | null): boolean {
+  const element = target as HTMLElement | null;
+  return Boolean(
+    element?.closest?.(
+      'button, a[href], input, select, textarea, [contenteditable="true"], [tabindex]:not([tabindex="-1"])'
+    )
+  );
 }
 
 function isEditableTarget(target: EventTarget | null): boolean {

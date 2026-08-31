@@ -7,6 +7,10 @@ import type {RenderConfig, VideoFormatId} from '../lib/video';
 import {renderOfflineExport} from './offlineExportRenderer';
 import type {ExportJob, ExportJobCallbacks, OfflineExportState} from './offlineExportTypes';
 
+/*
+ * Types.
+ */
+
 type OfflineExportOptions = {
   canvasRef: RefObject<HTMLCanvasElement>;
   audioBuffer: AudioBuffer | undefined;
@@ -25,6 +29,10 @@ type ExportEffectOptions = ExportJobCallbacks & {
   createOutputFormat: (formatId: VideoFormatId) => OutputFormat;
 };
 
+/*
+ * Constants.
+ */
+
 const CANCELLABLE_STATES: OfflineExportState[] = ['preparing', 'rendering'];
 const OUTPUT_FORMAT_FACTORIES: Record<VideoFormatId, () => OutputFormat> = {
   mp4: () => new Mp4OutputFormat(),
@@ -32,6 +40,10 @@ const OUTPUT_FORMAT_FACTORIES: Record<VideoFormatId, () => OutputFormat> = {
   mkv: () => new MkvOutputFormat(),
   webm: () => new WebMOutputFormat()
 };
+
+/*
+ * Hooks.
+ */
 
 export function useOfflineExport({
   canvasRef,
@@ -45,8 +57,7 @@ export function useOfflineExport({
   const [requestId, setRequestId] = useState(0);
   const activeJobRef = useRef<ExportJob | undefined>(undefined);
   const nextJobIdRef = useRef(0);
-  const onProcessedRef = useRef(onProcessed);
-  onProcessedRef.current = onProcessed;
+  const onProcessedRef = useLatestRef(onProcessed);
 
   const isActiveJob = useCallback((job: ExportJob) => activeJobRef.current?.id === job.id, []);
   const closeJobContext = useCallback(async (job: ExportJob) => {
@@ -111,6 +122,9 @@ export function useOfflineExport({
     setState('cancelling');
     void finishCancelledJob(job);
   }, [finishCancelledJob, state]);
+  const dismissError = () => {
+    setState(currentState => (currentState === 'error' ? 'idle' : currentState));
+  };
 
   useEffect(
     () =>
@@ -138,6 +152,7 @@ export function useOfflineExport({
       finishCancelledJob,
       finishJob,
       isActiveJob,
+      onProcessedRef,
       presetIndex,
       renderConfig,
       requestId,
@@ -146,8 +161,12 @@ export function useOfflineExport({
   );
   useEffect(() => () => cancelActiveJob(activeJobRef.current, finishCancelledJob), [finishCancelledJob]);
 
-  return {state, progress, start, cancel};
+  return {state, progress, start, cancel, dismissError};
 }
+
+/*
+ * Helpers.
+ */
 
 function createExportEffect(options: ExportEffectOptions): (() => void) | undefined {
   const {activeJob, audioBuffer, presetIndex, requestId} = options;
@@ -238,4 +257,11 @@ function createExportJob(id: number): ExportJob {
 
 function createOutputFormat(formatId: VideoFormatId): OutputFormat {
   return OUTPUT_FORMAT_FACTORIES[formatId]();
+}
+function useLatestRef<T>(value: T) {
+  const valueRef = useRef(value);
+  useEffect(() => {
+    valueRef.current = value;
+  }, [value]);
+  return valueRef;
 }

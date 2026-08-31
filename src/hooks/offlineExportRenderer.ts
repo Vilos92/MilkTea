@@ -10,8 +10,9 @@ import type {ExportJob, ExportJobCallbacks} from './offlineExportTypes';
 import {createAudioLevels, fillAudioLevels, nextAnimationFrame} from './offlineExportUtils';
 import type {AudioLevels} from './offlineExportUtils';
 
-const AUDIO_BITRATE = 192_000;
-const RENDER_SLICE_MS = 100;
+/*
+ * Types.
+ */
 
 type ExportSession = {
   target: BufferTarget;
@@ -34,11 +35,26 @@ type ExportRendererOptions = ExportJobCallbacks & {
 
 type FrameSliceResult = {isActive: boolean; lastYieldTime: number};
 
+/*
+ * Constants.
+ */
+
+const AUDIO_BITRATE = 192_000;
+const RENDER_SLICE_MS = 100;
+
+/*
+ * Renderer.
+ */
+
 export function renderOfflineExport(options: ExportRendererOptions): Promise<void> {
   return renderActiveExport(options)
     .catch(error => handleExportError(options, error))
     .finally(() => finishCancelledExport(options));
 }
+
+/*
+ * Helpers.
+ */
 
 async function renderActiveExport(options: ExportRendererOptions): Promise<void> {
   const session = await prepareExportSession(options);
