@@ -30,18 +30,12 @@ export const overlayDark = style([
   }
 ]);
 
-/** Theme-aware (follows prefers-color-scheme). */
+/** Theme-aware through the inherited color scheme. */
 export const overlayAdaptive = style([
   baseOverlay,
   {
-    background: '#0a0a0a',
-    color: '#fff',
-    '@media': {
-      '(prefers-color-scheme: light)': {
-        background: '#fff',
-        color: '#213547'
-      }
-    }
+    background: 'light-dark(#fff, #0a0a0a)',
+    color: 'light-dark(#213547, #fff)'
   }
 ]);
 
@@ -95,12 +89,7 @@ export const headingDark = style({
 
 export const headingAdaptive = style({
   ...headingBase,
-  color: 'rgba(255,255,255,0.6)',
-  '@media': {
-    '(prefers-color-scheme: light)': {
-      color: 'rgba(0,0,0,0.65)'
-    }
-  }
+  color: 'light-dark(rgba(0,0,0,0.65), rgba(255,255,255,0.6))'
 });
 
 /*
@@ -132,28 +121,16 @@ export const searchInputAdaptive = style({
   fontSize: '14px',
   lineHeight: 1.4,
   color: 'inherit',
-  background: 'rgba(255,255,255,0.08)',
-  border: '1px solid rgba(255,255,255,0.2)',
+  background: 'light-dark(rgba(0,0,0,0.06), rgba(255,255,255,0.08))',
+  border: '1px solid light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.2))',
   borderRadius: '4px',
   boxSizing: 'border-box',
   '::placeholder': {
-    color: 'rgba(255,255,255,0.5)'
+    color: 'light-dark(rgba(0,0,0,0.45), rgba(255,255,255,0.5))'
   },
   ':focus': {
     outline: 'none',
-    borderColor: 'rgba(255,255,255,0.4)'
-  },
-  '@media': {
-    '(prefers-color-scheme: light)': {
-      background: 'rgba(0,0,0,0.06)',
-      borderColor: 'rgba(0,0,0,0.15)',
-      '::placeholder': {
-        color: 'rgba(0,0,0,0.45)'
-      },
-      ':focus': {
-        borderColor: 'rgba(0,0,0,0.35)'
-      }
-    }
+    borderColor: 'light-dark(rgba(0,0,0,0.35), rgba(255,255,255,0.4))'
   }
 });
 
@@ -216,27 +193,22 @@ export const closeBtnDark = style({
 
 export const closeBtnAdaptive = style({
   ...closeBtnCornerBase,
+  color: 'light-dark(rgba(0,0,0,0.4), rgba(255,255,255,0.45))',
+  ':focus-visible': {
+    outline: '2px solid light-dark(rgba(0,0,0,0.4), rgba(255,255,255,0.5))',
+    outlineOffset: 2
+  },
   '@media': {
     '(pointer: coarse)': {
       width: '44px',
       height: '44px',
-      color: 'rgba(255,255,255,0.65)',
+      color: 'light-dark(rgba(0,0,0,0.4), rgba(255,255,255,0.65))',
       marginRight: '-16px'
     },
     '(hover: hover)': {
       ':hover': {
-        background: 'rgba(255,255,255,0.1)',
-        color: 'rgba(255,255,255,0.9)'
-      }
-    },
-    '(prefers-color-scheme: light)': {
-      color: 'rgba(0,0,0,0.4)',
-      ':focus-visible': {
-        outlineColor: 'rgba(0,0,0,0.4)'
-      },
-      ':hover': {
-        background: 'rgba(0,0,0,0.06)',
-        color: 'rgba(0,0,0,0.8)'
+        background: 'light-dark(rgba(0,0,0,0.06), rgba(255,255,255,0.1))',
+        color: 'light-dark(rgba(0,0,0,0.8), rgba(255,255,255,0.9))'
       }
     }
   }

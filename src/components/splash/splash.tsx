@@ -6,6 +6,7 @@ import {useSettingsContext} from '../../providers/settings';
 import {useTranslate} from '../../providers/translation';
 import {useDragArea} from '../dragArea/useDragArea';
 import {LocaleSwitcher} from '../locale/localeSwitcher';
+import {ThemeToggle} from '../themeToggle/themeToggle';
 
 import {
   btn,
@@ -14,9 +15,9 @@ import {
   splashCutout,
   splashCutoutColumn,
   splashDisclaimer,
-  splashDisclaimerBelowLocale,
+  splashDisclaimerBelowPreferences,
   splashDisclaimerBlock,
-  splashLocaleWrap,
+  splashPreferences,
   splashOverlay,
   splashSubtext,
   splashTitleLine
@@ -57,6 +58,12 @@ export function Splash({start}: SplashProps) {
       <span class={splashSubtext}>MilkTea</span>
     </span>
   );
+  const preferences = (
+    <div class={splashPreferences}>
+      <LocaleSwitcher />
+      <ThemeToggle />
+    </div>
+  );
 
   if (reducedMotion) {
     return (
@@ -67,9 +74,7 @@ export function Splash({start}: SplashProps) {
               <button type="button" onClick={start} class={btnSolid} aria-label={t('splash.ariaStart')}>
                 {splashLabel}
               </button>
-              <div class={splashLocaleWrap}>
-                <LocaleSwitcher />
-              </div>
+              {preferences}
               <div class={splashDisclaimerBlock}>
                 <p class={splashDisclaimer}>{t('splash.disclaimer1')}</p>
                 <p class={splashDisclaimer}>{t('splash.disclaimer2')}</p>
@@ -90,12 +95,8 @@ export function Splash({start}: SplashProps) {
           </button>
         )}
       </div>
-      {!isDragging && (
-        <div class={splashLocaleWrap}>
-          <LocaleSwitcher />
-        </div>
-      )}
-      <p class={[splashDisclaimer, splashDisclaimerBelowLocale].join(' ')}>{t('splash.disclaimer2')}</p>
+      {!isDragging && preferences}
+      <p class={[splashDisclaimer, splashDisclaimerBelowPreferences].join(' ')}>{t('splash.disclaimer2')}</p>
     </div>
   );
 }

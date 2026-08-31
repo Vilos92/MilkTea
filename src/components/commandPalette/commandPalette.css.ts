@@ -20,13 +20,8 @@ export const groupHeadingSplash = style({
   fontWeight: 600,
   textTransform: 'uppercase' as const,
   letterSpacing: '0.06em',
-  color: 'rgba(255,255,255,0.5)',
-  paddingBottom: '4px',
-  '@media': {
-    '(prefers-color-scheme: light)': {
-      color: 'rgba(0,0,0,0.5)'
-    }
-  }
+  color: 'light-dark(rgba(0,0,0,0.5), rgba(255,255,255,0.5))',
+  paddingBottom: '4px'
 });
 
 export const paletteGroup = style({
@@ -86,21 +81,13 @@ export const commandButtonSplash = style({
   alignItems: 'center',
   gap: '10px',
   ':focus-visible': {
-    outline: '2px solid rgba(255,255,255,0.5)',
+    outline: '2px solid light-dark(rgba(0,0,0,0.4), rgba(255,255,255,0.5))',
     outlineOffset: 2
   },
   '@media': {
     '(hover: hover)': {
       ':hover': {
-        background: 'rgba(255,255,255,0.08)'
-      }
-    },
-    '(prefers-color-scheme: light)': {
-      ':focus-visible': {
-        outlineColor: 'rgba(0,0,0,0.4)'
-      },
-      ':hover': {
-        background: 'rgba(0,0,0,0.06)'
+        background: 'light-dark(rgba(0,0,0,0.06), rgba(255,255,255,0.08))'
       }
     }
   }
@@ -111,12 +98,7 @@ export const commandButtonActive = style({
 });
 
 export const commandButtonActiveSplash = style({
-  background: 'rgba(255,255,255,0.12)',
-  '@media': {
-    '(prefers-color-scheme: light)': {
-      background: 'rgba(0,0,0,0.08)'
-    }
-  }
+  background: 'light-dark(rgba(0,0,0,0.08), rgba(255,255,255,0.12))'
 });
 
 export const commandButtonTouchCoarse = style({
@@ -129,11 +111,8 @@ export const commandButtonTouchCoarse = style({
 
 export const commandButtonTouchCoarseSplash = style({
   '@media': {
-    '(pointer: coarse) and (prefers-color-scheme: light)': {
-      background: 'rgba(0,0,0,0.1) !important'
-    },
-    '(pointer: coarse) and (prefers-color-scheme: dark)': {
-      background: 'rgba(255,255,255,0.16) !important'
+    '(pointer: coarse)': {
+      background: 'light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.16)) !important'
     }
   }
 });
@@ -144,13 +123,8 @@ export const switchRowActive = style({
 });
 
 export const switchRowActiveSplash = style({
-  background: 'rgba(255,255,255,0.12)',
-  borderRadius: '4px',
-  '@media': {
-    '(prefers-color-scheme: light)': {
-      background: 'rgba(0,0,0,0.08)'
-    }
-  }
+  background: 'light-dark(rgba(0,0,0,0.08), rgba(255,255,255,0.12))',
+  borderRadius: '4px'
 });
 
 export const switchRow = style({

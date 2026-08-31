@@ -24,14 +24,8 @@ const baseOverlay = style({
 export const overlaySplash = style([
   baseOverlay,
   {
-    background: '#0a0a0a',
-    color: '#fff',
-    '@media': {
-      '(prefers-color-scheme: light)': {
-        background: '#fff',
-        color: '#213547'
-      }
-    }
+    background: 'light-dark(#fff, #0a0a0a)',
+    color: 'light-dark(#213547, #fff)'
   }
 ]);
 
@@ -93,12 +87,7 @@ export const heading = style({
 
 export const headingSplash = style({
   ...headingBase,
-  color: 'rgba(255,255,255,0.6)',
-  '@media': {
-    '(prefers-color-scheme: light)': {
-      color: 'rgba(0,0,0,0.65)'
-    }
-  }
+  color: 'light-dark(rgba(0,0,0,0.65), rgba(255,255,255,0.6))'
 });
 
 const textBase = {
@@ -114,12 +103,7 @@ export const paragraph = style({
 
 export const paragraphSplash = style({
   ...textBase,
-  color: 'rgba(255,255,255,0.9)',
-  '@media': {
-    '(prefers-color-scheme: light)': {
-      color: '#213547'
-    }
-  }
+  color: 'light-dark(#213547, rgba(255,255,255,0.9))'
 });
 
 export const list = style({
@@ -140,15 +124,10 @@ export const listSplash = style({
   listStyle: 'none',
   fontSize: '15px',
   lineHeight: 1.6,
-  color: 'rgba(255,255,255,0.9)',
+  color: 'light-dark(#213547, rgba(255,255,255,0.9))',
   display: 'flex',
   flexDirection: 'column',
-  gap: '8px',
-  '@media': {
-    '(prefers-color-scheme: light)': {
-      color: '#213547'
-    }
-  }
+  gap: '8px'
 });
 
 export const hotkeyRow = style({
@@ -178,15 +157,12 @@ const blueskyWrap = style({
   alignSelf: 'center'
 });
 
-/** Splash: black on light background, white on dark. */
+/** Splash: adapts to the inherited color scheme. */
 export const blueskyWrapSplash = style([
   blueskyWrap,
   {
-    color: '#000',
+    color: 'light-dark(#000, #fff)',
     '@media': {
-      '(prefers-color-scheme: dark)': {
-        color: '#fff'
-      },
       '(hover: hover)': {
         ':hover': {
           color: '#0085FF'
