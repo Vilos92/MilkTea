@@ -33,6 +33,8 @@
   "export.finishing": "Dokončování exportu…",
   "export.rendering": "Vykreslování celé skladby",
   "locale.ariaSelectLanguage": "Vybrat jazyk",
+  "theme.switchToLight": "Přepnout do světlého režimu",
+  "theme.switchToDark": "Přepnout do tmavého režimu",
   "help.about": "O aplikaci",
   "help.aboutText": "MilkTea. Vizualizér MilkDrop v prohlížeči",
   "help.shareToBlueskyMessage": "Podívejte se na tento vizualizér: https://milktea.ink",

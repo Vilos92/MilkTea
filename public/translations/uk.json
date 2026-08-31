@@ -33,6 +33,8 @@
   "export.finishing": "Завершення експорту…",
   "export.rendering": "Рендеринг усієї композиції",
   "locale.ariaSelectLanguage": "Вибрати мову",
+  "theme.switchToLight": "Перемкнутися на світлу тему",
+  "theme.switchToDark": "Перемкнутися на темну тему",
   "help.about": "Про програму",
   "help.aboutText": "MilkTea. Візуалізатор MilkDrop для браузера",
   "help.shareToBlueskyMessage": "Перегляньте цей візуалізатор: https://milktea.ink",

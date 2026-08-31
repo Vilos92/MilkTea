@@ -33,6 +33,8 @@
   "export.finishing": "Exportálás befejezése…",
   "export.rendering": "Teljes szám renderelése",
   "locale.ariaSelectLanguage": "Nyelv kiválasztása",
+  "theme.switchToLight": "Váltás világos módra",
+  "theme.switchToDark": "Váltás sötét módra",
   "help.about": "Névjegy",
   "help.aboutText": "MilkTea. MilkDrop böngészős vizualizáló",
   "help.shareToBlueskyMessage": "Nézd meg ezt a vizualizálót: https://milktea.ink",

@@ -33,6 +33,8 @@
   "export.finishing": "הייצוא מסתיים…",
   "export.rendering": "רינדור הקטע המלא",
   "locale.ariaSelectLanguage": "בחר שפה",
+  "theme.switchToLight": "עבור למצב בהיר",
+  "theme.switchToDark": "עבור למצב כהה",
   "help.about": "אודות",
   "help.aboutText": "MilkTea. מציג ויזואלי של MilkDrop בדפדפן",
   "help.shareToBlueskyMessage": "בדוק את הוויזואלייזר הזה: https://milktea.ink",

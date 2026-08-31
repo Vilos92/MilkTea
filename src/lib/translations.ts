@@ -40,6 +40,8 @@ export type TranslationKey =
   | 'export.finishing'
   | 'export.rendering'
   | 'locale.ariaSelectLanguage'
+  | 'theme.switchToLight'
+  | 'theme.switchToDark'
   | 'help.about'
   | 'help.aboutText'
   | 'help.shareToBlueskyMessage'
@@ -124,6 +126,8 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'export.finishing': 'Finishing export…',
   'export.rendering': 'Rendering full track',
   'locale.ariaSelectLanguage': 'Select language',
+  'theme.switchToLight': 'Switch to light mode',
+  'theme.switchToDark': 'Switch to dark mode',
   'help.about': 'About',
   'help.aboutText': 'MilkTea. A browser visualizer for MilkDrop',
   'help.shareToBlueskyMessage': 'Check out this visualizer: https://milktea.ink',

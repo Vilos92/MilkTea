@@ -33,6 +33,8 @@
   "export.finishing": "एक्सपोर्ट पूरा हो रहा है…",
   "export.rendering": "पूरा ट्रैक रेंडर हो रहा है",
   "locale.ariaSelectLanguage": "भाषा चुनें",
+  "theme.switchToLight": "लाइट मोड पर स्विच करें",
+  "theme.switchToDark": "डार्क मोड पर स्विच करें",
   "help.about": "के बारे में",
   "help.aboutText": "MilkTea. ब्राउज़र के लिए MilkDrop विज़ुअलाइज़र",
   "help.shareToBlueskyMessage": "इस विज़ुअलाइज़र को देखें: https://milktea.ink",

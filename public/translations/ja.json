@@ -33,6 +33,8 @@
   "export.finishing": "エクスポートを完了しています…",
   "export.rendering": "トラック全体をレンダリング中",
   "locale.ariaSelectLanguage": "言語を選択",
+  "theme.switchToLight": "ライトモードに切り替える",
+  "theme.switchToDark": "ダークモードに切り替える",
   "help.about": "概要",
   "help.aboutText": "MilkTea. ブラウザ用MilkDropビジュアライザー",
   "help.shareToBlueskyMessage": "このビジュアライザーを見てみて: https://milktea.ink",

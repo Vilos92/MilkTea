@@ -1,6 +1,4 @@
 export {
   iconButton as commandPaletteButton,
-  iconButtonActive as commandPaletteButtonActive,
-  iconButtonAlwaysLight as commandPaletteButtonAlwaysLight,
-  iconButtonAlwaysLightActive as commandPaletteButtonAlwaysLightActive
+  iconButtonAlwaysLight as commandPaletteButtonAlwaysLight
 } from '../hud/hud.css';

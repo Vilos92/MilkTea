@@ -1,11 +1,6 @@
 import {style} from '@vanilla-extract/css';
 
-import {
-  iconButton,
-  iconButtonActive,
-  iconButtonAlwaysLight,
-  iconButtonAlwaysLightActive
-} from '../hud/hud.css';
+import {iconButton, iconButtonAlwaysLight} from '../hud/hud.css';
 
 /*
  * Styles.
@@ -17,6 +12,4 @@ export const helpButtonRoot = style({
 });
 
 export const helpButton = iconButton;
-export const helpButtonActive = iconButtonActive;
 export const helpButtonAlwaysLight = iconButtonAlwaysLight;
-export const helpButtonAlwaysLightActive = iconButtonAlwaysLightActive;
