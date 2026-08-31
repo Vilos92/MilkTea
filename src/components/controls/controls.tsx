@@ -2,6 +2,7 @@ import type {RefObject} from 'preact';
 import {useEffect, useRef, useState} from 'preact/hooks';
 
 import {Axis, useSwipe} from '../../hooks/useSwipe';
+import {formatTime} from '../../lib/formatTime';
 import {supportsRequestFullscreen} from '../../lib/platform';
 import type {TranslationKey} from '../../lib/translations';
 import {VibrationPattern, vibrateMedium} from '../../lib/vibrate';
@@ -238,7 +239,6 @@ export const Controls = ({
             <span class={[timeLabel, timeLabelRight].join(' ')}>{formatTime(filePlayback.duration)}</span>
           </div>
         ) : (
-          filePlayback != null &&
           hasProgress && (
             <div class={progressWrap}>
               <span class={timeLabel}>{formatTime(filePlayback.currentTime)}</span>
@@ -493,10 +493,4 @@ function formatRecordTranslationKey(
     return 'controls.stopRecord';
   }
   return 'controls.record';
-}
-
-function formatTime(seconds: number): string {
-  const m = Math.floor(seconds / 60);
-  const s = Math.floor(seconds % 60);
-  return `${m}:${String(s).padStart(2, '0')}`;
 }

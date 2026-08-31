@@ -13,8 +13,8 @@ import {useAudioSource} from './hooks/useAudioSource';
 import {useButterchurn} from './hooks/useButterchurn';
 import {useCyclePresets} from './hooks/useCyclePresets';
 import {useOfflineExport} from './hooks/useOfflineExport';
-import type {RenderConfig} from './hooks/useRecorder';
 import {vibrateHeavy} from './lib/vibrate';
+import type {RenderConfig} from './lib/video';
 import {
   DEFAULT_MAIN_RECORD_BPP,
   DEFAULT_VIDEO_FPS,
@@ -298,6 +298,7 @@ export function MilkTea() {
             progress={exportProgress}
             duration={audioBuffer?.duration ?? 0}
             isFinishing={exportState === 'finishing'}
+            isCancelling={exportState === 'cancelling'}
             onCancel={cancelExport}
             onClose={closeExportDownload}
             download={exportDownload}

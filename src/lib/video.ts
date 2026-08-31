@@ -14,6 +14,9 @@ export type VideoSizePreset = {label: VideoSizeLabel; width: number; height: num
 export type VideoFormatId = 'mp4' | 'mov' | 'mkv' | 'webm';
 export type VideoFormatOption = {id: VideoFormatId; label: string};
 
+/** The configuration that defines how the output video will be rendered. */
+export type RenderConfig = Size & {fps: number; bpp: number; formatId: VideoFormatId; baseName: string};
+
 /*
  * Constants.
  */

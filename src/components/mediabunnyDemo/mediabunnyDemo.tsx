@@ -2,10 +2,10 @@ import type {RefObject} from 'preact';
 import {useCallback, useEffect, useRef, useState} from 'preact/hooks';
 
 import demoMp3 from '../../assets/needle-the-thread.mp3';
-import {type RenderConfig, useRecorder} from '../../hooks/useRecorder';
+import {useRecorder} from '../../hooks/useRecorder';
 import {createVisualizer} from '../../lib/butterchurn/butterchurn';
 import {fetchPresetByIndex, getPresetKeys} from '../../lib/butterchurn/butterchurnPresets';
-import {VIDEO_FORMAT_OPTIONS, type VideoFormatOption} from '../../lib/video';
+import {VIDEO_FORMAT_OPTIONS, type RenderConfig, type VideoFormatOption} from '../../lib/video';
 import {
   DEFAULT_VIDEO_FPS,
   DEFAULT_VIDEO_SIZE_PRESET,

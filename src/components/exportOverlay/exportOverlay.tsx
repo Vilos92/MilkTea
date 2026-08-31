@@ -13,6 +13,7 @@ type ExportOverlayProps = {
   progress: number;
   duration: number;
   isFinishing: boolean;
+  isCancelling: boolean;
   onCancel: () => void;
   onClose: () => void;
   download: {url: string; filename: string} | undefined;
@@ -26,19 +27,14 @@ export function ExportOverlay({
   progress,
   duration,
   isFinishing,
+  isCancelling,
   onCancel,
   onClose,
   download
 }: ExportOverlayProps) {
   const t = useTranslate();
   const percent = Math.round(progress * 100);
-  let status = 'Rendering full track';
-  if (isFinishing) {
-    status = 'Finishing export…';
-  }
-  if (download) {
-    status = 'Export complete';
-  }
+  const status = computeExportStatus(download, isFinishing, isCancelling);
 
   return (
     <div class={overlayDark} role="dialog" aria-modal="true" aria-labelledby="export-title">
@@ -77,7 +73,7 @@ export function ExportOverlay({
             <p class={time}>
               {formatTime(duration * progress)} / {formatTime(duration)}
             </p>
-            {!isFinishing && (
+            {!isFinishing && !isCancelling && (
               <div class={actions}>
                 <button class={action} type="button" onClick={onCancel}>
                   Cancel export
@@ -89,4 +85,21 @@ export function ExportOverlay({
       </section>
     </div>
   );
+}
+
+function computeExportStatus(
+  download: ExportOverlayProps['download'],
+  isFinishing: boolean,
+  isCancelling: boolean
+): string {
+  if (download) {
+    return 'Export complete';
+  }
+  if (isCancelling) {
+    return 'Cancelling export…';
+  }
+  if (isFinishing) {
+    return 'Finishing export…';
+  }
+  return 'Rendering full track';
 }

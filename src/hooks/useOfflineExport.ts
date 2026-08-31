@@ -15,15 +15,13 @@ import {useCallback, useEffect, useRef, useState} from 'preact/hooks';
 import {createVisualizer, createVisualizerAudioContext} from '../lib/butterchurn/butterchurn';
 import {fetchPresetByIndex} from '../lib/butterchurn/butterchurnPresets';
 import {computeVideoBitrate} from '../lib/video';
-import type {VideoFormatId} from '../lib/video';
-import type {RenderConfig} from './useRecorder';
+import type {RenderConfig, VideoFormatId} from '../lib/video';
 
 /*
  * Types.
  */
 
-export type OfflineExportState = 'idle' | 'preparing' | 'rendering' | 'cancelling' | 'finishing' | 'error';
-
+type OfflineExportState = 'idle' | 'preparing' | 'rendering' | 'cancelling' | 'finishing' | 'error';
 type OfflineExportOptions = {
   canvasRef: RefObject<HTMLCanvasElement>;
   audioBuffer: AudioBuffer | undefined;
@@ -36,6 +34,15 @@ type AudioLevels = {
   timeByteArray: Uint8Array;
   timeByteArrayL: Uint8Array;
   timeByteArrayR: Uint8Array;
+};
+
+type ExportJob = {
+  id: number;
+  isCancelled: boolean;
+  output: Output | undefined;
+  audioContext: AudioContext | undefined;
+  teardownPromise: Promise<void> | undefined;
+  closePromise: Promise<void> | undefined;
 };
 
 /*
@@ -60,76 +67,150 @@ export function useOfflineExport({
   const [state, setState] = useState<OfflineExportState>('idle');
   const [progress, setProgress] = useState(0);
   const [requestId, setRequestId] = useState(0);
-  const cancelRequestedRef = useRef(false);
-  const outputRef = useRef<Output | undefined>(undefined);
-  const shouldStartRef = useRef(false);
+  const activeJobRef = useRef<ExportJob | undefined>(undefined);
+  const nextJobIdRef = useRef(0);
+
+  const isActiveJob = useCallback((job: ExportJob) => activeJobRef.current?.id === job.id, []);
+
+  const closeJobContext = useCallback(async (job: ExportJob) => {
+    if (!job.audioContext) {
+      return;
+    }
+    if (!job.closePromise) {
+      job.closePromise = job.audioContext.close();
+    }
+    await job.closePromise;
+  }, []);
+
+  const teardownJob = useCallback(
+    async (job: ExportJob) => {
+      if (!job.teardownPromise) {
+        job.teardownPromise = (async () => {
+          try {
+            await job.output?.cancel();
+          } finally {
+            await closeJobContext(job);
+          }
+        })();
+      }
+      await job.teardownPromise;
+    },
+    [closeJobContext]
+  );
+
+  const finishJob = useCallback(
+    async (job: ExportJob, nextState: OfflineExportState) => {
+      await closeJobContext(job);
+      if (!isActiveJob(job)) {
+        return;
+      }
+      activeJobRef.current = undefined;
+      setState(nextState);
+    },
+    [closeJobContext, isActiveJob]
+  );
+
+  const finishCancelledJob = useCallback(
+    async (job: ExportJob) => {
+      try {
+        await teardownJob(job);
+      } catch (error) {
+        console.error(error);
+      }
+      await finishJob(job, 'idle');
+    },
+    [finishJob, teardownJob]
+  );
 
   const start = useCallback(() => {
     if (!audioBuffer || presetIndex === undefined || (state !== 'idle' && state !== 'error')) {
       return;
     }
 
-    cancelRequestedRef.current = false;
-    shouldStartRef.current = true;
+    const job = {
+      id: nextJobIdRef.current + 1,
+      isCancelled: false,
+      output: undefined,
+      audioContext: undefined,
+      teardownPromise: undefined,
+      closePromise: undefined
+    };
+    nextJobIdRef.current = job.id;
+    activeJobRef.current = job;
     setProgress(0);
     setState('preparing');
-    setRequestId(currentRequestId => currentRequestId + 1);
+    setRequestId(job.id);
   }, [audioBuffer, presetIndex, state]);
 
   const cancel = useCallback(() => {
-    if (state !== 'preparing' && state !== 'rendering') {
+    const job = activeJobRef.current;
+    if (!job || (state !== 'preparing' && state !== 'rendering')) {
       return;
     }
 
-    cancelRequestedRef.current = true;
+    job.isCancelled = true;
     setState('cancelling');
-    void outputRef.current?.cancel();
-  }, [state]);
+    void finishCancelledJob(job);
+  }, [finishCancelledJob, state]);
 
   useEffect(() => {
-    if (requestId === 0 || !shouldStartRef.current || !audioBuffer || presetIndex === undefined) {
+    const job = activeJobRef.current;
+    if (
+      requestId === 0 ||
+      !job ||
+      job.id !== requestId ||
+      job.isCancelled ||
+      !audioBuffer ||
+      presetIndex === undefined
+    ) {
       return;
     }
-    shouldStartRef.current = false;
     const canvas = canvasRef.current;
     if (!canvas) {
-      setState('error');
+      void finishJob(job, 'error');
       return;
     }
-
-    let isUnmounted = false;
 
     const exportVideo = async () => {
       const {width, height, fps, bpp, formatId, baseName} = renderConfig;
       const frameDuration = 1 / fps;
       const totalFrames = Math.ceil(audioBuffer.duration * fps);
-      const preset = await fetchPresetByIndex(presetIndex);
-      const target = new BufferTarget();
-      const format = createOutputFormat(formatId);
-      const output = new Output({format, target});
-      const {videoCodec, audioCodec} = selectCodecs(formatId);
-      const videoSource = new CanvasSource(canvas, {
-        codec: videoCodec,
-        bitrate: computeVideoBitrate(width, height, fps, bpp),
-        latencyMode: 'quality',
-        hardwareAcceleration: 'prefer-hardware'
-      });
-      const audioSource = new AudioBufferSource({codec: audioCodec, bitrate: AUDIO_BITRATE});
-      const context = createVisualizerAudioContext();
-
-      outputRef.current = output;
-      output.addVideoTrack(videoSource);
-      output.addAudioTrack(audioSource);
 
       try {
+        const preset = await fetchPresetByIndex(presetIndex);
+        if (!isActiveJob(job) || job.isCancelled) {
+          return;
+        }
+
+        const target = new BufferTarget();
+        const format = createOutputFormat(formatId);
+        const output = new Output({format, target});
+        const {videoCodec, audioCodec} = selectCodecs(formatId);
+        const videoSource = new CanvasSource(canvas, {
+          codec: videoCodec,
+          bitrate: computeVideoBitrate(width, height, fps, bpp),
+          latencyMode: 'quality',
+          hardwareAcceleration: 'prefer-hardware'
+        });
+        const audioSource = new AudioBufferSource({codec: audioCodec, bitrate: AUDIO_BITRATE});
+        const context = createVisualizerAudioContext();
+
+        job.output = output;
+        job.audioContext = context.audioContext;
+        if (!isActiveJob(job) || job.isCancelled) {
+          await finishCancelledJob(job);
+          return;
+        }
+
+        output.addVideoTrack(videoSource);
+        output.addAudioTrack(audioSource);
         canvas.width = width;
         canvas.height = height;
 
         const visualizer = createVisualizer(canvas, context, preset, width, height);
         const audioLevels = createAudioLevels();
         await output.start();
-
-        if (cancelRequestedRef.current) {
+        if (!isActiveJob(job) || job.isCancelled) {
           return;
         }
 
@@ -137,7 +218,7 @@ export function useOfflineExport({
         let lastYieldTime = performance.now();
 
         for (let frame = 0; frame < totalFrames; frame += 1) {
-          if (cancelRequestedRef.current) {
+          if (!isActiveJob(job) || job.isCancelled) {
             return;
           }
 
@@ -155,18 +236,23 @@ export function useOfflineExport({
           }
         }
 
-        if (cancelRequestedRef.current) {
+        if (!isActiveJob(job) || job.isCancelled) {
           return;
         }
 
         setState('finishing');
         await audioSource.add(audioBuffer);
-        if (cancelRequestedRef.current) {
+        if (!isActiveJob(job) || job.isCancelled) {
           return;
         }
 
         await output.finalize();
-        if (isUnmounted || cancelRequestedRef.current) {
+        if (!isActiveJob(job) || job.isCancelled) {
+          return;
+        }
+
+        await closeJobContext(job);
+        if (!isActiveJob(job) || job.isCancelled) {
           return;
         }
 
@@ -174,36 +260,57 @@ export function useOfflineExport({
           new Blob([target.buffer!], {type: format.mimeType}),
           `${baseName}${format.fileExtension}`
         );
+        activeJobRef.current = undefined;
         setState('idle');
+      } catch (error) {
+        if (!isActiveJob(job) || job.isCancelled) {
+          return;
+        }
+
+        console.error(error);
+        try {
+          await teardownJob(job);
+        } catch (teardownError) {
+          console.error(teardownError);
+        }
+        await finishJob(job, 'error');
       } finally {
-        outputRef.current = undefined;
-        await context.audioContext.close();
-        if (!isUnmounted && cancelRequestedRef.current) {
-          setState('idle');
+        if (job.isCancelled) {
+          await finishCancelledJob(job);
         }
       }
     };
 
-    void exportVideo().catch(error => {
-      if (!cancelRequestedRef.current) {
-        console.error(error);
-        setState('error');
-      } else {
-        setState('idle');
-      }
-    });
+    void exportVideo();
 
     return () => {
-      isUnmounted = true;
+      job.isCancelled = true;
+      void finishCancelledJob(job);
     };
-  }, [audioBuffer, canvasRef, onProcessed, presetIndex, renderConfig, requestId]);
+  }, [
+    audioBuffer,
+    canvasRef,
+    closeJobContext,
+    finishCancelledJob,
+    finishJob,
+    isActiveJob,
+    onProcessed,
+    presetIndex,
+    renderConfig,
+    requestId,
+    teardownJob
+  ]);
 
   useEffect(() => {
     return () => {
-      cancelRequestedRef.current = true;
-      void outputRef.current?.cancel();
+      const job = activeJobRef.current;
+      if (!job) {
+        return;
+      }
+      job.isCancelled = true;
+      void finishCancelledJob(job);
     };
-  }, []);
+  }, [finishCancelledJob]);
 
   return {state, progress, start, cancel};
 }
