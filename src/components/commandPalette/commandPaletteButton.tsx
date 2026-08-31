@@ -1,12 +1,7 @@
 import {useTranslate} from '../../providers/translation';
 import {Icon} from '../icon/icon';
 
-import {
-  commandPaletteButton,
-  commandPaletteButtonActive,
-  commandPaletteButtonAlwaysLight,
-  commandPaletteButtonAlwaysLightActive
-} from './commandPaletteButton.css';
+import {commandPaletteButton, commandPaletteButtonAlwaysLight} from './commandPaletteButton.css';
 
 /*
  * Types.
@@ -30,11 +25,7 @@ export function CommandPaletteButton({
   onOpen
 }: CommandPaletteButtonProps) {
   const t = useTranslate();
-  const baseClass = [
-    commandPaletteButton,
-    alwaysLight && commandPaletteButtonAlwaysLight,
-    active && (alwaysLight ? commandPaletteButtonAlwaysLightActive : commandPaletteButtonActive)
-  ]
+  const baseClass = [commandPaletteButton, alwaysLight && commandPaletteButtonAlwaysLight]
     .filter(Boolean)
     .join(' ');
   const buttonClass = className ? [baseClass, className].join(' ') : baseClass;
@@ -43,6 +34,7 @@ export function CommandPaletteButton({
     <button
       type="button"
       class={buttonClass}
+      data-active={active ? 'true' : undefined}
       onClick={onOpen}
       aria-label={t('help.keyCommandPaletteAction')}
       title={t('help.keyCommandPaletteAction')}

@@ -33,6 +33,8 @@
   "export.finishing": "Đang hoàn tất xuất…",
   "export.rendering": "Đang kết xuất toàn bộ bản nhạc",
   "locale.ariaSelectLanguage": "Chọn ngôn ngữ",
+  "theme.switchToLight": "Chuyển sang chế độ sáng",
+  "theme.switchToDark": "Chuyển sang chế độ tối",
   "help.about": "Giới thiệu",
   "help.aboutText": "MilkTea. Trình hiển thị MilkDrop trên trình duyệt",
   "help.shareToBlueskyMessage": "Xem trình hiển thị này: https://milktea.ink",

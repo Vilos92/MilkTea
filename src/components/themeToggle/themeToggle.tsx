@@ -1,4 +1,5 @@
 import {useThemeContext} from '../../providers/theme';
+import {useTranslate} from '../../providers/translation';
 
 import {button, icon} from './themeToggle.css';
 
@@ -8,8 +9,9 @@ import {button, icon} from './themeToggle.css';
 
 export function ThemeToggle() {
   const {resolvedTheme, toggleTheme} = useThemeContext();
+  const t = useTranslate();
   const targetTheme = resolvedTheme === 'light' ? 'dark' : 'light';
-  const label = `Switch to ${targetTheme} mode`;
+  const label = targetTheme === 'dark' ? t('theme.switchToDark') : t('theme.switchToLight');
 
   return (
     <button type="button" class={button} onClick={toggleTheme} aria-label={label} title={label}>

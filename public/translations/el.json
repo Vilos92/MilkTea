@@ -33,6 +33,8 @@
   "export.finishing": "Ολοκλήρωση εξαγωγής…",
   "export.rendering": "Απόδοση ολόκληρου του κομματιού",
   "locale.ariaSelectLanguage": "Επιλέξτε γλώσσα",
+  "theme.switchToLight": "Μετάβαση σε φωτεινή λειτουργία",
+  "theme.switchToDark": "Μετάβαση σε σκοτεινή λειτουργία",
   "help.about": "Σχετικά",
   "help.aboutText": "MilkTea. Οπτικοποιητής MilkDrop για το πρόγραμμα περιήγησης",
   "help.shareToBlueskyMessage": "Δείτε αυτόν τον οπτικοποιητή: https://milktea.ink",

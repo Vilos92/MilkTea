@@ -33,6 +33,8 @@
   "export.finishing": "正在完成匯出…",
   "export.rendering": "正在算繪完整曲目",
   "locale.ariaSelectLanguage": "選擇語言",
+  "theme.switchToLight": "切換到淺色模式",
+  "theme.switchToDark": "切換到深色模式",
   "help.about": "關於",
   "help.aboutText": "MilkTea。瀏覽器版 MilkDrop 視覺化工具",
   "help.shareToBlueskyMessage": "看看這個視覺化工具：https://milktea.ink",

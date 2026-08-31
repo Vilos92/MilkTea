@@ -33,6 +33,8 @@
   "export.finishing": "Se finalizează exportul…",
   "export.rendering": "Se randează piesa completă",
   "locale.ariaSelectLanguage": "Selectează limba",
+  "theme.switchToLight": "Comută la modul luminos",
+  "theme.switchToDark": "Comută la modul întunecat",
   "help.about": "Despre",
   "help.aboutText": "MilkTea. Un vizualizator MilkDrop în browser",
   "help.shareToBlueskyMessage": "Vizualizează acest vizualizator: https://milktea.ink",

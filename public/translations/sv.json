@@ -33,6 +33,8 @@
   "export.finishing": "Slutför exporten…",
   "export.rendering": "Renderar hela spåret",
   "locale.ariaSelectLanguage": "Välj språk",
+  "theme.switchToLight": "Byt till ljust läge",
+  "theme.switchToDark": "Byt till mörkt läge",
   "help.about": "Om",
   "help.aboutText": "MilkTea. En webbläsarvisualiserare för MilkDrop",
   "help.shareToBlueskyMessage": "Kolla in denna visualisering: https://milktea.ink",

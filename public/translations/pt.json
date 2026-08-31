@@ -33,6 +33,8 @@
   "export.finishing": "Finalizando exportação…",
   "export.rendering": "Renderizando a faixa completa",
   "locale.ariaSelectLanguage": "Selecionar idioma",
+  "theme.switchToLight": "Mudar para o modo claro",
+  "theme.switchToDark": "Mudar para o modo escuro",
   "help.about": "Sobre",
   "help.aboutText": "MilkTea. Um visualizador de MilkDrop no navegador",
   "help.shareToBlueskyMessage": "Confira este visualizador: https://milktea.ink",

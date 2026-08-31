@@ -33,6 +33,8 @@
   "export.finishing": "내보내기 마무리 중…",
   "export.rendering": "전체 트랙 렌더링 중",
   "locale.ariaSelectLanguage": "언어 선택",
+  "theme.switchToLight": "라이트 모드로 전환",
+  "theme.switchToDark": "다크 모드로 전환",
   "help.about": "정보",
   "help.aboutText": "MilkTea. 브라우저용 MilkDrop 비주얼라이저",
   "help.shareToBlueskyMessage": "이 비주얼라이저를 확인해 보세요: https://milktea.ink",

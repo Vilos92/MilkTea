@@ -33,6 +33,8 @@
   "export.finishing": "Export wordt afgerond…",
   "export.rendering": "Volledige track wordt gerenderd",
   "locale.ariaSelectLanguage": "Selecteer taal",
+  "theme.switchToLight": "Overschakelen naar lichte modus",
+  "theme.switchToDark": "Overschakelen naar donkere modus",
   "help.about": "Over",
   "help.aboutText": "MilkTea. Een browser-visualizer voor MilkDrop",
   "help.shareToBlueskyMessage": "Bekijk deze visualizer: https://milktea.ink",

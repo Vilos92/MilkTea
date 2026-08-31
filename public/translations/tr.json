@@ -33,6 +33,8 @@
   "export.finishing": "Dışa aktarma tamamlanıyor…",
   "export.rendering": "Parçanın tamamı işleniyor",
   "locale.ariaSelectLanguage": "Dil seçin",
+  "theme.switchToLight": "Açık moda geç",
+  "theme.switchToDark": "Koyu moda geç",
   "help.about": "Hakkında",
   "help.aboutText": "MilkTea. Tarayıcı için MilkDrop görselleştirici",
   "help.shareToBlueskyMessage": "Bu görselleştiriciye göz atın: https://milktea.ink",

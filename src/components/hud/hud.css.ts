@@ -17,15 +17,23 @@ export const iconButton = style({
   color: 'light-dark(rgba(0,0,0,0.8), rgba(255,255,255,0.8))',
   border: '1px solid light-dark(rgba(0,0,0,0.2), rgba(255,255,255,0.25))',
   borderRadius: '4px',
+  selectors: {
+    '&[data-active="true"]': {
+      borderColor: 'light-dark(rgba(0,0,0,0.5), rgba(255,255,255,0.6))',
+      background: 'light-dark(rgba(0,0,0,0.12), rgba(255,255,255,0.2))'
+    }
+  },
   ':focus-visible': {
     outline: '2px solid light-dark(rgba(0,0,0,0.4), rgba(255,255,255,0.6))',
     outlineOffset: '2px'
   },
   '@media': {
     '(hover: hover)': {
-      ':hover': {
-        borderColor: 'light-dark(rgba(0,0,0,0.35), rgba(255,255,255,0.5))',
-        background: 'light-dark(rgba(0,0,0,0.06), rgba(255,255,255,0.1))'
+      selectors: {
+        '&:hover:not([data-active="true"])': {
+          borderColor: 'light-dark(rgba(0,0,0,0.35), rgba(255,255,255,0.5))',
+          background: 'light-dark(rgba(0,0,0,0.06), rgba(255,255,255,0.1))'
+        }
       }
     },
     '(pointer: fine)': {
@@ -36,32 +44,30 @@ export const iconButton = style({
   }
 });
 
-export const iconButtonActive = style({
-  borderColor: 'light-dark(rgba(0,0,0,0.5), rgba(255,255,255,0.6))',
-  background: 'light-dark(rgba(0,0,0,0.12), rgba(255,255,255,0.2))'
-});
-
 export const iconButtonAlwaysLight = style({
   background: 'rgba(0,0,0,0.5)',
   color: 'rgba(255,255,255,0.9)',
   border: '1px solid rgba(255,255,255,0.3)',
+  selectors: {
+    '&[data-active="true"]': {
+      borderColor: 'rgba(255,255,255,0.7)',
+      background: 'rgba(255,255,255,0.25)'
+    }
+  },
   ':focus-visible': {
     outline: '2px solid rgba(255,255,255,0.6)',
     outlineOffset: '2px'
   },
   '@media': {
     '(hover: hover)': {
-      ':hover': {
-        borderColor: 'rgba(255,255,255,0.5)',
-        background: 'rgba(255,255,255,0.1)'
+      selectors: {
+        '&:hover:not([data-active="true"])': {
+          borderColor: 'rgba(255,255,255,0.5)',
+          background: 'rgba(255,255,255,0.1)'
+        }
       }
     }
   }
-});
-
-export const iconButtonAlwaysLightActive = style({
-  borderColor: 'rgba(255,255,255,0.7)',
-  background: 'rgba(255,255,255,0.25)'
 });
 
 export const topCorner = style({

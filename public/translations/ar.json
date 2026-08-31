@@ -33,6 +33,8 @@
   "export.finishing": "جارٍ إنهاء التصدير…",
   "export.rendering": "جارٍ تصيير المقطع بالكامل",
   "locale.ariaSelectLanguage": "اختر اللغة",
+  "theme.switchToLight": "التبديل إلى الوضع الفاتح",
+  "theme.switchToDark": "التبديل إلى الوضع الداكن",
   "help.about": "حول",
   "help.aboutText": "MilkTea. أداة تصور MilkDrop في المتصفح",
   "help.shareToBlueskyMessage": "تحقق من هذا المرئي: https://milktea.ink",
