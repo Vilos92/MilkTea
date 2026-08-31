@@ -1,5 +1,9 @@
 import {keyframes, style} from '@vanilla-extract/css';
 
+/*
+ * Styles.
+ */
+
 export const audioSourceRoot = style({
   position: 'fixed',
   zIndex: 300,

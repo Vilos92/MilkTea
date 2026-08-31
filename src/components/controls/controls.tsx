@@ -10,6 +10,10 @@ import {PlaybackProgress} from './playbackProgress';
 
 import {controls, trackInfo, trackPresetLabel, trackTitle} from './controls.css';
 
+/*
+ * Types.
+ */
+
 type ControlsProps = {
   swipeRef: RefObject<HTMLElement>;
   class?: string;
@@ -32,6 +36,10 @@ type ControlsProps = {
   stagedPresetName: string | undefined;
   onFireStagedPreset: () => void;
 };
+
+/*
+ * Component.
+ */
 
 export const Controls = ({
   swipeRef,

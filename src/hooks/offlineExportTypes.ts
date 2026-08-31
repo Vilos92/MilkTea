@@ -16,7 +16,7 @@ export type ExportJob = {
 };
 
 export type ExportJobCallbacks = {
-  isActiveJob: (job: ExportJob) => boolean;
+  checkIsActiveJob: (job: ExportJob) => boolean;
   setState: (state: OfflineExportState) => void;
   setProgress: (progress: number) => void;
   finishJob: (job: ExportJob, state: OfflineExportState) => Promise<void>;

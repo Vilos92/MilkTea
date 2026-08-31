@@ -2,12 +2,6 @@
  * Types.
  */
 
-export const AudioSource = {
-  OSCILLATOR: 'oscillator',
-  FILE: 'file',
-  MICROPHONE: 'microphone',
-  SCREEN_CAPTURE: 'screen-capture'
-} as const;
 export type AudioSource = (typeof AudioSource)[keyof typeof AudioSource];
 
 export type AudioFilePlayback = {
@@ -17,3 +11,14 @@ export type AudioFilePlayback = {
   onPlayPause: () => void;
   onSeek: (time: number) => void;
 };
+
+/*
+ * Enums.
+ */
+
+export const AudioSource = {
+  OSCILLATOR: 'oscillator',
+  FILE: 'file',
+  MICROPHONE: 'microphone',
+  SCREEN_CAPTURE: 'screen-capture'
+} as const;

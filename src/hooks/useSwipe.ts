@@ -5,10 +5,6 @@ import {useEffect, useRef} from 'preact/hooks';
  * Types.
  */
 
-export const Axis = {
-  HORIZONTAL: 'horizontal',
-  VERTICAL: 'vertical'
-} as const;
 type Axis = (typeof Axis)[keyof typeof Axis];
 
 type SwipeConfigHorizontal = {
@@ -24,6 +20,15 @@ type SwipeConfigVertical = {
 };
 
 export type SwipeConfig = SwipeConfigHorizontal | SwipeConfigVertical;
+
+/*
+ * Enums.
+ */
+
+export const Axis = {
+  HORIZONTAL: 'horizontal',
+  VERTICAL: 'vertical'
+} as const;
 
 /*
  * Constants.

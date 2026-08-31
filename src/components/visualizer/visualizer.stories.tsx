@@ -4,6 +4,12 @@ import {useButterchurn} from '../../hooks/useButterchurn';
 import {Visualizer} from './visualizer';
 
 /*
+ * Types.
+ */
+
+type Story = StoryObj<typeof meta>;
+
+/*
  * Meta.
  */
 
@@ -23,7 +29,5 @@ export default meta;
 /*
  * Stories.
  */
-
-type Story = StoryObj<typeof meta>;
 
 export const Basic: Story = {};

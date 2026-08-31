@@ -1,5 +1,9 @@
 import {style} from '@vanilla-extract/css';
 
+/*
+ * Styles.
+ */
+
 export const topCorner = style({
   position: 'fixed',
   zIndex: 300,

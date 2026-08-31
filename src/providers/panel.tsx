@@ -6,12 +6,6 @@ import {useCallback, useContext, useEffect, useState} from 'preact/hooks';
  * Types.
  */
 
-export const MilkTeaPanel = {
-  COMMAND_PALETTE: 'COMMAND_PALETTE',
-  HELP: 'HELP',
-  PRESET_PICKER: 'PRESET_PICKER',
-  NONE: 'NONE'
-} as const;
 export type MilkTeaPanel = (typeof MilkTeaPanel)[keyof typeof MilkTeaPanel];
 
 export type PanelContextValue = {
@@ -19,6 +13,21 @@ export type PanelContextValue = {
   setOpenPanel: (panel: MilkTeaPanel | ((prev: MilkTeaPanel) => MilkTeaPanel)) => void;
   togglePanel: (panel: Exclude<MilkTeaPanel, 'NONE'>) => void;
 };
+
+type PanelProviderProps = {
+  children: ComponentChildren;
+};
+
+/*
+ * Enums.
+ */
+
+export const MilkTeaPanel = {
+  COMMAND_PALETTE: 'COMMAND_PALETTE',
+  HELP: 'HELP',
+  PRESET_PICKER: 'PRESET_PICKER',
+  NONE: 'NONE'
+} as const;
 
 /*
  * Context.
@@ -33,10 +42,6 @@ const PanelContext = createContext<PanelContextValue>({
 /*
  * Provider.
  */
-
-type PanelProviderProps = {
-  children: ComponentChildren;
-};
 
 export function PanelProvider({children}: PanelProviderProps) {
   const [openPanel, setOpenPanel] = useState<MilkTeaPanel>(MilkTeaPanel.NONE);

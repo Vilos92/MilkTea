@@ -1,5 +1,9 @@
 import {style} from '@vanilla-extract/css';
 
+/*
+ * Styles.
+ */
+
 export const helpButtonRoot = style({
   display: 'flex',
   alignItems: 'center'

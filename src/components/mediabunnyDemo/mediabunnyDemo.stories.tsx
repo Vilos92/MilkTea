@@ -3,6 +3,12 @@ import type {Meta, StoryObj} from '@storybook/preact-vite';
 import {MediabunnyDemo} from './mediabunnyDemo';
 
 /*
+ * Types.
+ */
+
+type Story = StoryObj<typeof meta>;
+
+/*
  * Meta.
  */
 
@@ -16,7 +22,5 @@ export default meta;
 /*
  * Stories.
  */
-
-type Story = StoryObj<typeof meta>;
 
 export const Basic: Story = {};

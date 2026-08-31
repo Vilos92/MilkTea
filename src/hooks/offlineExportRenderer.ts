@@ -58,7 +58,7 @@ export function renderOfflineExport(options: ExportRendererOptions): Promise<voi
 
 async function renderActiveExport(options: ExportRendererOptions): Promise<void> {
   const session = await prepareExportSession(options);
-  if (!session || !canContinue(options)) {
+  if (!session || !checkCanContinue(options)) {
     return;
   }
   await renderExport(options, session);
@@ -74,7 +74,7 @@ async function finishCancelledExport(options: ExportRendererOptions): Promise<vo
 async function prepareExportSession(options: ExportRendererOptions): Promise<ExportSession | undefined> {
   const {canvas, job, presetIndex, renderConfig} = options;
   const preset = await fetchPresetByIndex(presetIndex);
-  if (!canContinue(options)) {
+  if (!checkCanContinue(options)) {
     return undefined;
   }
 
@@ -87,7 +87,7 @@ async function prepareExportSession(options: ExportRendererOptions): Promise<Exp
   const context = createVisualizerAudioContext();
   job.output = output;
   job.audioContext = context.audioContext;
-  if (!canContinue(options)) {
+  if (!checkCanContinue(options)) {
     return undefined;
   }
 
@@ -108,19 +108,19 @@ async function prepareExportSession(options: ExportRendererOptions): Promise<Exp
 
 async function renderExport(options: ExportRendererOptions, session: ExportSession): Promise<void> {
   await session.output.start();
-  if (!canContinue(options)) {
+  if (!checkCanContinue(options)) {
     return;
   }
 
   options.setState('rendering');
   await renderFrames(options, session);
-  if (!canContinue(options)) {
+  if (!checkCanContinue(options)) {
     return;
   }
 
   options.setState('finishing');
   await session.audioSource.add(options.audioBuffer);
-  if (!canContinue(options)) {
+  if (!checkCanContinue(options)) {
     return;
   }
 
@@ -148,21 +148,21 @@ async function renderFrameSlice(
   totalFrames: number,
   lastYieldTime: number
 ): Promise<FrameSliceResult> {
-  if (!canContinue(options)) {
+  if (!checkCanContinue(options)) {
     return {isActive: false, lastYieldTime};
   }
 
   await renderFrame(session, options.audioBuffer, frame, frameDuration);
-  if (!shouldYield(frame, totalFrames, lastYieldTime)) {
-    return {isActive: canContinue(options), lastYieldTime};
+  if (!checkShouldYield(frame, totalFrames, lastYieldTime)) {
+    return {isActive: checkCanContinue(options), lastYieldTime};
   }
-  if (!canContinue(options)) {
+  if (!checkCanContinue(options)) {
     return {isActive: false, lastYieldTime};
   }
 
   options.setProgress((frame + 1) / totalFrames);
   await nextAnimationFrame();
-  return {isActive: canContinue(options), lastYieldTime: performance.now()};
+  return {isActive: checkCanContinue(options), lastYieldTime: performance.now()};
 }
 
 async function renderFrame(
@@ -179,12 +179,12 @@ async function renderFrame(
 }
 
 async function completeExport(options: ExportRendererOptions, session: ExportSession): Promise<void> {
-  if (!canContinue(options)) {
+  if (!checkCanContinue(options)) {
     return;
   }
 
   await options.closeJobContext(options.job);
-  if (!canContinue(options)) {
+  if (!checkCanContinue(options)) {
     return;
   }
 
@@ -197,7 +197,7 @@ async function completeExport(options: ExportRendererOptions, session: ExportSes
 }
 
 async function handleExportError(options: ExportRendererOptions, error: unknown): Promise<void> {
-  if (!canContinue(options)) {
+  if (!checkCanContinue(options)) {
     return;
   }
 
@@ -210,8 +210,8 @@ async function handleExportError(options: ExportRendererOptions, error: unknown)
   await options.finishJob(options.job, 'error');
 }
 
-function canContinue({job, isActiveJob}: ExportRendererOptions): boolean {
-  return isActiveJob(job) && !job.isCancelled;
+function checkCanContinue({job, checkIsActiveJob}: ExportRendererOptions): boolean {
+  return checkIsActiveJob(job) && !job.isCancelled;
 }
 
 function createVideoSource(
@@ -233,6 +233,6 @@ function selectCodecs(formatId: VideoFormatId) {
     : {videoCodec: 'avc' as const, audioCodec: 'aac' as const};
 }
 
-function shouldYield(frame: number, totalFrames: number, lastYieldTime: number): boolean {
+function checkShouldYield(frame: number, totalFrames: number, lastYieldTime: number): boolean {
   return performance.now() - lastYieldTime >= RENDER_SLICE_MS || frame === totalFrames - 1;
 }

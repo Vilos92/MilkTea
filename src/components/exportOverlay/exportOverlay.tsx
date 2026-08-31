@@ -22,6 +22,32 @@ type ExportOverlayProps = {
   download: ExportDownload | undefined;
 };
 
+type CloseButtonProps = {
+  onClose: () => void;
+  label: string;
+};
+
+type ExportDownloadActionsProps = {
+  download: ExportDownload;
+  onClose: () => void;
+};
+
+type ExportProgressProps = {
+  progress: number;
+  duration: number;
+  state: OfflineExportState;
+  onCancel: () => void;
+};
+
+type ExportErrorActionsProps = {
+  onRetry: () => void;
+  onClose: () => void;
+};
+
+type CancelButtonProps = {
+  onCancel: () => void;
+};
+
 /*
  * Component.
  */
@@ -68,6 +94,7 @@ export function ExportOverlay({
     </div>
   );
 }
+
 function ExportBody({progress, duration, state, onCancel, onRetry, onClose, download}: ExportOverlayProps) {
   if (download) {
     return <ExportDownloadActions download={download} onClose={onClose} />;
@@ -78,7 +105,7 @@ function ExportBody({progress, duration, state, onCancel, onRetry, onClose, down
   return <ExportProgress progress={progress} duration={duration} state={state} onCancel={onCancel} />;
 }
 
-function CloseButton({onClose, label}: {onClose: () => void; label: string}) {
+function CloseButton({onClose, label}: CloseButtonProps) {
   return (
     <button type="button" class={closeBtnDark} onClick={onClose} aria-label={label} title={label}>
       <Icon type="close" size="sm" />
@@ -86,7 +113,7 @@ function CloseButton({onClose, label}: {onClose: () => void; label: string}) {
   );
 }
 
-function ExportDownloadActions({download, onClose}: {download: ExportDownload; onClose: () => void}) {
+function ExportDownloadActions({download, onClose}: ExportDownloadActionsProps) {
   const t = useTranslate();
   return (
     <div class={actions}>
@@ -99,13 +126,6 @@ function ExportDownloadActions({download, onClose}: {download: ExportDownload; o
     </div>
   );
 }
-
-type ExportProgressProps = {
-  progress: number;
-  duration: number;
-  state: OfflineExportState;
-  onCancel: () => void;
-};
 
 function ExportProgress({progress, duration, state, onCancel}: ExportProgressProps) {
   const percent = Math.round(progress * 100);
@@ -123,7 +143,8 @@ function ExportProgress({progress, duration, state, onCancel}: ExportProgressPro
     </>
   );
 }
-function ExportErrorActions({onRetry, onClose}: {onRetry: () => void; onClose: () => void}) {
+
+function ExportErrorActions({onRetry, onClose}: ExportErrorActionsProps) {
   const t = useTranslate();
   return (
     <div class={actions}>
@@ -137,7 +158,7 @@ function ExportErrorActions({onRetry, onClose}: {onRetry: () => void; onClose: (
   );
 }
 
-function CancelButton({onCancel}: {onCancel: () => void}) {
+function CancelButton({onCancel}: CancelButtonProps) {
   const t = useTranslate();
   return (
     <div class={actions}>

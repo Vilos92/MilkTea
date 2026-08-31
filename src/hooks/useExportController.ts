@@ -10,6 +10,7 @@ import {useOfflineExport} from './useOfflineExport';
  */
 
 type ExportDownload = {url: string; filename: string};
+
 type RecordAction = 'cancel' | 'ignore' | 'start';
 
 type UseExportControllerOptions = {
@@ -18,6 +19,7 @@ type UseExportControllerOptions = {
   renderConfig: RenderConfig;
   filePlayback: AudioFilePlayback | undefined;
 };
+
 type RecordActionOptions = {
   cancel: () => void;
   closeDownload: () => void;

@@ -55,7 +55,7 @@ function usePlaybackKey(started: boolean, filePlayback: AudioFilePlayback | unde
     }
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== ' ' || isInteractiveTarget(event.target)) {
+      if (event.key !== ' ' || checkIsInteractiveTarget(event.target)) {
         return;
       }
       event.preventDefault();
@@ -83,22 +83,27 @@ function useRecordKey(started: boolean, audioSource: AudioSource, onRecord: () =
  */
 
 function handleRecordKey(event: KeyboardEvent, onRecord: () => void): void {
-  if (shouldIgnoreRecordKey(event)) {
+  if (checkShouldIgnoreRecordKey(event)) {
     return;
   }
   event.preventDefault();
   onRecord();
 }
 
-function shouldIgnoreRecordKey(event: KeyboardEvent): boolean {
-  return event.repeat || hasCommandModifier(event) || !isRecordKey(event) || isEditableTarget(event.target);
+function checkShouldIgnoreRecordKey(event: KeyboardEvent): boolean {
+  return (
+    event.repeat ||
+    checkHasCommandModifier(event) ||
+    !checkIsRecordKey(event) ||
+    checkIsEditableTarget(event.target)
+  );
 }
 
-function hasCommandModifier(event: KeyboardEvent): boolean {
+function checkHasCommandModifier(event: KeyboardEvent): boolean {
   return event.metaKey || event.ctrlKey || event.altKey;
 }
 
-function isInteractiveTarget(target: EventTarget | null): boolean {
+function checkIsInteractiveTarget(target: EventTarget | null): boolean {
   const element = target as HTMLElement | null;
   return Boolean(
     element?.closest?.(
@@ -107,11 +112,11 @@ function isInteractiveTarget(target: EventTarget | null): boolean {
   );
 }
 
-function isEditableTarget(target: EventTarget | null): boolean {
+function checkIsEditableTarget(target: EventTarget | null): boolean {
   const element = target as HTMLElement | null;
   return Boolean(element?.closest?.('input, textarea') || element?.isContentEditable);
 }
 
-function isRecordKey(event: KeyboardEvent): boolean {
+function checkIsRecordKey(event: KeyboardEvent): boolean {
   return event.key === 'r' || event.key === 'R' || event.code === 'KeyR';
 }

@@ -1,4 +1,10 @@
 /*
+ * Types.
+ */
+
+export type VibrationPattern = (typeof VibrationPattern)[keyof typeof VibrationPattern];
+
+/*
  * Enums.
  */
 
@@ -7,7 +13,6 @@ export const VibrationPattern = {
   MEDIUM: 20,
   HEAVY: 30
 } as const satisfies Record<string, VibratePattern>;
-export type VibrationPattern = (typeof VibrationPattern)[keyof typeof VibrationPattern];
 
 /*
  * Helpers.

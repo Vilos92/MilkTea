@@ -1,5 +1,9 @@
 import {globalStyle} from '@vanilla-extract/css';
 
+/*
+ * Styles.
+ */
+
 globalStyle(':root', {
   backgroundColor: '#000',
   colorScheme: 'dark'

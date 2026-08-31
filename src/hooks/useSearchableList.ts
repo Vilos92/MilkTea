@@ -8,6 +8,10 @@ import {smartSearch} from '../lib/search';
 
 export type GetSearchTerms<TItem> = (item: TItem) => string | readonly string[];
 
+/*
+ * Hook.
+ */
+
 /**
  * Manages query state, filtering, and keyboard-navigable active index for a searchable list.
  *

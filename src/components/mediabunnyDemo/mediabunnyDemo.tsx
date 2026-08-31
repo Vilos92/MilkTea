@@ -48,6 +48,14 @@ import {
 
 type DemoStatus = 'idle' | 'loading' | 'playing' | 'done' | 'error';
 
+type MediabunnyPlayerProps = {
+  renderConfig: RenderConfig;
+};
+
+type SetupFormProps = {
+  onConfirm: (config: RenderConfig) => void;
+};
+
 /*
  * Constants.
  */
@@ -78,10 +86,6 @@ export function MediabunnyDemo() {
 
   return <MediabunnyPlayer renderConfig={renderConfig} />;
 }
-
-type MediabunnyPlayerProps = {
-  renderConfig: RenderConfig;
-};
 
 function MediabunnyPlayer({renderConfig}: MediabunnyPlayerProps) {
   const {width: displayWidth, height: displayHeight} = scaleVideoSizeToMaxDisplay(renderConfig);
@@ -145,10 +149,6 @@ function MediabunnyPlayer({renderConfig}: MediabunnyPlayerProps) {
     </div>
   );
 }
-
-type SetupFormProps = {
-  onConfirm: (config: RenderConfig) => void;
-};
 
 function SetupForm({onConfirm}: SetupFormProps) {
   const [rawWidth, setRawWidth] = useState<number>(DEFAULT_VIDEO_SIZE_PRESET.width);

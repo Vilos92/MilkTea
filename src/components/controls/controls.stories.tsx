@@ -24,6 +24,8 @@ type WrapperProps = Pick<
   initialIsPlaying: boolean;
 };
 
+type Story = StoryObj<typeof meta>;
+
 /*
  * Meta.
  */
@@ -122,8 +124,6 @@ export default meta;
 /*
  * Stories.
  */
-
-type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => (

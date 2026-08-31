@@ -1,5 +1,9 @@
 import {style} from '@vanilla-extract/css';
 
+/*
+ * Styles.
+ */
+
 export const groupHeading = style({
   margin: 0,
   fontSize: '12px',

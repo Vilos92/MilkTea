@@ -52,7 +52,7 @@ export function usePresetKeys(
 
   useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
-      if (hasCommandModifier(event) || isEditableTarget(event.target)) {
+      if (checkHasCommandModifier(event) || checkIsEditableTarget(event.target)) {
         return;
       }
 
@@ -104,7 +104,7 @@ function handleFullscreenKey(event: KeyboardEvent, toggleFullscreen: () => void)
   return true;
 }
 
-function hasCommandModifier(event: KeyboardEvent): boolean {
+function checkHasCommandModifier(event: KeyboardEvent): boolean {
   return event.ctrlKey || event.metaKey || event.altKey;
 }
 
@@ -112,7 +112,7 @@ function getPresetDelta(event: KeyboardEvent): -1 | 1 | undefined {
   return PRESET_DELTAS[event.key] ?? PRESET_DELTAS[event.code];
 }
 
-function isEditableTarget(target: EventTarget | null): boolean {
+function checkIsEditableTarget(target: EventTarget | null): boolean {
   const element = target as HTMLElement | null;
   return Boolean(element?.closest?.('input, textarea') || element?.isContentEditable);
 }

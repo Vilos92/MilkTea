@@ -1,5 +1,9 @@
 import type {VideoFormatId} from '../video';
 
+/*
+ * Helpers.
+ */
+
 /**
  * Converts a WebM blob to another container format using Mediabunny.
  * The input blob is assumed to come from `MediaRecorder` (VP8/VP9-encoded WebM).

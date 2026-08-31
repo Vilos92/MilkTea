@@ -59,7 +59,7 @@ export function useOfflineExport({
   const nextJobIdRef = useRef(0);
   const onProcessedRef = useLatestRef(onProcessed);
 
-  const isActiveJob = useCallback((job: ExportJob) => activeJobRef.current?.id === job.id, []);
+  const checkIsActiveJob = useCallback((job: ExportJob) => activeJobRef.current?.id === job.id, []);
   const closeJobContext = useCallback(async (job: ExportJob) => {
     if (!job.audioContext) {
       return;
@@ -81,13 +81,13 @@ export function useOfflineExport({
   const finishJob = useCallback(
     async (job: ExportJob, nextState: OfflineExportState) => {
       await closeJobContext(job);
-      if (!isActiveJob(job)) {
+      if (!checkIsActiveJob(job)) {
         return;
       }
       activeJobRef.current = undefined;
       setState(nextState);
     },
-    [closeJobContext, isActiveJob]
+    [closeJobContext, checkIsActiveJob]
   );
   const finishCancelledJob = useCallback(
     async (job: ExportJob) => {
@@ -101,7 +101,7 @@ export function useOfflineExport({
     [finishJob, teardownJob]
   );
   const start = useCallback(() => {
-    if (!canStartExport(audioBuffer, presetIndex, state)) {
+    if (!checkCanStartExport(audioBuffer, presetIndex, state)) {
       return;
     }
 
@@ -135,7 +135,7 @@ export function useOfflineExport({
         audioBuffer,
         presetIndex,
         renderConfig,
-        isActiveJob,
+        checkIsActiveJob,
         setState,
         setProgress,
         finishJob,
@@ -151,7 +151,7 @@ export function useOfflineExport({
       closeJobContext,
       finishCancelledJob,
       finishJob,
-      isActiveJob,
+      checkIsActiveJob,
       onProcessedRef,
       presetIndex,
       renderConfig,
@@ -212,7 +212,7 @@ function cancelActiveJob(
   void finishCancelledJob(job);
 }
 
-function canStartExport(
+function checkCanStartExport(
   audioBuffer: AudioBuffer | undefined,
   presetIndex: number | undefined,
   state: OfflineExportState

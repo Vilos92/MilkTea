@@ -25,6 +25,7 @@ type PlaybackProgressProps = {
   onControlsEnter: () => void;
   onDragChange: (isDragging: boolean) => void;
 };
+
 type ProgressSliderProps = {
   duration: number;
   currentTime: number;

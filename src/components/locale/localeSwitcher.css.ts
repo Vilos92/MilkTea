@@ -1,5 +1,9 @@
 import {style} from '@vanilla-extract/css';
 
+/*
+ * Styles.
+ */
+
 /** Shift row left so the select is visually centered (globe width + gap). */
 export const root = style({
   display: 'flex',
