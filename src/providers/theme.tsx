@@ -28,10 +28,7 @@ type ThemeProviderProps = {
  * Context.
  */
 
-const ThemeContext = createContext<ThemeContextValue>({
-  resolvedTheme: 'light',
-  toggleTheme: () => {}
-});
+const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 /*
  * Provider.
@@ -95,7 +92,11 @@ export function ThemeProvider({children}: ThemeProviderProps) {
  */
 
 export function useThemeContext(): ThemeContextValue {
-  return useContext(ThemeContext);
+  const context = useContext(ThemeContext);
+  if (context === undefined) {
+    throw new Error('useThemeContext must be used within ThemeProvider.');
+  }
+  return context;
 }
 
 /*
