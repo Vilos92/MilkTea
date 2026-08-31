@@ -5,7 +5,15 @@ import {globalStyle} from '@vanilla-extract/css';
  */
 
 globalStyle(':root', {
-  backgroundColor: '#000',
+  backgroundColor: 'light-dark(#fff, #000)',
+  colorScheme: 'light dark'
+});
+
+globalStyle(':root[data-theme="light"]', {
+  colorScheme: 'light'
+});
+
+globalStyle(':root[data-theme="dark"]', {
   colorScheme: 'dark'
 });
 

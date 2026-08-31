@@ -14,21 +14,16 @@ export const container = style({
   justifyContent: 'center'
 });
 
-/** Pre-start only: background (and base color) respects light/dark mode. */
+/** Pre-start only: background and base color respect the selected theme. */
 export const containerSplash = style({
-  background: '#000',
-  color: 'rgba(255, 255, 255, 0.87)',
-  '@media': {
-    '(prefers-color-scheme: light)': {
-      background: '#fff',
-      color: '#213547'
-    }
-  }
+  background: 'light-dark(#fff, #000)',
+  color: 'light-dark(#213547, rgba(255, 255, 255, 0.87))'
 });
 
 export const containerStarted = style({
   background: '#000',
-  color: '#fff'
+  color: '#fff',
+  colorScheme: 'dark'
 });
 
 export const cursorHidden = style({

@@ -16,6 +16,7 @@ import {useButterchurn} from './hooks/useButterchurn';
 import {useCyclePresets} from './hooks/useCyclePresets';
 import {useExportController} from './hooks/useExportController';
 import {useMilkTeaKeyboard} from './hooks/useMilkTeaKeyboard';
+import {themePageBackground} from './lib/theme';
 import {vibrateHeavy} from './lib/vibrate';
 import type {RenderConfig} from './lib/video';
 import {
@@ -27,6 +28,7 @@ import {
 } from './lib/video';
 import {MilkTeaPanel, usePanelContext} from './providers/panel';
 import {useSettingsContext} from './providers/settings';
+import {useThemeContext} from './providers/theme';
 import {AudioSource} from './types/audio';
 import type {AudioFilePlayback} from './types/audio';
 
@@ -122,6 +124,14 @@ export function MilkTea() {
     isCanvasFullscreen,
     toggleFullscreen
   } = useButterchurn();
+
+  const {resolvedTheme} = useThemeContext();
+  useEffect(() => {
+    const themeColor = document.querySelector<HTMLMetaElement>('meta[data-theme-color]');
+    if (themeColor) {
+      themeColor.content = started ? themePageBackground.dark : themePageBackground[resolvedTheme];
+    }
+  }, [resolvedTheme, started]);
 
   const {restartPresetCycle} = useCyclePresets({
     started,

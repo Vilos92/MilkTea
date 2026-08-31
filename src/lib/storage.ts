@@ -6,6 +6,7 @@ import {
   DEFAULT_SHOW_TRACK_IN_CONTROLS,
   DEFAULT_SKIP_SPLASH_ON_LOAD
 } from './settings';
+import {readThemeOverride, type Theme, type ThemeOverride} from './theme';
 import type {Translations} from './translations';
 
 /*
@@ -15,6 +16,7 @@ import type {Translations} from './translations';
 type StorageKey =
   | 'locale'
   | 'translations'
+  | 'theme'
   | 'skipSplashOnLoad'
   | 'showPresetNameInControls'
   | 'showTrackNameInControls'
@@ -26,6 +28,7 @@ type MilkTeaStorageKey = `milktea:${StorageKey}`;
 type MilkTeaStorage = {
   locale: Locale;
   translations: Translations;
+  theme: Theme;
 };
 
 /*
@@ -44,6 +47,13 @@ export function setStorageLocale(value: MilkTeaStorage['locale'] | undefined): v
 }
 export function getStorageLocale(): MilkTeaStorage['locale'] | undefined {
   return getStorageItem<MilkTeaStorage['locale']>('locale');
+}
+
+export function setStorageThemeOverride(override: ThemeOverride): void {
+  setStorageItem('theme', override);
+}
+export function getStorageThemeOverride(): ThemeOverride {
+  return readThemeOverride(getStorageItem<unknown>('theme'));
 }
 
 export function setStorageSkipSplashOnLoad(value: boolean): void {

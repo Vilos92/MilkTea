@@ -4,28 +4,15 @@ import {style} from '@vanilla-extract/css';
  * Styles.
  */
 
-/** Shift row left so the select is visually centered (globe width + gap). */
 export const root = style({
   display: 'flex',
-  alignItems: 'center',
-  gap: '8px',
-  transform: 'translateX(calc(-0.5 * (1.5rem + 12px)))',
-  '@media': {
-    '(pointer: fine)': {
-      transform: 'translateX(calc(-0.5 * (1.25rem + 8px)))'
-    }
-  }
+  alignItems: 'center'
 });
 
 export const label = style({
   fontSize: '12px',
-  color: 'rgba(255,255,255,0.7)',
-  whiteSpace: 'nowrap',
-  '@media': {
-    '(prefers-color-scheme: light)': {
-      color: 'rgba(0,0,0,0.8)'
-    }
-  }
+  color: 'light-dark(rgba(0, 0, 0, 0.8), rgba(255, 255, 255, 0.82))',
+  whiteSpace: 'nowrap'
 });
 
 export const row = style({
@@ -63,89 +50,30 @@ export const globe = style({
   }
 });
 
-/** Force light label so it’s visible over dark animations. */
-export const labelAlwaysLight = style({
-  color: 'rgba(255,255,255,0.92)',
-  '@media': {
-    '(prefers-color-scheme: light)': {
-      color: 'rgba(255,255,255,0.92)'
-    }
-  }
-});
-
 export const select = style({
-  fontSize: '12px',
   height: '48px',
   minWidth: '7em',
   padding: '0 16px',
-  background: 'rgba(0,0,0,0.5)',
-  color: '#fff',
-  border: '1px solid rgba(255,255,255,0.25)',
-  borderRadius: '4px',
   boxSizing: 'border-box',
+  background: 'light-dark(rgba(255, 255, 255, 0.9), rgba(0, 0, 0, 0.5))',
+  color: 'light-dark(#171717, #fff)',
+  border: '1px solid light-dark(rgba(0, 0, 0, 0.24), rgba(255, 255, 255, 0.3))',
+  borderRadius: 0,
+  fontSize: '12px',
   ':focus-visible': {
-    outline: '2px solid rgba(255,255,255,0.6)',
+    outline: '2px solid light-dark(rgba(0, 0, 0, 0.48), rgba(255, 255, 255, 0.65))',
     outlineOffset: '2px'
   },
   '@media': {
     '(hover: hover)': {
       ':hover': {
-        borderColor: 'rgba(255,255,255,0.5)',
-        background: 'rgba(0,0,0,0.65)'
-      }
-    },
-    '(prefers-color-scheme: light)': {
-      background: 'rgba(255,255,255,0.9)',
-      color: '#213547',
-      border: '1px solid rgba(0,0,0,0.2)',
-      ':focus-visible': {
-        outline: '2px solid rgba(0,0,0,0.4)',
-        outlineOffset: '2px'
-      }
-    },
-    '(hover: hover) and (prefers-color-scheme: light)': {
-      ':hover': {
-        borderColor: 'rgba(0,0,0,0.35)',
-        background: 'rgba(255,255,255,1)'
+        background: 'light-dark(#fff, rgba(0, 0, 0, 0.65))',
+        borderColor: 'light-dark(rgba(0, 0, 0, 0.4), rgba(255, 255, 255, 0.5))'
       }
     },
     '(pointer: fine)': {
       height: '28px',
       padding: '0 8px'
-    }
-  }
-});
-
-/** Force light select so it’s visible over dark animations. */
-export const selectAlwaysLight = style({
-  background: 'rgba(0,0,0,0.5)',
-  color: '#fff',
-  border: '1px solid rgba(255,255,255,0.3)',
-  ':focus-visible': {
-    outline: '2px solid rgba(255,255,255,0.6)',
-    outlineOffset: '2px'
-  },
-  '@media': {
-    '(hover: hover)': {
-      ':hover': {
-        borderColor: 'rgba(255,255,255,0.5)',
-        background: 'rgba(0,0,0,0.65)'
-      }
-    },
-    '(prefers-color-scheme: light)': {
-      background: 'rgba(0,0,0,0.5)',
-      color: '#fff',
-      border: '1px solid rgba(255,255,255,0.3)',
-      ':focus-visible': {
-        outline: '2px solid rgba(255,255,255,0.6)',
-        outlineOffset: '2px'
-      }
-    },
-    '(hover: hover) and (prefers-color-scheme: light)': {
-      ':hover': {
-        borderColor: 'rgba(255,255,255,0.5)',
-        background: 'rgba(0,0,0,0.65)'
-      }
     }
   }
 });
