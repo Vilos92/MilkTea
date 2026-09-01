@@ -1,0 +1,34 @@
+# Publishes only after both platform workflows succeed and the GitHub draft
+# contains every named artifact and checksum.
+labels:
+  platform: linux/arm64
+  backend: docker
+
+depends_on:
+  - release-linux
+  - release-macos
+
+when:
+  - event: tag
+    ref: refs/tags/v*
+
+clone:
+  - name: clone
+    image: woodpeckerci/plugin-git
+    settings:
+      partial: false
+
+steps:
+  - name: validate
+    image: greg-zone/bun-git:1.4.0
+    commands:
+      - bun run release:verify-tag
+
+  - name: publish
+    image: greg-zone/bun-git:1.4.0
+    depends_on: [validate]
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_release_token
+    commands:
+      - bun run scripts/publish-release.ts

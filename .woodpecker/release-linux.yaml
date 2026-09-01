@@ -1,0 +1,55 @@
+# The macOS Local-backend agent drives an amd64 Linux container through Docker
+# Desktop. This produces x86_64 bundles while keeping the host workflow isolated
+# to trusted release tags.
+labels:
+  platform: darwin/arm64
+  backend: local
+  release: milktea
+
+depends_on:
+  - release-create
+
+when:
+  - event: tag
+    ref: refs/tags/v*
+
+steps:
+  - name: validate
+    image: bash
+    commands:
+      - bun run release:verify-tag
+
+  - name: build-linux
+    image: bash
+    depends_on: [validate]
+    commands:
+      - >-
+        docker run --rm --platform linux/amd64
+        --volume "$CI_WORKSPACE:/workspace"
+        --workdir /workspace
+        greg-zone/milktea-tauri-linux:1.95.0-bun1.4.0
+        bash -lc 'install -Dm755 /usr/local/bin/linuxdeploy-wrapper /root/.cache/tauri/linuxdeploy-x86_64.AppImage && ln -sf /opt/linuxdeploy/plugins/linuxdeploy-plugin-appimage/AppRun /root/.cache/tauri/linuxdeploy-plugin-appimage.AppImage && export PATH="/root/.cache/tauri:$PATH" && bun install --frozen-lockfile && bun run build:desktop -- --bundles appimage deb'
+      - mkdir -p release
+      - cp src-tauri/target/release/bundle/appimage/*.AppImage release/MilkTea-linux-x86_64.AppImage
+      - cp src-tauri/target/release/bundle/deb/*.deb release/MilkTea-linux-x86_64.deb
+      - cp src-tauri/icons/icon.png release/MilkTea-linux-icon.png
+      - cd release && shasum -a 256 MilkTea-linux-x86_64.AppImage > MilkTea-linux-x86_64.AppImage.sha256
+      - cd release && shasum -a 256 MilkTea-linux-x86_64.deb > MilkTea-linux-x86_64.deb.sha256
+      - cd release && shasum -a 256 MilkTea-linux-icon.png > MilkTea-linux-icon.png.sha256
+
+  - name: upload-linux
+    image: bash
+    depends_on: [build-linux]
+    environment:
+      GH_TOKEN:
+        from_secret: github_release_token
+    commands:
+      - >-
+        gh release upload "$CI_COMMIT_TAG"
+        release/MilkTea-linux-x86_64.AppImage
+        release/MilkTea-linux-x86_64.AppImage.sha256
+        release/MilkTea-linux-x86_64.deb
+        release/MilkTea-linux-x86_64.deb.sha256
+        release/MilkTea-linux-icon.png
+        release/MilkTea-linux-icon.png.sha256
+        --clobber --repo "$CI_REPO"
