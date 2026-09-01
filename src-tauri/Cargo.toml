@@ -1,6 +1,6 @@
 [package]
 name = "milktea"
-version = "0.0.0"
+version = "0.1.0"
 description = "Visual music in a lightweight desktop app"
 authors = ["Greg Linscheid"]
 repository = "https://github.com/Vilos92/MilkTea"
