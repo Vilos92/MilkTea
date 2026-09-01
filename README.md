@@ -6,15 +6,58 @@
 
 Visual music in the browser or a lightweight Tauri desktop app.
 
-## Develop
+## Quick start
 
-Install dependencies once:
+Use MilkTea immediately at [milktea.ink](https://milktea.ink).
+
+To install the desktop app on macOS or Linux:
 
 ```sh
+curl --proto '=https' --tlsv1.2 -fsSL https://github.com/Vilos92/MilkTea/releases/latest/download/install.sh | sh
+```
+
+The installer detects the operating system and architecture, verifies the release checksum, and installs without `sudo`. Run the same command again to update.
+
+- macOS: `~/Applications/MilkTea.app`
+- Linux: `~/Applications/MilkTea.AppImage`, `~/.local/bin/MilkTea`, and an XDG desktop entry
+
+Available releases support macOS on Apple Silicon and Intel, plus Linux x86_64 as AppImage and Debian packages. Linux ARM64, Windows, Homebrew, and automatic in-app updates are not available yet.
+
+> [!NOTE]
+> macOS builds are ad-hoc signed, not Apple-notarized. If macOS blocks the first launch, try opening MilkTea once, then approve it under **System Settings → Privacy & Security → Open Anyway**.
+
+### Uninstall
+
+Remove the managed desktop app while preserving saved settings:
+
+```sh
+curl --proto '=https' --tlsv1.2 -fsSL https://github.com/Vilos92/MilkTea/releases/latest/download/install.sh | sh -s -- uninstall
+```
+
+## Keyboard shortcuts
+
+| Shortcut                            | Action                             |
+| ----------------------------------- | ---------------------------------- |
+| `?`                                 | Open help                          |
+| `←`, `A`, or `H`                    | Previous preset                    |
+| `→`, `D`, or `L`                    | Next preset                        |
+| `;`                                 | Stage and launch preset            |
+| `Space`                             | Pause or play file audio           |
+| `F`                                 | Toggle fullscreen                  |
+| `R`                                 | Start or stop recording file audio |
+| `⌘K` on macOS or `Ctrl+K` elsewhere | Open the command palette           |
+
+## Develop
+
+Clone the repository and install its dependencies:
+
+```sh
+git clone https://github.com/Vilos92/MilkTea.git
+cd MilkTea
 vp install
 ```
 
-Run the standalone web app:
+Run the web app:
 
 ```sh
 vp dev
@@ -26,42 +69,24 @@ Run the same frontend in Tauri:
 bun run dev:desktop
 ```
 
-Build the web app or macOS desktop bundle:
+Build the web app or a desktop bundle:
 
 ```sh
 bun run build
 bun run build:desktop
 ```
 
-The desktop bundle is written under `src-tauri/target/release/bundle/`.
+Desktop bundles are written under `src-tauri/target/release/bundle/`.
 
-## Web and desktop behavior
+## Runtime behavior
 
 MilkTea keeps its browser-first architecture. Tauri loads the production Vite build and does not replace browser APIs with desktop-only abstractions.
 
-Settings continue to use `localStorage`. The desktop WebView persists that storage in its own application data, separate from the deployed website. A setting changed in one installation does not sync to the other.
+Settings use `localStorage`. The desktop WebView persists that storage in its own application data, separate from the deployed website. Settings do not sync between installations.
 
-File audio, microphone audio, rendering, and export remain frontend-owned. macOS receives the microphone usage description from `src-tauri/Info.plist`. System-audio screen capture is not offered in the macOS desktop app because Tauri uses WKWebView rather than Chromium; MilkTea's existing capability predicate already hides that unsupported source.
+File audio, microphone audio, rendering, and export remain frontend-owned. macOS receives the microphone usage description from `src-tauri/Info.plist`. System-audio screen capture is unavailable in the macOS desktop app because Tauri uses WKWebView rather than Chromium; MilkTea hides that unsupported source.
 
-## Install and update desktop builds
-
-The release installer chooses the matching macOS or Linux bundle, verifies its SHA-256 checksum, and installs it without `sudo`:
-
-```sh
-curl --proto '=https' --tlsv1.2 -fsSL https://github.com/Vilos92/MilkTea/releases/latest/download/install.sh | sh
-```
-
-Run the same command again to update. On macOS it installs `~/Applications/MilkTea.app`. On Linux it installs `~/Applications/MilkTea.AppImage`, `~/.local/bin/MilkTea`, and an XDG desktop entry.
-
-Uninstall the managed app and desktop integration while preserving saved settings:
-
-```sh
-curl --proto '=https' --tlsv1.2 -fsSL https://github.com/Vilos92/MilkTea/releases/latest/download/install.sh | sh -s -- uninstall
-```
-
-Releases currently include macOS Apple Silicon, macOS Intel, Linux x86_64 AppImage, and Linux x86_64 Debian packages. Linux ARM64, Windows, Homebrew, and Tauri's in-app updater are not available yet.
-
-## Publish a desktop release
+## Maintainer release process
 
 Prepare releases only from a clean local `main` that exactly matches `origin/main`:
 
@@ -72,7 +97,9 @@ git push origin main --follow-tags
 
 Use `minor` for the first release to advance the unreleased `0.0.0` package to `0.1.0`. After that, use `patch`, `minor`, or `major` according to the compatibility change.
 
-The release command runs the project checks, synchronizes `package.json`, `src-tauri/Cargo.toml`, and `src-tauri/Cargo.lock`, creates a `:bookmark:` release commit, and creates the matching `vX.Y.Z` tag. It does not push. Inspect the commit and tag before the explicit push.
+The release command runs project checks, synchronizes `package.json`, `src-tauri/Cargo.toml`, and `src-tauri/Cargo.lock`, creates a `:bookmark:` release commit, and creates the matching `vX.Y.Z` tag. It does not push. Inspect the commit and tag before the explicit push.
+
+### Woodpecker release flow
 
 Woodpecker handles tagged releases in four gated workflows:
 
@@ -85,6 +112,8 @@ A platform failure leaves the GitHub release as a draft. Rerun the failed Woodpe
 
 The Woodpecker repository needs a `github_release_token` secret with GitHub **Contents: read and write** access to `Vilos92/MilkTea`. Woodpecker must allow that secret for tag events. Do not expose it to pull request workflows.
 
+### Release runner
+
 The Mac mini runs a separate Woodpecker Local-backend agent with one concurrent workflow and the mandatory `release=milktea` label. Its managed files are:
 
 - `~/Library/LaunchAgents/com.greg.woodpecker-release-agent.plist`
@@ -93,5 +122,3 @@ The Mac mini runs a separate Woodpecker Local-backend agent with one concurrent 
 - `~/.local/bin/plugin-git`
 
 The launcher reads only `WOODPECKER_AGENT_SECRET` from `greg-zone/.env`. The Woodpecker server exposes gRPC only on `127.0.0.1:9000`. Linux bundles use the local `greg-zone/milktea-tauri-linux:1.95.0-bun1.4.0` image, built from `greg-zone/ci/milktea-tauri-linux/Dockerfile`.
-
-The macOS builds use an ad-hoc signature. This satisfies Apple Silicon's requirement that downloaded code have a signature, but it is not Apple Developer ID signing or notarization. macOS can still block the first launch. After attempting to open MilkTea, approve it under **System Settings > Privacy & Security > Open Anyway**. A seamless first launch for public downloads requires the paid Apple Developer Program, Developer ID signing, and notarization. It does not require the Mac App Store.
