@@ -10,6 +10,8 @@
     "pwa-assets.config.ts",
     // Run directly by `bun` from the `export-presets` script.
     "scripts/export-butterchurn-presets.ts",
+    // Run directly by Woodpecker after every platform uploads its release assets.
+    "scripts/publish-release.ts",
     // Built but never wired up: a faint preview watermark for the visualizer. Kept as a root so
     // reachability does not report it while the feature is still on the shelf.
     "src/components/visualizer/splashOverlay.tsx",

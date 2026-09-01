@@ -1,0 +1,48 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "MilkTea",
+  "version": "../package.json",
+  "identifier": "com.greglinscheid.milktea",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420",
+    "beforeDevCommand": "bun run dev -- --port 1420 --strictPort",
+    "beforeBuildCommand": "bun run build"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "MilkTea",
+        "width": 1280,
+        "height": 800,
+        "minWidth": 640,
+        "minHeight": 480,
+        "resizable": true,
+        "fullscreen": false,
+        "center": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "macOS": {
+      "signingIdentity": "-"
+    },
+    "linux": {
+      "appimage": {
+        "bundleMediaFramework": true
+      }
+    }
+  }
+}

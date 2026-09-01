@@ -1,0 +1,45 @@
+# Creates a draft before platform builds start. The final workflow publishes it
+# only after every required asset is present.
+labels:
+  platform: linux/arm64
+  backend: docker
+
+when:
+  - event: tag
+    ref: refs/tags/v*
+
+clone:
+  - name: clone
+    image: woodpeckerci/plugin-git
+    settings:
+      partial: false
+
+steps:
+  - name: validate
+    image: greg-zone/bun-git:1.4.0
+    commands:
+      - bun run release:verify-tag
+
+  - name: prepare-installer
+    image: greg-zone/bun-git:1.4.0
+    depends_on: [validate]
+    commands:
+      - mkdir -p release
+      - cp scripts/install-milktea.sh release/install.sh
+      - cd release && sha256sum install.sh > install.sh.sha256
+
+  - name: create-draft
+    image: woodpeckerci/plugin-release:0.3.1
+    depends_on: [prepare-installer]
+    settings:
+      api_key:
+        from_secret: github_release_token
+      draft: true
+      file_exists: overwrite
+      files:
+        - release/install.sh
+        - release/install.sh.sha256
+      generate_release_notes: true
+      overwrite: true
+      target: ${CI_COMMIT_SHA}
+      title: MilkTea ${CI_COMMIT_TAG}
