@@ -108,7 +108,7 @@ export default defineConfig({
         extends: true,
         test: {
           name: 'unit',
-          include: ['src/**/*.spec.ts'],
+          include: ['src/**/*.spec.ts', 'scripts/**/*.spec.ts'],
           environment: 'node'
         }
       },

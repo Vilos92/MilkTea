@@ -38,7 +38,14 @@ steps:
         --volume "$CI_WORKSPACE:/workspace"
         --workdir /workspace
         greg-zone/milktea-tauri-linux:1.95.0-bun1.4.0
-        bash -lc 'install -Dm755 /usr/local/bin/linuxdeploy-wrapper /root/.cache/tauri/linuxdeploy-x86_64.AppImage && ln -sf /opt/linuxdeploy/plugins/linuxdeploy-plugin-appimage/AppRun /root/.cache/tauri/linuxdeploy-plugin-appimage.AppImage && export PATH="/root/.cache/tauri:$PATH" && bun install --frozen-lockfile && bun run build:desktop -- --bundles appimage deb'
+        bash -lc 'install -Dm755 /usr/local/bin/linuxdeploy-wrapper /root/.cache/tauri/linuxdeploy-x86_64.AppImage &&
+        ln -sf /opt/linuxdeploy/plugins/linuxdeploy-plugin-appimage/AppRun /root/.cache/tauri/linuxdeploy-plugin-appimage.AppImage &&
+        export PATH="/root/.cache/tauri:$PATH" &&
+        apt-get update &&
+        DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends squashfs-tools xauth xvfb &&
+        bun install --frozen-lockfile &&
+        bun run build:desktop -- --bundles appimage deb &&
+        scripts/smoke-appimage.sh src-tauri/target/release/bundle/appimage/*.AppImage'
       - mkdir -p release
       - cp src-tauri/target/release/bundle/appimage/*.AppImage release/MilkTea-linux-x86_64.AppImage
       - cp src-tauri/target/release/bundle/deb/*.deb release/MilkTea-linux-x86_64.deb

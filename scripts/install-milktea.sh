@@ -148,7 +148,8 @@ EOF
   fi
 }
 
-download_verified() {
+# Keep each download's working variables inside the helper invocation.
+download_verified() (
   asset="$1"
   checksum_command="$2"
   checksum="$asset.sha256"
@@ -163,7 +164,7 @@ download_verified() {
   else
     (cd "$TEMP_DIR" && sha256sum -c "$checksum")
   fi
-}
+)
 
 uninstall() {
   case "$(uname -s)" in
