@@ -4,7 +4,7 @@
   <img src="public/milktea-icon.png" alt="MilkTea" width="256" height="256" />
 </p>
 
-Visual music in the browser or a lightweight Tauri desktop app.
+MilkDrop music visualizations in the browser or a lightweight Tauri desktop app, powered by [Butterchurn](https://github.com/jberg/butterchurn).
 
 ## Quick start
 
