@@ -54,13 +54,13 @@ Clone the repository and install its dependencies:
 ```sh
 git clone https://github.com/Vilos92/MilkTea.git
 cd MilkTea
-vp install
+bun install
 ```
 
 Run the web app:
 
 ```sh
-vp dev
+bun run dev
 ```
 
 Run the same frontend in Tauri:
