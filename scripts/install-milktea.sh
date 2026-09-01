@@ -118,13 +118,13 @@ install_linux() {
   staged="$app_dir/.MilkTea.AppImage.new.$$"
   icon_dir="$data_home/icons/hicolor/512x512/apps"
   desktop_dir="$data_home/applications"
-  desktop_file="$desktop_dir/milktea.desktop"
+  desktop_file="$desktop_dir/MilkTea.desktop"
 
   mkdir -p "$app_dir" "$bin_dir" "$desktop_dir" "$icon_dir"
   install -m 0755 "$TEMP_DIR/$asset" "$staged"
   mv "$staged" "$target"
-  install -m 0644 "$TEMP_DIR/$icon_asset" "$icon_dir/milktea.png"
-  ln -sfn "$target" "$bin_dir/milktea"
+  install -m 0644 "$TEMP_DIR/$icon_asset" "$icon_dir/MilkTea.png"
+  ln -sfn "$target" "$bin_dir/MilkTea"
 
   cat >"$desktop_file" <<EOF
 [Desktop Entry]
@@ -132,7 +132,7 @@ Type=Application
 Name=MilkTea
 Comment=Visual music in a lightweight desktop app
 Exec="$target"
-Icon=$icon_dir/milktea.png
+Icon=$icon_dir/MilkTea.png
 Terminal=false
 Categories=AudioVideo;Audio;
 X-MilkTea-Installer=github-release
@@ -176,9 +176,9 @@ uninstall() {
       data_home="${XDG_DATA_HOME:-$HOME/.local/share}"
       bin_dir="${MILKTEA_BIN_DIR:-$HOME/.local/bin}"
       rm -f "$app_dir/MilkTea.AppImage"
-      rm -f "$bin_dir/milktea"
-      rm -f "$data_home/applications/milktea.desktop"
-      rm -f "$data_home/icons/hicolor/512x512/apps/milktea.png"
+      rm -f "$bin_dir/MilkTea"
+      rm -f "$data_home/applications/MilkTea.desktop"
+      rm -f "$data_home/icons/hicolor/512x512/apps/MilkTea.png"
       ;;
     *)
       fail 'MilkTea supports this uninstaller on macOS and Linux.'

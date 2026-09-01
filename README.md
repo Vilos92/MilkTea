@@ -1,5 +1,9 @@
 # MilkTea
 
+<p align="center">
+  <img src="public/milktea-icon.png" alt="MilkTea" width="256" height="256" />
+</p>
+
 Visual music in the browser or a lightweight Tauri desktop app.
 
 ## Develop
@@ -47,7 +51,7 @@ The release installer chooses the matching macOS or Linux bundle, verifies its S
 curl --proto '=https' --tlsv1.2 -fsSL https://github.com/Vilos92/MilkTea/releases/latest/download/install.sh | sh
 ```
 
-Run the same command again to update. On macOS it installs `~/Applications/MilkTea.app`. On Linux it installs `~/Applications/MilkTea.AppImage`, `~/.local/bin/milktea`, and an XDG desktop entry.
+Run the same command again to update. On macOS it installs `~/Applications/MilkTea.app`. On Linux it installs `~/Applications/MilkTea.AppImage`, `~/.local/bin/MilkTea`, and an XDG desktop entry.
 
 Uninstall the managed app and desktop integration while preserving saved settings:
 

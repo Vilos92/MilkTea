@@ -1,6 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "MilkTea",
+  "mainBinaryName": "MilkTea",
   "version": "../package.json",
   "identifier": "com.greglinscheid.milktea",
   "build": {

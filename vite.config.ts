@@ -74,7 +74,6 @@ export default defineConfig({
       devOptions: {enabled: process.env.PWA_DEV === '1'},
       includeAssets: [
         'favicon.ico',
-        'favicon.svg',
         'pwa-64x64.png',
         'pwa-192x192.png',
         'pwa-512x512.png',
