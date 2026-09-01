@@ -1,3 +1,4 @@
+import {Buffer} from 'node:buffer';
 import {readFile} from 'node:fs/promises';
 import {join} from 'node:path';
 
@@ -19,6 +20,8 @@ const ORIGIN_MAIN = 'origin/main';
 const SEMANTIC_VERSION_PATTERN = /^\d+\.\d+\.\d+$/;
 const CARGO_PACKAGE_VERSION_PATTERN = /\[package\][\s\S]*?\nversion = "([^"]+)"\n/;
 const CARGO_LOCK_PACKAGE_PATTERN = /\[\[package\]\]\nname = "milktea"\nversion = "([^"]+)"\n/;
+const GIT_CONFIG_COUNT = '1';
+const GITHUB_AUTH_HEADER_CONFIG_KEY = 'http.https://github.com/.extraheader';
 const repoRoot = join(import.meta.dir, '..');
 
 /*
@@ -53,7 +56,9 @@ if (cargoVersion !== version || cargoLockVersion !== version) {
   );
 }
 
-runGit(['fetch', '--quiet', 'origin', 'main']);
+const githubToken = process.env.GITHUB_TOKEN;
+const fetchEnvironment = githubToken ? createGitHubFetchEnvironment(githubToken) : undefined;
+runGit(['fetch', '--quiet', 'origin', 'main'], {environment: fetchEnvironment});
 const ancestryCheck = Bun.spawnSync({
   cmd: ['git', 'merge-base', '--is-ancestor', commit, ORIGIN_MAIN],
   cwd: repoRoot,
@@ -69,6 +74,17 @@ console.info(`Release ${tag} verified at ${commit.slice(0, 12)}.`);
 /*
  * Helpers.
  */
+
+function createGitHubFetchEnvironment(githubToken: string): Record<string, string | undefined> {
+  const credentials = Buffer.from(`x-access-token:${githubToken}`).toString('base64');
+
+  return {
+    ...process.env,
+    GIT_CONFIG_COUNT,
+    GIT_CONFIG_KEY_0: GITHUB_AUTH_HEADER_CONFIG_KEY,
+    GIT_CONFIG_VALUE_0: `AUTHORIZATION: basic ${credentials}`
+  };
+}
 
 function matchVersion(contents: string, pattern: RegExp, filename: string): string {
   const version = contents.match(pattern)?.[1];

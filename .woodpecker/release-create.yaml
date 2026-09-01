@@ -17,6 +17,9 @@ clone:
 steps:
   - name: validate
     image: greg-zone/bun-git:1.4.0
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_release_token
     commands:
       - bun run release:verify-tag
 

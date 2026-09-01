@@ -16,6 +16,9 @@ when:
 steps:
   - name: validate
     image: bash
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_release_token
     commands:
       - bun run release:verify-tag
 
