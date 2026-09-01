@@ -122,3 +122,7 @@ The Mac mini runs a separate Woodpecker Local-backend agent with one concurrent 
 - `~/.local/bin/plugin-git`
 
 The launcher reads only `WOODPECKER_AGENT_SECRET` from `greg-zone/.env`. The Woodpecker server exposes gRPC only on `127.0.0.1:9000`. Linux bundles use the local `greg-zone/milktea-tauri-linux:1.95.0-bun1.4.0` image, built from `greg-zone/ci/milktea-tauri-linux/Dockerfile`.
+
+## License
+
+MilkTea is available under the [MIT License](LICENSE). Copyright © 2026 Greg Linscheid.
