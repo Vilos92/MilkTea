@@ -47,9 +47,13 @@ if (!token || !tag) {
   throw new Error('GITHUB_TOKEN and CI_COMMIT_TAG are required to publish a release.');
 }
 
-const release = await requestRelease(
-  `https://api.github.com/repos/${REPOSITORY}/releases/tags/${encodeURIComponent(tag)}`
+const releases = await requestGitHub<readonly GitHubRelease[]>(
+  `https://api.github.com/repos/${REPOSITORY}/releases?per_page=100`
 );
+const release = releases.find(candidate => candidate.tag_name === tag);
+if (!release) {
+  throw new Error(`Could not find GitHub release ${tag}.`);
+}
 
 const assetsByName = new Map(release.assets.map(asset => [asset.name, asset]));
 const missingAssets = REQUIRED_ASSETS.filter(name => {
@@ -61,7 +65,7 @@ if (missingAssets.length > 0) {
 }
 
 if (release.draft) {
-  const publishedRelease = await requestRelease(
+  const publishedRelease = await requestGitHub<GitHubRelease>(
     `https://api.github.com/repos/${REPOSITORY}/releases/${release.id}`,
     {
       body: JSON.stringify({draft: false, make_latest: 'true'}),
@@ -81,7 +85,7 @@ if (release.draft) {
  * Helpers.
  */
 
-async function requestRelease(url: string, init: RequestInit = {}): Promise<GitHubRelease> {
+async function requestGitHub<T>(url: string, init: RequestInit = {}): Promise<T> {
   const headers = new Headers(init.headers);
   headers.set('Accept', 'application/vnd.github+json');
   headers.set('Authorization', `Bearer ${token}`);
@@ -98,5 +102,5 @@ async function requestRelease(url: string, init: RequestInit = {}): Promise<GitH
     throw new Error(`GitHub release request failed (${response.status}): ${detail}`);
   }
 
-  return (await response.json()) as GitHubRelease;
+  return (await response.json()) as T;
 }
