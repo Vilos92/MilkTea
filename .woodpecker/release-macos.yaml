@@ -38,14 +38,16 @@ steps:
   - name: build-macos
     image: bash
     depends_on: [install]
+    environment:
+      CI: 'true'
     commands:
       - bun run build:desktop -- --target aarch64-apple-darwin --bundles dmg
       - bun run build:desktop -- --target x86_64-apple-darwin --bundles dmg
       - mkdir -p release
       - cp src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg release/MilkTea-macos-aarch64.dmg
       - cp src-tauri/target/x86_64-apple-darwin/release/bundle/dmg/*.dmg release/MilkTea-macos-x86_64.dmg
-      - cd release && shasum -a 256 MilkTea-macos-aarch64.dmg > MilkTea-macos-aarch64.dmg.sha256
-      - cd release && shasum -a 256 MilkTea-macos-x86_64.dmg > MilkTea-macos-x86_64.dmg.sha256
+      - (cd release && shasum -a 256 MilkTea-macos-aarch64.dmg > MilkTea-macos-aarch64.dmg.sha256)
+      - (cd release && shasum -a 256 MilkTea-macos-x86_64.dmg > MilkTea-macos-x86_64.dmg.sha256)
 
   - name: upload-macos
     image: bash

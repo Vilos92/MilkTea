@@ -43,9 +43,9 @@ steps:
       - cp src-tauri/target/release/bundle/appimage/*.AppImage release/MilkTea-linux-x86_64.AppImage
       - cp src-tauri/target/release/bundle/deb/*.deb release/MilkTea-linux-x86_64.deb
       - cp src-tauri/icons/icon.png release/MilkTea-linux-icon.png
-      - cd release && shasum -a 256 MilkTea-linux-x86_64.AppImage > MilkTea-linux-x86_64.AppImage.sha256
-      - cd release && shasum -a 256 MilkTea-linux-x86_64.deb > MilkTea-linux-x86_64.deb.sha256
-      - cd release && shasum -a 256 MilkTea-linux-icon.png > MilkTea-linux-icon.png.sha256
+      - (cd release && shasum -a 256 MilkTea-linux-x86_64.AppImage > MilkTea-linux-x86_64.AppImage.sha256)
+      - (cd release && shasum -a 256 MilkTea-linux-x86_64.deb > MilkTea-linux-x86_64.deb.sha256)
+      - (cd release && shasum -a 256 MilkTea-linux-icon.png > MilkTea-linux-icon.png.sha256)
 
   - name: upload-linux
     image: bash
