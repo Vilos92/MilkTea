@@ -12,6 +12,7 @@ clone:
   - name: clone
     image: woodpeckerci/plugin-git
     settings:
+      lfs: false
       partial: false
 
 steps:
