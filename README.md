@@ -95,7 +95,7 @@ bun run release -- patch
 git push origin main --follow-tags
 ```
 
-Use `minor` for the first release to advance the unreleased `0.0.0` package to `0.1.0`. After that, use `patch`, `minor`, or `major` according to the compatibility change.
+Choose `patch`, `minor`, or `major` according to the compatibility change.
 
 The release command runs project checks, synchronizes `package.json`, `src-tauri/Cargo.toml`, and `src-tauri/Cargo.lock`, creates a `:bookmark:` release commit, and creates the matching `vX.Y.Z` tag. It does not push. Inspect the commit and tag before the explicit push.
 
@@ -108,9 +108,21 @@ Woodpecker handles tagged releases in four gated workflows:
 3. `release-macos` builds Apple Silicon and Intel DMGs on the Mac mini.
 4. `release-publish` checks every required asset and checksum, then publishes the draft.
 
-A platform failure leaves the GitHub release as a draft. Rerun the failed Woodpecker workflow after fixing the runner. Asset uploads use stable names and `--clobber`, so a retry replaces incomplete files.
+Budget about 20 minutes for a cold release. The one-concurrency Mac mini runs the Linux and macOS workflows serially; the two macOS architectures take most of that time.
+
+A platform failure leaves the GitHub release as a draft. Woodpecker can restart only the whole pipeline, not one workflow or step. Restart the pipeline for a transient runner failure. Asset uploads use stable names and `--clobber`, so the retry replaces incomplete files.
+
+If both platform workflows uploaded every asset and only `release-publish` failed, replay only its idempotent publisher from a checked-out fix:
+
+```sh
+GITHUB_TOKEN="$(gh auth token)" CI_COMMIT_TAG=vX.Y.Z bun run scripts/publish-release.ts
+```
+
+The script verifies every required asset and checksum before publishing. Never move a published tag. Issue a patch release instead.
 
 The Woodpecker repository needs a `github_release_token` secret with GitHub **Contents: read and write** access to `Vilos92/MilkTea`. Woodpecker must allow that secret for tag events. Do not expose it to pull request workflows.
+
+Keep the GitHub repository public. The quick-start installer downloads release assets without authentication for both installs and updates.
 
 ### Release runner
 
