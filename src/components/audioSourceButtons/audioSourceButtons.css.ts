@@ -17,14 +17,16 @@ export const audioSourceRoot = style({
   gap: '8px',
   transition: 'opacity 0.35s ease',
   selectors: {
-    /* 3 visible buttons (input + 3 buttons = 4 children, no 5th) */
+    // Fewer than 4 visible buttons (input + buttons totals 4 children or fewer, no 5th).
+    // Button count varies by platform: mic and screen-capture are each hidden when the
+    // platform can't support them.
     '&:not(:has(> *:nth-child(5)))': {
       '@media': {
         '(max-width: 280px)': {top: '68px'},
         '(max-width: 280px) and (pointer: fine)': {top: '48px'}
       }
     },
-    /* 4 visible buttons (input + 4 buttons = 5 children) */
+    // 4 or more visible buttons (input + buttons totals 5 children or more).
     '&:has(> *:nth-child(5))': {
       '@media': {
         '(max-width: 350px)': {top: '68px'},

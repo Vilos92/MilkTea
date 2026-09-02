@@ -2,7 +2,7 @@ import {useCallback, useEffect, useMemo, useRef} from 'preact/hooks';
 
 import {useHasFinePointer} from '../../hooks/useHasFinePointer';
 import {type GetSearchTerms, useSearchableList} from '../../hooks/useSearchableList';
-import {likelySupportsDisplayAudio, supportsRequestFullscreen} from '../../lib/platform';
+import {likelySupportsDisplayAudio, supportsMicCapture, supportsRequestFullscreen} from '../../lib/platform';
 import {VibrationPattern} from '../../lib/vibrate';
 import {useSettingsContext} from '../../providers/settings';
 import {type Translate, useTranslate} from '../../providers/translation';
@@ -430,12 +430,14 @@ function usePaletteItems(
           onSelect: onOpenFilePicker,
           iconType: 'file-audio' as IconType
         },
-        {
-          type: PaletteItemType.AUDIO_INPUT_MIC,
-          label: t('source.microphone'),
-          onSelect: onSelectMic,
-          iconType: 'microphone' as IconType
-        },
+        supportsMicCapture
+          ? {
+              type: PaletteItemType.AUDIO_INPUT_MIC,
+              label: t('source.microphone'),
+              onSelect: onSelectMic,
+              iconType: 'microphone' as IconType
+            }
+          : undefined,
         likelySupportsDisplayAudio
           ? {
               type: PaletteItemType.AUDIO_INPUT_AUDIO_CAPTURE,
