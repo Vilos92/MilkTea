@@ -1,12 +1,15 @@
-# Runs fmt, lint, typecheck, unit tests, and Storybook browser tests on every
-# push to main and every pull request. On pull requests, also runs a fallow
-# audit diffing against the merge base. The jobs are independent so a slow one
-# never gates the rest: the unit tests skip the Playwright install that only the
-# Storybook browser job needs.
+# Runs fmt, lint, typecheck, unit tests, Storybook browser tests, and Rust
+# checks on every push to main and every pull request. On pull requests, also
+# runs a fallow audit diffing against the merge base. The jobs are independent
+# so a slow one never gates the rest: the unit tests skip the Playwright install
+# that only the Storybook browser job needs, and the Rust checks run in their
+# own image starting immediately.
 #
-# greg-zone/bun-git is oven/bun plus git, built locally on the CI host from
-# greg-zone/ci/bun-git/Dockerfile. If every step fails pulling the image,
-# rebuild it there.
+# Step images build locally on the CI host under greg-zone/ci/, never pushed:
+# greg-zone/bun-git (oven/bun plus git, for the JS steps) and
+# greg-zone/milktea-rust (rust 1.95.0 with rustfmt, clippy, and the Tauri Linux
+# libraries, for the Rust steps). If every step fails pulling an image, rebuild
+# it there.
 when:
   - event: pull_request
   - event: push
@@ -69,3 +72,20 @@ steps:
       - event: pull_request
     commands:
       - bun run fallow:audit -- --base 'HEAD^1'
+
+  # The Rust checks run cargo directly in the rust image, since the bun scripts
+  # are thin wrappers and this image has no bun. They need no dependencies, so
+  # they start immediately alongside the JS steps.
+  - name: rust-fmt
+    image: greg-zone/milktea-rust:1.95.0
+    depends_on: []
+    commands:
+      # same command as `bun run fmt:rust:check`
+      - cargo fmt --manifest-path src-tauri/Cargo.toml --check
+
+  - name: rust-clippy
+    image: greg-zone/milktea-rust:1.95.0
+    depends_on: []
+    commands:
+      # same command as `bun run lint:rust`
+      - cargo clippy --manifest-path src-tauri/Cargo.toml -- -D warnings
