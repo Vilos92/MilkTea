@@ -36,6 +36,8 @@
     "release:verify-tag": "bun run scripts/validate-release-tag.ts",
     "storybook": "storybook dev -p 6006",
     "test": "vp test",
+    "test:storybook": "vp test --project storybook",
+    "test:unit": "vp test --project unit",
     "typecheck": "tsc -b",
     "version": "bun run release:sync"
   },

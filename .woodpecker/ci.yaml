@@ -1,6 +1,8 @@
-# Runs fmt, lint, typecheck, and Playwright-backed tests on every push to
-# main and every pull request. On pull requests, also runs a fallow audit
-# diffing against the merge base.
+# Runs fmt, lint, typecheck, unit tests, and Storybook browser tests on every
+# push to main and every pull request. On pull requests, also runs a fallow
+# audit diffing against the merge base. The jobs are independent so a slow one
+# never gates the rest: the unit tests skip the Playwright install that only the
+# Storybook browser job needs.
 #
 # greg-zone/bun-git is oven/bun plus git, built locally on the CI host from
 # greg-zone/ci/bun-git/Dockerfile. If every step fails pulling the image,
@@ -47,12 +49,18 @@ steps:
     commands:
       - bun run typecheck
 
-  - name: test
+  - name: test-unit
+    image: greg-zone/bun-git:1.4.0
+    depends_on: [install]
+    commands:
+      - bun run test:unit
+
+  - name: test-storybook
     image: greg-zone/bun-git:1.4.0
     depends_on: [install]
     commands:
       - bunx playwright install --with-deps chromium chromium-headless-shell
-      - bun run test
+      - bun run test:storybook
 
   - name: fallow
     image: greg-zone/bun-git:1.4.0
