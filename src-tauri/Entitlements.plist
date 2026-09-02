@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!--
+    The bundler signs with the hardened runtime, which denies microphone access outright unless
+    this entitlement is present. Without it macOS never even shows the consent prompt, so the
+    native cpal input stream fails in installed builds while `tauri dev` runs unsigned and works.
+    System-audio capture goes through a CoreAudio process tap, which the hardened runtime does not
+    gate, which is why only the microphone source breaks.
+  -->
+  <key>com.apple.security.device.audio-input</key>
+  <true/>
+</dict>
+</plist>
