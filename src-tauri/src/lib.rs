@@ -18,14 +18,15 @@ pub fn run() {
             let handle = webview.app_handle().clone();
             std::thread::spawn(move || {
                 let state = handle.state::<audio_capture::AudioCaptureState>();
-                if let Err(error) = audio_capture::stop_capture(&state) {
-                    eprintln!("Failed to stop system audio capture on page load: {error}");
+                // Unscoped stop: a reload should tear down whatever capture is running.
+                if let Err(error) = audio_capture::stop_capture(&state, None) {
+                    eprintln!("Failed to stop audio capture on page load: {error}");
                 }
             });
         })
         .invoke_handler(tauri::generate_handler![
-            audio_capture::start_system_audio_capture,
-            audio_capture::stop_system_audio_capture
+            audio_capture::start_audio_capture,
+            audio_capture::stop_audio_capture
         ])
         .run(tauri::generate_context!())
         .expect("error while running MilkTea");

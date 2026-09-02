@@ -2,11 +2,11 @@ import type {RefObject} from 'preact';
 import {useCallback, useRef, useState} from 'preact/hooks';
 
 import type {PcmSink} from '../lib/pcmPlayer';
-import {likelySupportsDisplayAudio, supportsMicCapture} from '../lib/platform';
+import {isTauri, likelySupportsDisplayAudio, supportsMicCapture} from '../lib/platform';
 import {AudioSource} from '../types/audio';
 import type {AudioFilePlayback} from '../types/audio';
 import type {PcmSourceOptions} from './useButterchurn';
-import {useSystemAudioSource} from './useSystemAudioSource';
+import {useNativeAudioSources} from './useNativeAudioSource';
 
 /*
  * Types.
@@ -66,10 +66,13 @@ export function useAudioSource({
   }, [connectOscillator]);
 
   const {
-    start: startSystemAudio,
-    cancelPendingStart: cancelSystemAudioStart,
-    stop: stopSystemAudioHardware
-  } = useSystemAudioSource({
+    startSystemAudio,
+    cancelSystemAudioStart,
+    stopSystemAudioHardware,
+    startMicrophone,
+    cancelMicrophoneStart,
+    stopMicrophoneHardware
+  } = useNativeAudioSources({
     connectPcmSource,
     fallBackToOscillator,
     setAudioSource,
@@ -126,6 +129,7 @@ export function useAudioSource({
       // Every dispatch cancels in-flight setup, including re-picking the current source, so a slow
       // native start can never install itself over a newer choice.
       cancelSystemAudioStart();
+      cancelMicrophoneStart();
       setPendingAudioSource(undefined);
 
       if (newSource === audioSource) {
@@ -137,6 +141,7 @@ export function useAudioSource({
       }
 
       stopMicHardware();
+      stopMicrophoneHardware();
       stopSystemAudioHardware();
 
       switch (newSource) {
@@ -146,6 +151,14 @@ export function useAudioSource({
         case AudioSource.MICROPHONE:
           if (!supportsMicCapture) {
             console.warn('Microphone capture is not supported on this platform');
+            return;
+          }
+
+          // The desktop shell captures the mic natively through the same cpal bus as system audio.
+          // That routes frames to the analyser only, sidesteps WebKitGTK denying `getUserMedia` on
+          // Tauri Linux, and avoids the macOS WKWebView double permission prompt.
+          if (isTauri) {
+            startMicrophone();
             return;
           }
 
@@ -201,11 +214,14 @@ export function useAudioSource({
     [
       audioSource,
       stopMicHardware,
+      stopMicrophoneHardware,
       stopSystemAudioHardware,
       cancelSystemAudioStart,
+      cancelMicrophoneStart,
       connectMediaStream,
       connectOscillator,
-      startSystemAudio
+      startSystemAudio,
+      startMicrophone
     ]
   );
 
