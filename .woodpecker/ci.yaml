@@ -29,6 +29,12 @@ steps:
     commands:
       - bun run fmt:check
 
+  - name: comment-fmt
+    image: greg-zone/bun-git:1.4.0
+    depends_on: [install]
+    commands:
+      - bun run comment-fmt:check
+
   - name: lint
     image: greg-zone/bun-git:1.4.0
     depends_on: [install]

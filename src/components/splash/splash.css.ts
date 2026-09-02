@@ -18,7 +18,9 @@ export const splashOverlay = style({
   color: 'light-dark(#171717, #fff)'
 });
 
-/** Transparent cutout sized to the button only. The dark overlay is box-shadow, the hole is the button area. */
+/**
+ * Transparent cutout sized to the button only. The dark overlay is box-shadow, the hole is the button area.
+ */
 export const splashCutout = style({
   boxShadow: '0 0 0 100vmax light-dark(#fff, #000)'
 });

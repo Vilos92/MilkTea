@@ -26,6 +26,7 @@
         "@vitest/browser-playwright": "4.1.10",
         "@vitest/coverage-v8": "4.1.10",
         "bun-types": "^1.3.9",
+        "comment-fmt": "^0.1.10",
         "eslint-plugin-storybook": "^10.2.16",
         "fallow": "^2.75.0",
         "ora": "^9.3.0",
@@ -846,6 +847,8 @@
     "colorette": ["colorette@2.0.20", "", {}, "sha512-IfEDxwoWIjkeXL1eXcDiow4UbKjhLdq6/EuSVR9GMN7KVH3r9gQ83e73hsz1Nd1T3ijd5xv1wcWRYO+D6kCI2w=="],
 
     "commander": ["commander@2.20.3", "", {}, "sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ=="],
+
+    "comment-fmt": ["comment-fmt@0.1.11", "", { "bin": { "comment-fmt": "dist/cli/index.mjs" } }, "sha512-vkTWZQq9g/TpsQBL77EQA9AHF7QGohcxOGZ36UBboxLw1s82gDQ8v9ZmNUHw7PwBhPfxNvNUQMz24i0CfYXKHw=="],
 
     "common-tags": ["common-tags@1.8.2", "", {}, "sha512-gk/Z852D2Wtb//0I+kRFNKKE9dIIVirjoqPoA1wJU+XePVXZfGeBpk45+A1rKO4Q43prqWBNY/MiIeRLbPWUaA=="],
 
