@@ -1,15 +1,14 @@
 # Runs fmt, lint, typecheck, unit tests, Storybook browser tests, and Rust
 # checks on every push to main and every pull request. On pull requests, also
 # runs a fallow audit diffing against the merge base. The jobs are independent
-# so a slow one never gates the rest: the unit tests skip the Playwright install
-# that only the Storybook browser job needs, and the Rust checks run in their
-# own image starting immediately.
+# so a slow one never gates the rest, and no step downloads a browser at run
+# time.
 #
 # Step images build locally on the CI host under greg-zone/ci/, never pushed:
-# greg-zone/bun-git (oven/bun plus git, for the JS steps) and
-# greg-zone/milktea-rust (rust 1.95.0 with rustfmt, clippy, and the Tauri Linux
-# libraries, for the Rust steps). If every step fails pulling an image, rebuild
-# it there.
+# greg-zone/bun-git (oven/bun plus git) for most JS steps, greg-zone/milktea-rust
+# (rust 1.95.0 with rustfmt, clippy, and the Tauri Linux libraries) for the Rust
+# steps, and greg-zone/milktea-storybook (bun-git with Chromium prebaked) for the
+# browser tests. If every step fails pulling an image, rebuild it there.
 when:
   - event: pull_request
   - event: push
@@ -58,11 +57,12 @@ steps:
     commands:
       - bun run test:unit
 
+  # milktea-storybook is bun-git with Chromium prebaked at PLAYWRIGHT_BROWSERS_PATH,
+  # so this step no longer downloads the browser on every run.
   - name: test-storybook
-    image: greg-zone/bun-git:1.4.0
+    image: greg-zone/milktea-storybook:1.4.0-pw1.58.2
     depends_on: [install]
     commands:
-      - bunx playwright install --with-deps chromium chromium-headless-shell
       - bun run test:storybook
 
   - name: fallow
