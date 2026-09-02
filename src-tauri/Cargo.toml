@@ -1,6 +1,6 @@
 [package]
 name = "milktea"
-version = "0.1.1"
+version = "0.2.0"
 description = "Visual music in a lightweight desktop app"
 authors = ["Greg Linscheid"]
 license = "MIT"
