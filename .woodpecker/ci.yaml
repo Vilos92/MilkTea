@@ -83,9 +83,20 @@ steps:
       # same command as `bun run fmt:rust:check`
       - cargo fmt --manifest-path src-tauri/Cargo.toml --check
 
+  # Cache cargo across runs on the single CI host so clippy does not recompile the whole dependency
+  # tree every pipeline. `CARGO_HOME` keeps the crate registry and downloads, and `CARGO_TARGET_DIR`
+  # keeps the compiled artifacts, both on named volumes that persist between runs. This needs the
+  # repo marked volume-trusted. `cancel_previous` stops same-branch runs from overlapping, and
+  # cargo's build-directory lock serializes the rare cross-branch runs that share the cache.
   - name: rust-clippy
     image: greg-zone/milktea-rust:1.95.0
     depends_on: []
+    volumes:
+      - milktea-cargo-home:/cargo-home
+      - milktea-cargo-target:/cargo-target
+    environment:
+      CARGO_HOME: /cargo-home
+      CARGO_TARGET_DIR: /cargo-target
     commands:
       # same command as `bun run lint:rust`
       - cargo clippy --manifest-path src-tauri/Cargo.toml -- -D warnings
