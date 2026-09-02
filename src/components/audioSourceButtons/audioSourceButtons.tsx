@@ -1,6 +1,6 @@
 import type {RefObject} from 'preact';
 
-import {likelySupportsDisplayAudio} from '../../lib/platform.ts';
+import {likelySupportsDisplayAudio, supportsMicCapture} from '../../lib/platform.ts';
 import {useTranslate} from '../../providers/translation';
 import {AudioSource} from '../../types/audio';
 import {Icon} from '../icon/icon';
@@ -66,16 +66,18 @@ export function AudioSourceButtons({
       >
         <Icon type="file-audio" size="sm" />
       </button>
-      <button
-        type="button"
-        class={buttonClass(AudioSource.MICROPHONE, audioSource, pendingAudioSource, started)}
-        onClick={() => onSourceChange(AudioSource.MICROPHONE)}
-        aria-label={t('source.microphone')}
-        aria-pressed={audioSource === AudioSource.MICROPHONE}
-        title={t('source.microphone')}
-      >
-        <Icon type="microphone" size="sm" />
-      </button>
+      {supportsMicCapture && (
+        <button
+          type="button"
+          class={buttonClass(AudioSource.MICROPHONE, audioSource, pendingAudioSource, started)}
+          onClick={() => onSourceChange(AudioSource.MICROPHONE)}
+          aria-label={t('source.microphone')}
+          aria-pressed={audioSource === AudioSource.MICROPHONE}
+          title={t('source.microphone')}
+        >
+          <Icon type="microphone" size="sm" />
+        </button>
+      )}
       {likelySupportsDisplayAudio && (
         <button
           type="button"

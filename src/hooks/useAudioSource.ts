@@ -1,7 +1,7 @@
 import type {RefObject} from 'preact';
 import {useCallback, useRef, useState} from 'preact/hooks';
 
-import {likelySupportsDisplayAudio} from '../lib/platform';
+import {likelySupportsDisplayAudio, supportsMicCapture} from '../lib/platform';
 import {AudioSource} from '../types/audio';
 import type {AudioFilePlayback} from '../types/audio';
 
@@ -117,6 +117,11 @@ export function useAudioSource({
           fileInputRef.current?.click();
           return;
         case AudioSource.MICROPHONE:
+          if (!supportsMicCapture) {
+            console.warn('Microphone capture is not supported on this platform');
+            return;
+          }
+
           navigator.mediaDevices
             .getUserMedia({audio: true})
             .then(stream => {
@@ -128,7 +133,8 @@ export function useAudioSource({
           return;
         case AudioSource.SCREEN_CAPTURE:
           if (!likelySupportsDisplayAudio) {
-            throw new Error('Screen capture is not supported on this browser');
+            console.warn('Screen capture is not supported on this browser');
+            return;
           }
 
           navigator.mediaDevices
