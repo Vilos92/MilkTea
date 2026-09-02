@@ -80,11 +80,11 @@ Desktop bundles are written under `src-tauri/target/release/bundle/`.
 
 ## Runtime behavior
 
-MilkTea keeps its browser-first architecture. Tauri loads the production Vite build and does not replace browser APIs with desktop-only abstractions.
+MilkTea keeps its browser-first architecture. Tauri loads the production Vite build and reuses browser APIs where it can, adding native code only for audio capture the WebView cannot provide.
 
 Settings use `localStorage`. The desktop WebView persists that storage in its own application data, separate from the deployed website. Settings do not sync between installations.
 
-File audio, microphone audio, rendering, and export remain frontend-owned. macOS receives the microphone usage description from `src-tauri/Info.plist`. System-audio screen capture is unavailable in the macOS desktop app because Tauri uses WKWebView rather than Chromium; MilkTea hides that unsupported source.
+File audio, rendering, and export remain frontend-owned. In the browser, microphone capture uses `getUserMedia`, and screen-capture audio uses `getDisplayMedia`, which only Chromium provides. The desktop app instead captures the microphone and system audio natively through cpal in Rust and streams the samples into the visualizer, so capture does not depend on the WebView. macOS requests the microphone and audio-capture permissions declared in `src-tauri/Info.plist`. MilkTea hides any source the current platform cannot support, such as browser screen capture outside Chromium.
 
 ## Maintainer release process
 
