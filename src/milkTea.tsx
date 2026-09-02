@@ -119,6 +119,7 @@ export function MilkTea() {
     connectAudioBuffer,
     connectOscillator,
     connectMediaStream,
+    connectPcmSource,
     audioBuffer,
     filePlayback: filePlaybackRaw,
     isCanvasFullscreen,
@@ -170,6 +171,7 @@ export function MilkTea() {
     connectAudioBuffer,
     connectOscillator,
     connectMediaStream,
+    connectPcmSource,
     onAudioFile: start,
     filePlayback: filePlaybackRaw
   });
@@ -380,6 +382,7 @@ function CommandPanel(props: CommandPanelProps) {
       onSelectOscillator={() => props.handleSourceChange(AudioSource.OSCILLATOR)}
       onSelectMic={() => props.handleSourceChange(AudioSource.MICROPHONE)}
       onSelectAudioCapture={() => props.handleSourceChange(AudioSource.SCREEN_CAPTURE)}
+      onSelectSystemAudio={() => props.handleSourceChange(AudioSource.SYSTEM_AUDIO)}
       filePlayback={props.audioFilePlayback}
       hasPresets={props.hasPresets}
       stagedPresetName={props.stagedPreset}

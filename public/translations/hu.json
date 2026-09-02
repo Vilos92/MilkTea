@@ -74,5 +74,6 @@
   "source.oscillator": "Oszcillátor",
   "source.file": "Hangfájl",
   "source.microphone": "Mikrofon",
-  "source.audio-capture": "Hangrögzítés"
+  "source.audio-capture": "Hangrögzítés",
+  "source.system-audio": "Rendszerhang"
 }

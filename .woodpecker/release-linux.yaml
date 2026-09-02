@@ -1,6 +1,9 @@
 # The macOS Local-backend agent drives an amd64 Linux container through Docker
 # Desktop. This produces x86_64 bundles while keeping the host workflow isolated
 # to trusted release tags.
+#
+# `libasound2-dev` is installed because cpal's `alsa-sys` build script resolves ALSA
+# through pkg-config, which needs the development headers.
 labels:
   platform: darwin/arm64
   backend: local
@@ -42,7 +45,7 @@ steps:
         ln -sf /opt/linuxdeploy/plugins/linuxdeploy-plugin-appimage/AppRun /root/.cache/tauri/linuxdeploy-plugin-appimage.AppImage &&
         export PATH="/root/.cache/tauri:$PATH" &&
         apt-get update &&
-        DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends squashfs-tools xauth xvfb &&
+        DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends libasound2-dev squashfs-tools xauth xvfb &&
         bun install --frozen-lockfile &&
         bun run build:desktop -- --bundles appimage deb &&
         scripts/smoke-appimage.sh src-tauri/target/release/bundle/appimage/*.AppImage'

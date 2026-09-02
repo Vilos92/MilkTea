@@ -43,6 +43,9 @@
     "linux": {
       "appimage": {
         "bundleMediaFramework": true
+      },
+      "deb": {
+        "depends": ["libasound2"]
       }
     }
   }

@@ -74,5 +74,6 @@
   "source.oscillator": "振盪器",
   "source.file": "音訊檔案",
   "source.microphone": "麥克風",
-  "source.audio-capture": "音訊擷取"
+  "source.audio-capture": "音訊擷取",
+  "source.system-audio": "系統音訊"
 }

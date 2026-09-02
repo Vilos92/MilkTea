@@ -74,5 +74,6 @@
   "source.oscillator": "Bộ dao động",
   "source.file": "Tệp âm thanh",
   "source.microphone": "Micrô",
-  "source.audio-capture": "Chụp âm thanh"
+  "source.audio-capture": "Chụp âm thanh",
+  "source.system-audio": "Âm thanh hệ thống"
 }

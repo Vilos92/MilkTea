@@ -81,7 +81,8 @@ export type TranslationKey =
   | 'source.oscillator'
   | 'source.file'
   | 'source.microphone'
-  | 'source.audio-capture';
+  | 'source.audio-capture'
+  | 'source.system-audio';
 
 export type Translations = Record<TranslationKey, string>;
 
@@ -167,7 +168,8 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'source.oscillator': 'Oscillator',
   'source.file': 'Audio file',
   'source.microphone': 'Microphone',
-  'source.audio-capture': 'Audio capture'
+  'source.audio-capture': 'Audio capture',
+  'source.system-audio': 'System audio'
 };
 
 const SUPPORTED_LOCALES = new Set<string>(Object.values(Locale));

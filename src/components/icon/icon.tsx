@@ -18,6 +18,7 @@ import {PrevTrack} from './paths/prevTrack';
 import {Record} from './paths/record';
 import {ScreenCapture} from './paths/screenCapture';
 import {Settings} from './paths/settings';
+import {SystemAudio} from './paths/systemAudio';
 
 /*
  * Types.
@@ -40,6 +41,7 @@ export type IconType =
   | 'file-audio'
   | 'microphone'
   | 'screen-capture'
+  | 'system-audio'
   | 'help'
   | 'bluesky'
   | 'command-palette'
@@ -113,6 +115,8 @@ function renderPaths(type: IconType) {
       return <Microphone />;
     case 'screen-capture':
       return <ScreenCapture />;
+    case 'system-audio':
+      return <SystemAudio />;
     case 'help':
       return <HelpCircle />;
     case 'bluesky':

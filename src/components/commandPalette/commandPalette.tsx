@@ -2,7 +2,12 @@ import {useCallback, useEffect, useMemo, useRef} from 'preact/hooks';
 
 import {useHasFinePointer} from '../../hooks/useHasFinePointer';
 import {type GetSearchTerms, useSearchableList} from '../../hooks/useSearchableList';
-import {likelySupportsDisplayAudio, supportsMicCapture, supportsRequestFullscreen} from '../../lib/platform';
+import {
+  likelySupportsDisplayAudio,
+  supportsMicCapture,
+  supportsRequestFullscreen,
+  supportsSystemAudioCapture
+} from '../../lib/platform';
 import {VibrationPattern} from '../../lib/vibrate';
 import {useSettingsContext} from '../../providers/settings';
 import {type Translate, useTranslate} from '../../providers/translation';
@@ -67,6 +72,7 @@ type CommandPaletteProps = {
   onSelectOscillator: () => void;
   onSelectMic: () => void;
   onSelectAudioCapture: () => void;
+  onSelectSystemAudio: () => void;
   filePlayback: AudioFilePlayback | undefined;
   hasPresets: boolean;
   stagedPresetName: string | undefined;
@@ -89,6 +95,7 @@ const PaletteItemType = {
   AUDIO_INPUT_FILE: 'audio_input_file',
   AUDIO_INPUT_OSCILLATOR: 'audio_input_oscillator',
   AUDIO_INPUT_AUDIO_CAPTURE: 'audio_input_audio_capture',
+  AUDIO_INPUT_SYSTEM_AUDIO: 'audio_input_system_audio',
   SETTINGS_SKIP_SPLASH_ON_LOAD: 'settings_skip_splash_on_load',
   SETTINGS_RANDOMIZE_PRESETS: 'settings_randomize_presets',
   SETTINGS_CYCLE_PRESETS: 'settings_cycle_presets',
@@ -118,6 +125,7 @@ export function CommandPalette({
   onSelectOscillator,
   onSelectMic,
   onSelectAudioCapture,
+  onSelectSystemAudio,
   filePlayback,
   hasPresets,
   stagedPresetName,
@@ -148,6 +156,7 @@ export function CommandPalette({
     onSelectMic,
     onOpenFilePicker,
     onSelectAudioCapture,
+    onSelectSystemAudio,
     filePlayback,
     hasPresets,
     stagedPresetName,
@@ -315,6 +324,7 @@ function usePaletteItems(
   onSelectMic: () => void,
   onOpenFilePicker: () => void,
   onSelectAudioCapture: () => void,
+  onSelectSystemAudio: () => void,
   filePlayback: AudioFilePlayback | undefined,
   hasPresets: boolean,
   stagedPresetName: string | undefined,
@@ -445,6 +455,14 @@ function usePaletteItems(
               onSelect: onSelectAudioCapture,
               iconType: 'screen-capture' as IconType
             }
+          : undefined,
+        supportsSystemAudioCapture
+          ? {
+              type: PaletteItemType.AUDIO_INPUT_SYSTEM_AUDIO,
+              label: t('source.system-audio'),
+              onSelect: onSelectSystemAudio,
+              iconType: 'system-audio' as IconType
+            }
           : undefined
       ].filter(item => item !== undefined),
     [
@@ -472,7 +490,8 @@ function usePaletteItems(
       onSelectOscillator,
       onOpenFilePicker,
       onSelectMic,
-      onSelectAudioCapture
+      onSelectAudioCapture,
+      onSelectSystemAudio
     ]
   );
 }

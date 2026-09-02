@@ -24,3 +24,8 @@ export const likelySupportsDisplayAudio = supportsGetDisplayMedia && isChromium;
 // `navigator.mediaDevices` is undefined in insecure contexts.
 export const supportsMicCapture =
   !(isTauri && isLinux) && typeof navigator.mediaDevices?.getUserMedia === 'function';
+
+// Native cpal capture, which only the desktop shell exposes. macOS needs 14.6+ for CoreAudio
+// process taps and Linux needs a PulseAudio monitor source. Neither is knowable from the webview,
+// so those failures surface at runtime through the same path as any other source error.
+export const supportsSystemAudioCapture = isTauri;

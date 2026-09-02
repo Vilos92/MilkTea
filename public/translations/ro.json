@@ -74,5 +74,6 @@
   "source.oscillator": "Oscilator",
   "source.file": "Fișier audio",
   "source.microphone": "Microfon",
-  "source.audio-capture": "Captură audio"
+  "source.audio-capture": "Captură audio",
+  "source.system-audio": "Sunet de sistem"
 }

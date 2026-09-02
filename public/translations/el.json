@@ -74,5 +74,6 @@
   "source.oscillator": "Ταλαντωτής",
   "source.file": "Αρχείο ήχου",
   "source.microphone": "Μικρόφωνο",
-  "source.audio-capture": "Λήψη ήχου"
+  "source.audio-capture": "Λήψη ήχου",
+  "source.system-audio": "Ήχος συστήματος"
 }
