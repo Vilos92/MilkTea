@@ -20,5 +20,6 @@ export const AudioSource = {
   OSCILLATOR: 'oscillator',
   FILE: 'file',
   MICROPHONE: 'microphone',
-  SCREEN_CAPTURE: 'screen-capture'
+  SCREEN_CAPTURE: 'screen-capture',
+  SYSTEM_AUDIO: 'system-audio'
 } as const;

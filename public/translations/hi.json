@@ -74,5 +74,6 @@
   "source.oscillator": "ऑसिलेटर",
   "source.file": "ऑडियो फ़ाइल",
   "source.microphone": "माइक्रोफ़ोन",
-  "source.audio-capture": "ऑडियो कैप्चर"
+  "source.audio-capture": "ऑडियो कैप्चर",
+  "source.system-audio": "सिस्टम ऑडियो"
 }

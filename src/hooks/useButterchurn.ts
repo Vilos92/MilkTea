@@ -13,6 +13,14 @@ import {
   prefetchNeighborPresets
 } from '../lib/butterchurn/butterchurnPresets';
 import {clamp} from '../lib/number';
+import {
+  PCM_PLAYER_OUTPUT_CHANNEL_COUNT,
+  PCM_PLAYER_PROCESSOR_NAME,
+  PCM_PLAYER_STOP_MESSAGE,
+  type PcmSink
+} from '../lib/pcmPlayer';
+// oxlint-disable-next-line import/default -- Vite bundles the worklet and yields its URL here.
+import pcmPlayerWorkletUrl from '../lib/pcmPlayerWorklet?worker&url';
 import type {AudioFilePlayback} from '../types/audio';
 import type {Size} from '../types/geometry';
 import {useReducedMotion} from './useReducedMotion';
@@ -20,6 +28,12 @@ import {useReducedMotion} from './useReducedMotion';
 /*
  * Types.
  */
+
+/** Format of a raw PCM stream that a caller wants to feed into the analysis graph. */
+export type PcmSourceOptions = {
+  sampleRate: number;
+  channelCount: number;
+};
 
 type UseButterChurnResult = {
   containerRef: RefObject<HTMLDivElement>;
@@ -36,6 +50,7 @@ type UseButterChurnResult = {
   connectAudioBuffer: (arrayBuffer: ArrayBuffer) => Promise<void>;
   connectOscillator: () => void;
   connectMediaStream: (stream: MediaStream) => void;
+  connectPcmSource: (options: PcmSourceOptions, checkIsStale: () => boolean) => Promise<PcmSink>;
   audioStreamRef: RefObject<MediaStream | undefined>;
   audioBuffer: AudioBuffer | undefined;
   filePlayback: AudioFilePlayback | undefined;
@@ -57,9 +72,11 @@ export function useButterchurn(): UseButterChurnResult {
   const audioContextRef = useRef<AudioContext | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
   const audioStreamRef = useRef<MediaStream | undefined>(undefined);
-  const sourceNodeRef = useRef<AudioBufferSourceNode | OscillatorNode | MediaStreamAudioSourceNode | null>(
-    null
-  );
+  const sourceNodeRef = useRef<
+    AudioBufferSourceNode | OscillatorNode | MediaStreamAudioSourceNode | AudioWorkletNode | null
+  >(null);
+  /** Resolves once the PCM player module is registered on this context. Registration is one-shot. */
+  const pcmPlayerModuleRef = useRef<Promise<void> | undefined>(undefined);
 
   const audioBufferRef = useRef<AudioBuffer | null>(null);
   const bufferStartTimeRef = useRef<number>(0);
@@ -158,6 +175,10 @@ export function useButterchurn(): UseButterChurnResult {
     node.disconnect();
     if ('stop' in node) {
       (node as AudioBufferSourceNode).stop();
+    }
+    if ('port' in node) {
+      // Let the processor return false so the worklet releases it instead of rendering forever.
+      node.port.postMessage(PCM_PLAYER_STOP_MESSAGE);
     }
     sourceNodeRef.current = null;
     audioBufferRef.current = null;
@@ -328,6 +349,57 @@ export function useButterchurn(): UseButterChurnResult {
     [stopCurrentSource]
   );
 
+  /** Registers the PCM player processor on this context, at most once. */
+  const ensurePcmPlayerModule = useCallback((ctx: AudioContext): Promise<void> => {
+    pcmPlayerModuleRef.current ??= ctx.audioWorklet.addModule(pcmPlayerWorkletUrl).catch(error => {
+      // Clear the cache so a later attempt can retry registration.
+      pcmPlayerModuleRef.current = undefined;
+      throw error;
+    });
+
+    return pcmPlayerModuleRef.current;
+  }, []);
+
+  /**
+   * Worklet-backed PCM sink -> `gainNode`. Returns the writer for incoming capture chunks.
+   *
+   * `checkIsStale` is consulted after the worklet module resolves: the caller may have switched to
+   * another source while it loaded, and nothing here may tear down whatever replaced it.
+   */
+  const connectPcmSource = useCallback(
+    async ({sampleRate, channelCount}: PcmSourceOptions, checkIsStale: () => boolean): Promise<PcmSink> => {
+      const ctx = audioContextRef.current;
+      const gainNode = gainNodeRef.current;
+      if (!ctx || !gainNode) {
+        throw new Error('Audio graph is not ready');
+      }
+
+      await ensurePcmPlayerModule(ctx);
+
+      if (checkIsStale()) {
+        throw new Error('Audio source changed before the PCM player was connected');
+      }
+
+      stopCurrentSource();
+
+      gainNode.gain.setTargetAtTime(1.0, ctx.currentTime, 0.01);
+
+      const node = new AudioWorkletNode(ctx, PCM_PLAYER_PROCESSOR_NAME, {
+        numberOfInputs: 0,
+        numberOfOutputs: 1,
+        outputChannelCount: [PCM_PLAYER_OUTPUT_CHANNEL_COUNT],
+        processorOptions: {captureSampleRate: sampleRate, captureChannelCount: channelCount}
+      });
+      // Analysis only: system audio already reaches the speakers, so never wire it to destination.
+      node.connect(gainNode);
+
+      sourceNodeRef.current = node;
+
+      return samples => node.port.postMessage(samples, [samples.buffer]);
+    },
+    [stopCurrentSource, ensurePcmPlayerModule]
+  );
+
   const filePlaybackOnPlayPause = useCallback(() => {
     const ctx = audioContextRef.current;
     const node = sourceNodeRef.current;
@@ -486,6 +558,7 @@ export function useButterchurn(): UseButterChurnResult {
     connectAudioBuffer,
     connectOscillator,
     connectMediaStream,
+    connectPcmSource,
     audioStreamRef,
     audioBuffer: audioBufferRef.current ?? undefined,
     filePlayback,

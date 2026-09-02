@@ -38,6 +38,7 @@
     "version": "bun run release:sync"
   },
   "dependencies": {
+    "@tauri-apps/api": "^2",
     "@vanilla-extract/css": "^1.21.2",
     "butterchurn": "^2.6.7",
     "butterchurn-presets": "^2.4.7",

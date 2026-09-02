@@ -1,9 +1,12 @@
 import type {RefObject} from 'preact';
 import {useCallback, useRef, useState} from 'preact/hooks';
 
+import type {PcmSink} from '../lib/pcmPlayer';
 import {likelySupportsDisplayAudio, supportsMicCapture} from '../lib/platform';
 import {AudioSource} from '../types/audio';
 import type {AudioFilePlayback} from '../types/audio';
+import type {PcmSourceOptions} from './useButterchurn';
+import {useSystemAudioSource} from './useSystemAudioSource';
 
 /*
  * Types.
@@ -13,6 +16,7 @@ type UseAudioSourceOptions = {
   connectAudioBuffer: (arrayBuffer: ArrayBuffer) => Promise<void>;
   connectOscillator: () => void;
   connectMediaStream: (stream: MediaStream) => void;
+  connectPcmSource: (options: PcmSourceOptions, checkIsStale: () => boolean) => Promise<PcmSink>;
   onAudioFile: () => void;
   filePlayback: AudioFilePlayback | undefined;
 };
@@ -37,6 +41,7 @@ export function useAudioSource({
   connectAudioBuffer,
   connectOscillator,
   connectMediaStream,
+  connectPcmSource,
   onAudioFile,
   filePlayback
 }: UseAudioSourceOptions): UseAudioSourceResult {
@@ -54,6 +59,22 @@ export function useAudioSource({
     }
     micStreamRef.current = null;
   }, []);
+
+  const fallBackToOscillator = useCallback(() => {
+    connectOscillator();
+    setAudioSource(AudioSource.OSCILLATOR);
+  }, [connectOscillator]);
+
+  const {
+    start: startSystemAudio,
+    cancelPendingStart: cancelSystemAudioStart,
+    stop: stopSystemAudioHardware
+  } = useSystemAudioSource({
+    connectPcmSource,
+    fallBackToOscillator,
+    setAudioSource,
+    setPendingAudioSource
+  });
 
   const handleAudioFile = useCallback(
     (file: File) => {
@@ -102,6 +123,11 @@ export function useAudioSource({
 
   const handleSourceChange = useCallback(
     (newSource: AudioSource) => {
+      // Every dispatch cancels in-flight setup, including re-picking the current source, so a slow
+      // native start can never install itself over a newer choice.
+      cancelSystemAudioStart();
+      setPendingAudioSource(undefined);
+
       if (newSource === audioSource) {
         // The user should be able to change the file if the source is already set to file.
         if (newSource === AudioSource.FILE) {
@@ -111,6 +137,7 @@ export function useAudioSource({
       }
 
       stopMicHardware();
+      stopSystemAudioHardware();
 
       switch (newSource) {
         case AudioSource.FILE:
@@ -161,6 +188,9 @@ export function useAudioSource({
             })
             .catch(console.warn);
           return;
+        case AudioSource.SYSTEM_AUDIO:
+          startSystemAudio();
+          return;
         case AudioSource.OSCILLATOR:
         default:
           connectOscillator();
@@ -168,7 +198,15 @@ export function useAudioSource({
           return;
       }
     },
-    [audioSource, stopMicHardware, connectMediaStream, connectOscillator]
+    [
+      audioSource,
+      stopMicHardware,
+      stopSystemAudioHardware,
+      cancelSystemAudioStart,
+      connectMediaStream,
+      connectOscillator,
+      startSystemAudio
+    ]
   );
 
   return {

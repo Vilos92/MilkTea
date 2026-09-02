@@ -1,6 +1,10 @@
 import type {RefObject} from 'preact';
 
-import {likelySupportsDisplayAudio, supportsMicCapture} from '../../lib/platform.ts';
+import {
+  likelySupportsDisplayAudio,
+  supportsMicCapture,
+  supportsSystemAudioCapture
+} from '../../lib/platform.ts';
 import {useTranslate} from '../../providers/translation';
 import {AudioSource} from '../../types/audio';
 import {Icon} from '../icon/icon';
@@ -41,7 +45,7 @@ export function AudioSourceButtons({
   onSourceChange
 }: AudioSourceButtonsProps) {
   const t = useTranslate();
-  const rootClass = className ? [audioSourceRoot, className].join(' ') : audioSourceRoot;
+  const rootClass = [audioSourceRoot, className].filter(Boolean).join(' ');
 
   return (
     <div class={rootClass}>
@@ -88,6 +92,18 @@ export function AudioSourceButtons({
           title={t('source.audio-capture')}
         >
           <Icon type="screen-capture" size="sm" />
+        </button>
+      )}
+      {supportsSystemAudioCapture && (
+        <button
+          type="button"
+          class={buttonClass(AudioSource.SYSTEM_AUDIO, audioSource, pendingAudioSource, started)}
+          onClick={() => onSourceChange(AudioSource.SYSTEM_AUDIO)}
+          aria-label={t('source.system-audio')}
+          aria-pressed={audioSource === AudioSource.SYSTEM_AUDIO}
+          title={t('source.system-audio')}
+        >
+          <Icon type="system-audio" size="sm" />
         </button>
       )}
     </div>

@@ -74,5 +74,6 @@
   "source.oscillator": "Osilatör",
   "source.file": "Ses dosyası",
   "source.microphone": "Mikrofon",
-  "source.audio-capture": "Ses yakalama"
+  "source.audio-capture": "Ses yakalama",
+  "source.system-audio": "Sistem sesi"
 }

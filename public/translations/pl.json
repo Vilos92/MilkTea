@@ -74,5 +74,6 @@
   "source.oscillator": "Oscylator",
   "source.file": "Plik audio",
   "source.microphone": "Mikrofon",
-  "source.audio-capture": "Przechwytywanie dźwięku"
+  "source.audio-capture": "Przechwytywanie dźwięku",
+  "source.system-audio": "Dźwięk systemowy"
 }

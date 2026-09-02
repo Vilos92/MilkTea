@@ -74,5 +74,6 @@
   "source.oscillator": "Oscilátor",
   "source.file": "Zvukový soubor",
   "source.microphone": "Mikrofon",
-  "source.audio-capture": "Zachycení zvuku"
+  "source.audio-capture": "Zachycení zvuku",
+  "source.system-audio": "Zvuk systému"
 }
