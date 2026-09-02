@@ -6,10 +6,7 @@ export const isMac =
   (typeof navigator !== 'undefined' && navigator.userAgentData?.platform === 'macOS') ||
   /Mac|iPhone|iPad|iPod/.test(navigator.platform);
 
-const isTauri = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
-
-// Desktop heuristic. Android also reports Linux, so revisit this if a Tauri mobile build ships.
-const isLinux = navigator.userAgentData?.platform === 'Linux' || /\bLinux\b/.test(navigator.platform);
+export const isTauri = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
 
 const isChromium = Boolean('chrome' in window);
 
@@ -19,11 +16,11 @@ const supportsGetDisplayMedia = typeof navigator.mediaDevices?.getDisplayMedia =
 
 export const likelySupportsDisplayAudio = supportsGetDisplayMedia && isChromium;
 
-// WebKitGTK denies `getUserMedia` permission requests because Tauri registers no permission
-// handler, so mic capture can never succeed on Tauri Linux today. Also feature-detect, since
-// `navigator.mediaDevices` is undefined in insecure contexts.
-export const supportsMicCapture =
-  !(isTauri && isLinux) && typeof navigator.mediaDevices?.getUserMedia === 'function';
+// The desktop shell captures the microphone natively through cpal, which works on every desktop
+// OS and sidesteps WebKitGTK denying `getUserMedia` on Tauri Linux. A plain browser instead needs
+// `getUserMedia`, which is also feature-detected since `navigator.mediaDevices` is undefined in
+// insecure contexts.
+export const supportsMicCapture = isTauri || typeof navigator.mediaDevices?.getUserMedia === 'function';
 
 // Native cpal capture, which only the desktop shell exposes. macOS needs 14.6+ for CoreAudio
 // process taps and Linux needs a PulseAudio monitor source. Neither is knowable from the webview,

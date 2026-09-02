@@ -390,7 +390,9 @@ export function useButterchurn(): UseButterChurnResult {
         outputChannelCount: [PCM_PLAYER_OUTPUT_CHANNEL_COUNT],
         processorOptions: {captureSampleRate: sampleRate, captureChannelCount: channelCount}
       });
-      // Analysis only: system audio already reaches the speakers, so never wire it to destination.
+      // Native capture feeds the analyser only for every source, so it never wires to
+      // `ctx.destination`. System audio already reaches the speakers, and routing the microphone
+      // there would create a feedback loop.
       node.connect(gainNode);
 
       sourceNodeRef.current = node;
