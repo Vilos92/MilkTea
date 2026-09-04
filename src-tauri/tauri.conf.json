@@ -39,7 +39,10 @@
     ],
     "macOS": {
       "signingIdentity": "-",
-      "entitlements": "Entitlements.plist"
+      "entitlements": "Entitlements.plist",
+      "files": {
+        "Resources/Assets.car": "icons/Assets.car"
+      }
     },
     "linux": {
       "appimage": {
