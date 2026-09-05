@@ -12,5 +12,7 @@ export const canvas = style({
   background: '#000',
   display: 'block',
   border: 'none',
-  cursor: 'inherit'
+  cursor: 'inherit',
+  // Keep touch drags feeding the warp interaction instead of triggering browser pan and zoom.
+  touchAction: 'none'
 });
