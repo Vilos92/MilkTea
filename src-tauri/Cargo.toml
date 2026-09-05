@@ -23,7 +23,10 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tauri = { version = "2.11.3", features = [] }
 
-# The native PipeWire and PulseAudio hosts only exist on Linux, so the features stay scoped here
-# and the macOS build keeps its default CoreAudio host untouched.
+# The native PulseAudio host only exists on Linux, so the feature stays scoped here and the macOS
+# build keeps its default CoreAudio host untouched. It is a pure-Rust protocol client, so it needs
+# no system headers and adds no runtime linkage, and it reaches PipeWire through pipewire-pulse.
+# cpal's `pipewire` feature is deliberately off: its libspa bindings do not compile against the
+# PipeWire 0.3.48 headers in the Ubuntu 22.04 release image.
 [target.'cfg(target_os = "linux")'.dependencies]
-cpal = { version = "0.18", features = ["pipewire", "pulseaudio"] }
+cpal = { version = "0.18", features = ["pulseaudio"] }

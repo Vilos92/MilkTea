@@ -42,11 +42,6 @@ const CHUNK_FRAMES: usize = 1024;
 /// macOS consent prompt blocks inside that call the first time an install captures audio.
 const START_TIMEOUT: Duration = Duration::from_secs(30);
 
-/// Synthetic duplex device the cpal PipeWire host publishes for the current default sink. Opening
-/// an input stream on it makes PipeWire capture the sink's monitor — that stream is system audio.
-#[cfg(target_os = "linux")]
-const PIPEWIRE_DEFAULT_SINK_DEVICE: &str = "default_sink";
-
 /// Suffix PulseAudio appends to a sink name to form its monitor source.
 #[cfg(target_os = "linux")]
 const PULSE_MONITOR_SUFFIX: &str = ".monitor";
@@ -434,48 +429,26 @@ fn find_system_audio_device(host: &Host) -> Result<Device, String> {
 /// Picks the device that carries the audio the user is hearing.
 #[cfg(target_os = "linux")]
 fn find_system_audio_device(host: &Host) -> Result<Device, String> {
-    // cpal prefers its native PipeWire and PulseAudio hosts on Linux, and each exposes sink
-    // monitors directly, so system audio no longer needs the user to repoint their default source.
-    // The ALSA host only wins on server-less installs, where the old bridge route is all there is.
+    // cpal prefers its native PulseAudio host on Linux, which lists sink monitors as ordinary
+    // input devices, so system audio no longer needs the user to repoint their default source.
+    // pipewire-pulse serves the same protocol on PipeWire desktops. The ALSA host only wins on
+    // server-less installs, where the old bridge route is all there is.
     match host.id() {
-        cpal::HostId::PipeWire => find_pipewire_default_sink(host),
         cpal::HostId::PulseAudio => find_pulseaudio_monitor(host),
         cpal::HostId::Alsa => find_alsa_bridge(host),
     }
-}
-
-/// Finds the duplex device the PipeWire host publishes for the default sink. An input stream on it
-/// captures the sink's monitor, which is exactly the audio the user is hearing.
-#[cfg(target_os = "linux")]
-fn find_pipewire_default_sink(host: &Host) -> Result<Device, String> {
-    let devices = host
-        .devices()
-        .map_err(|error| format!("Failed to list audio devices: {error}"))?;
-
-    for device in devices {
-        let is_default_sink = device
-            .description()
-            .is_ok_and(|description| description.name() == PIPEWIRE_DEFAULT_SINK_DEVICE);
-        if is_default_sink && device.supports_input() {
-            return Ok(device);
-        }
-    }
-
-    Err(
-        "No default output device to capture. Pick a default output in the system sound settings \
-         and try again."
-            .to_string(),
-    )
 }
 
 /// Finds the monitor source of the default sink on a PulseAudio server, falling back to any
 /// monitor source so capture still works when the default sink exposes none of its own.
 #[cfg(target_os = "linux")]
 fn find_pulseaudio_monitor(host: &Host) -> Result<Device, String> {
+    // Matching runs on device ids, which carry the raw PulseAudio names (`<sink>.monitor`); the
+    // descriptions are display strings like "Monitor of Built-in Audio" and are not stable.
     let default_monitor = host
         .default_output_device()
-        .and_then(|device| device.description().ok())
-        .map(|description| format!("{}{PULSE_MONITOR_SUFFIX}", description.name()));
+        .and_then(|device| device.id().ok())
+        .map(|id| format!("{}{PULSE_MONITOR_SUFFIX}", id.id()));
 
     let devices = host
         .input_devices()
@@ -483,10 +456,10 @@ fn find_pulseaudio_monitor(host: &Host) -> Result<Device, String> {
 
     let mut fallback = None;
     for device in devices {
-        let Ok(description) = device.description() else {
+        let Ok(id) = device.id() else {
             continue;
         };
-        let name = description.name();
+        let name = id.id();
         if Some(name) == default_monitor.as_deref() {
             return Ok(device);
         }
