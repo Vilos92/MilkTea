@@ -12,6 +12,7 @@ import {
   getPresetKeys,
   prefetchNeighborPresets
 } from '../lib/butterchurn/butterchurnPresets';
+import {type WarpInteraction, createWarpInteraction} from '../lib/butterchurn/warpInteraction';
 import {clamp} from '../lib/number';
 import {
   PCM_PLAYER_OUTPUT_CHANNEL_COUNT,
@@ -24,6 +25,7 @@ import pcmPlayerWorkletUrl from '../lib/pcmPlayerWorklet?worker&url';
 import type {AudioFilePlayback} from '../types/audio';
 import type {Size} from '../types/geometry';
 import {useReducedMotion} from './useReducedMotion';
+import {useWarpInteraction} from './useWarpInteraction';
 
 /*
  * Types.
@@ -86,6 +88,21 @@ export function useButterchurn(): UseButterChurnResult {
 
   const currentPresetRef = useRef<unknown>(null);
   const createVisualizerRef = useRef<((size: Size) => void) | null>(null);
+  const warpInteractionRef = useRef<WarpInteraction | null>(null);
+
+  useWarpInteraction(canvasRef, warpInteractionRef);
+
+  /** Stores a fresh visualizer and repatches its renderer so pointer impulses reach the new instance. */
+  const installVisualizer = useCallback((visualizer: Visualizer) => {
+    visualizerRef.current = visualizer;
+    try {
+      warpInteractionRef.current = createWarpInteraction(visualizer);
+    } catch (error) {
+      // Pointer interaction rides on private butterchurn internals. Losing it must not break rendering.
+      warpInteractionRef.current = null;
+      console.warn(error);
+    }
+  }, []);
 
   const [started, setStarted] = useState(false);
   const [filePlaybackCurrentTime, setFilePlaybackCurrentTime] = useState(0);
@@ -132,7 +149,7 @@ export function useButterchurn(): UseButterChurnResult {
 
   const setupVisualizer = useCallback(
     (canvas: HTMLCanvasElement, context: VisualizerContext, width: number, height: number) => {
-      visualizerRef.current = createVisualizer(canvas, context, currentPresetRef.current, width, height);
+      installVisualizer(createVisualizer(canvas, context, currentPresetRef.current, width, height));
 
       createVisualizerRef.current = (size: Size) => {
         requestAnimationFrame(() => {
@@ -143,15 +160,17 @@ export function useButterchurn(): UseButterChurnResult {
           visualizerRef.current = null;
           c.width = size.width;
           c.height = size.height;
-          visualizerRef.current = createVisualizer(
-            c,
-            {
-              audioContext: audioContextRef.current,
-              gainNode: gainNodeRef.current
-            },
-            currentPresetRef.current,
-            size.width,
-            size.height
+          installVisualizer(
+            createVisualizer(
+              c,
+              {
+                audioContext: audioContextRef.current,
+                gainNode: gainNodeRef.current
+              },
+              currentPresetRef.current,
+              size.width,
+              size.height
+            )
           );
         });
       };
@@ -164,7 +183,7 @@ export function useButterchurn(): UseButterChurnResult {
       };
       render();
     },
-    []
+    [installVisualizer]
   );
 
   const stopCurrentSource = useCallback(() => {
@@ -452,30 +471,35 @@ export function useButterchurn(): UseButterChurnResult {
     }
   }, []);
 
-  const resizeCanvas = useCallback((size: Size): Promise<void> => {
-    return new Promise(resolve => {
-      const canvas = canvasRef.current;
-      const audioCtx = audioContextRef.current;
-      const gainNode = gainNodeRef.current;
-      if (!canvas || !audioCtx || !gainNode) {
-        resolve();
-        return;
-      }
-      requestAnimationFrame(() => {
-        visualizerRef.current = null;
-        canvas.width = size.width;
-        canvas.height = size.height;
-        visualizerRef.current = createVisualizer(
-          canvas,
-          {audioContext: audioCtx, gainNode},
-          currentPresetRef.current,
-          size.width,
-          size.height
-        );
-        resolve();
+  const resizeCanvas = useCallback(
+    (size: Size): Promise<void> => {
+      return new Promise(resolve => {
+        const canvas = canvasRef.current;
+        const audioCtx = audioContextRef.current;
+        const gainNode = gainNodeRef.current;
+        if (!canvas || !audioCtx || !gainNode) {
+          resolve();
+          return;
+        }
+        requestAnimationFrame(() => {
+          visualizerRef.current = null;
+          canvas.width = size.width;
+          canvas.height = size.height;
+          installVisualizer(
+            createVisualizer(
+              canvas,
+              {audioContext: audioCtx, gainNode},
+              currentPresetRef.current,
+              size.width,
+              size.height
+            )
+          );
+          resolve();
+        });
       });
-    });
-  }, []);
+    },
+    [installVisualizer]
+  );
 
   // On mount: initialize visualizer for a splash preview.
   // Do NOT signal as started. Only call `start` to exit splash
