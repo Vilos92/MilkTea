@@ -42,8 +42,17 @@ const CHUNK_FRAMES: usize = 1024;
 /// macOS consent prompt blocks inside that call the first time an install captures audio.
 const START_TIMEOUT: Duration = Duration::from_secs(30);
 
+/// Synthetic duplex device the cpal PipeWire host publishes for the current default sink. Opening
+/// an input stream on it makes PipeWire capture the sink's monitor — that stream is system audio.
+#[cfg(target_os = "linux")]
+const PIPEWIRE_DEFAULT_SINK_DEVICE: &str = "default_sink";
+
+/// Suffix PulseAudio appends to a sink name to form its monitor source.
+#[cfg(target_os = "linux")]
+const PULSE_MONITOR_SUFFIX: &str = ".monitor";
+
 /// ALSA PCM the PulseAudio and PipeWire bridges register. It records the sound server's default
-/// source, which is what makes a sink monitor reachable from cpal at all.
+/// source, which is the only monitor route left when cpal falls back to its ALSA host.
 #[cfg(target_os = "linux")]
 const PULSE_BRIDGE_PCM: &str = "pulse";
 
@@ -376,7 +385,7 @@ where
 
     device
         .build_input_stream(
-            config,
+            *config,
             move |samples: &[T], _: &InputCallbackInfo| sender.push(samples),
             move |error| {
                 let label = error_monitor.source.label();
@@ -425,10 +434,75 @@ fn find_system_audio_device(host: &Host) -> Result<Device, String> {
 /// Picks the device that carries the audio the user is hearing.
 #[cfg(target_os = "linux")]
 fn find_system_audio_device(host: &Host) -> Result<Device, String> {
-    // cpal enumerates ALSA PCM hints, and PulseAudio and PipeWire sink monitors are not hints, so
-    // no enumerated name here ever contains "monitor". The sound server's bridge is a hint, and it
-    // records whatever that server has set as the default source. Point the default source at a
-    // sink monitor and this device carries system audio.
+    // cpal prefers its native PipeWire and PulseAudio hosts on Linux, and each exposes sink
+    // monitors directly, so system audio no longer needs the user to repoint their default source.
+    // The ALSA host only wins on server-less installs, where the old bridge route is all there is.
+    match host.id() {
+        cpal::HostId::PipeWire => find_pipewire_default_sink(host),
+        cpal::HostId::PulseAudio => find_pulseaudio_monitor(host),
+        cpal::HostId::Alsa => find_alsa_bridge(host),
+    }
+}
+
+/// Finds the duplex device the PipeWire host publishes for the default sink. An input stream on it
+/// captures the sink's monitor, which is exactly the audio the user is hearing.
+#[cfg(target_os = "linux")]
+fn find_pipewire_default_sink(host: &Host) -> Result<Device, String> {
+    let devices = host
+        .devices()
+        .map_err(|error| format!("Failed to list audio devices: {error}"))?;
+
+    for device in devices {
+        let is_default_sink = device
+            .description()
+            .is_ok_and(|description| description.name() == PIPEWIRE_DEFAULT_SINK_DEVICE);
+        if is_default_sink && device.supports_input() {
+            return Ok(device);
+        }
+    }
+
+    Err(
+        "No default output device to capture. Pick a default output in the system sound settings \
+         and try again."
+            .to_string(),
+    )
+}
+
+/// Finds the monitor source of the default sink on a PulseAudio server, falling back to any
+/// monitor source so capture still works when the default sink exposes none of its own.
+#[cfg(target_os = "linux")]
+fn find_pulseaudio_monitor(host: &Host) -> Result<Device, String> {
+    let default_monitor = host
+        .default_output_device()
+        .and_then(|device| device.description().ok())
+        .map(|description| format!("{}{PULSE_MONITOR_SUFFIX}", description.name()));
+
+    let devices = host
+        .input_devices()
+        .map_err(|error| format!("Failed to list input devices: {error}"))?;
+
+    let mut fallback = None;
+    for device in devices {
+        let Ok(description) = device.description() else {
+            continue;
+        };
+        let name = description.name();
+        if Some(name) == default_monitor.as_deref() {
+            return Ok(device);
+        }
+        if name.ends_with(PULSE_MONITOR_SUFFIX) && fallback.is_none() {
+            fallback = Some(device);
+        }
+    }
+
+    fallback.ok_or_else(|| "No sink monitor source found to capture system audio from.".to_string())
+}
+
+/// Last-resort route for installs without a sound server: the ALSA bridge PCM records whatever the
+/// server-side default source is, so it only carries system audio once the user points that source
+/// at a sink monitor.
+#[cfg(target_os = "linux")]
+fn find_alsa_bridge(host: &Host) -> Result<Device, String> {
     if let Some(device) = find_pcm(host, PULSE_BRIDGE_PCM)? {
         return Ok(device);
     }
@@ -545,5 +619,79 @@ impl ChunkSender {
             self.monitor
                 .fail(format!("Failed to send a {label} chunk: {error}"));
         }
+    }
+}
+
+/// Integration tests against a live sound server. They are ignored by default because they need a
+/// running PipeWire or PulseAudio stack with a tone playing on the default sink — the audio-rig
+/// container provides exactly that. Run them there with `cargo test -- --ignored`.
+#[cfg(all(test, target_os = "linux"))]
+mod live_capture_tests {
+    use super::*;
+
+    /// Loud enough to rule out noise, far above the pure digital silence a wrong-device capture
+    /// yields against the rig's silent virtual microphone.
+    const AUDIBLE_RMS_FLOOR: f64 = 0.01;
+    const CAPTURE_TIME: Duration = Duration::from_secs(2);
+
+    /// Opens an input stream on `device` and returns the RMS of two seconds of captured audio.
+    fn captured_rms(device: &Device, supported: SupportedStreamConfig) -> f64 {
+        use std::sync::Arc;
+
+        let config: StreamConfig = supported.into();
+        let samples: Arc<Mutex<Vec<f32>>> = Arc::new(Mutex::new(Vec::new()));
+        let sink = samples.clone();
+
+        assert_eq!(
+            supported.sample_format(),
+            SampleFormat::F32,
+            "the rig's sound servers negotiate f32 capture"
+        );
+        let stream = device
+            .build_input_stream(
+                config,
+                move |data: &[f32], _: &InputCallbackInfo| {
+                    sink.lock().unwrap().extend_from_slice(data);
+                },
+                |error| panic!("stream error during capture: {error}"),
+                None,
+            )
+            .expect("failed to build the capture stream");
+        stream.play().expect("failed to start the capture stream");
+        std::thread::sleep(CAPTURE_TIME);
+        drop(stream);
+
+        let captured = samples.lock().unwrap();
+        assert!(!captured.is_empty(), "the stream delivered no samples");
+        let sum_of_squares: f64 = captured.iter().map(|s| f64::from(*s) * f64::from(*s)).sum();
+        (sum_of_squares / captured.len() as f64).sqrt()
+    }
+
+    #[test]
+    #[ignore = "needs the audio-rig container's live sound server"]
+    fn system_audio_captures_the_tone_playing_on_the_default_sink() {
+        let host = cpal::default_host();
+        let device = find_system_audio_device(&host).expect("no system-audio device found");
+        let supported =
+            capture_config(CaptureSource::SystemAudio, &device).expect("no capture config");
+
+        let rms = captured_rms(&device, supported);
+        assert!(
+            rms > AUDIBLE_RMS_FLOOR,
+            "system audio captured near-silence (rms {rms}); the sink monitor was not captured"
+        );
+    }
+
+    #[test]
+    #[ignore = "needs the audio-rig container's live sound server"]
+    fn microphone_capture_opens_and_delivers_frames() {
+        let host = cpal::default_host();
+        let device = find_capture_device(CaptureSource::Microphone, &host)
+            .expect("no microphone device found");
+        let supported =
+            capture_config(CaptureSource::Microphone, &device).expect("no capture config");
+
+        // The rig's virtual microphone is silent, so only stream health is asserted here.
+        captured_rms(&device, supported);
     }
 }

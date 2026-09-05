@@ -18,7 +18,12 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 tauri-build = { version = "2.6.3", features = [] }
 
 [dependencies]
-cpal = "0.17"
+cpal = "0.18"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tauri = { version = "2.11.3", features = [] }
+
+# The native PipeWire and PulseAudio hosts only exist on Linux, so the features stay scoped here
+# and the macOS build keeps its default CoreAudio host untouched.
+[target.'cfg(target_os = "linux")'.dependencies]
+cpal = { version = "0.18", features = ["pipewire", "pulseaudio"] }

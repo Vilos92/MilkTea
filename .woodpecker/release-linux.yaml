@@ -45,7 +45,7 @@ steps:
         ln -sf /opt/linuxdeploy/plugins/linuxdeploy-plugin-appimage/AppRun /root/.cache/tauri/linuxdeploy-plugin-appimage.AppImage &&
         export PATH="/root/.cache/tauri:$PATH" &&
         apt-get update &&
-        DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends libasound2-dev squashfs-tools xauth xvfb &&
+        DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends libasound2-dev libclang-dev libpipewire-0.3-dev squashfs-tools xauth xvfb &&
         bun install --frozen-lockfile &&
         bun run build:desktop -- --bundles appimage deb &&
         scripts/smoke-appimage.sh src-tauri/target/release/bundle/appimage/*.AppImage'
