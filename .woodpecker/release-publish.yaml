@@ -1,5 +1,7 @@
-# Publishes only after both platform workflows succeed and the GitHub draft
-# contains every named artifact and checksum.
+# Publishes after both Woodpecker platform workflows succeed and the GitHub
+# draft contains every named artifact and checksum. The Windows assets come
+# from a GitHub Actions leg this pipeline cannot depend on, so
+# publish-release.ts polls for them and fail-fast probes its check run.
 labels:
   platform: linux/arm64
   backend: docker

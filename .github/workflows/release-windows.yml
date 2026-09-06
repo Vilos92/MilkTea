@@ -34,6 +34,9 @@ jobs:
   release-windows:
     name: release-windows
     runs-on: windows-latest
+    # Bound a hung build well below the 6-hour Actions default so the check run
+    # concludes while publish-release.ts is still watching it.
+    timeout-minutes: 45
     defaults:
       run:
         shell: bash
@@ -60,21 +63,23 @@ jobs:
       # Same check the Woodpecker legs run via `bun run release:verify-tag`.
       # Woodpecker supplies CI_COMMIT_TAG / CI_COMMIT_SHA itself; GitHub Actions
       # has no equivalent, so map them from the tag-push context explicitly.
-      # GITHUB_TOKEN is optional in the script (only used to authenticate the
-      # `git fetch origin main` it runs) — actions/checkout already persists a
-      # working credential for that fetch, but passing it too costs nothing and
-      # keeps this step's env parallel to the Woodpecker legs.
+      # Do NOT pass GITHUB_TOKEN here: the script would inject a second
+      # `http.https://github.com/.extraheader` on top of the one actions/checkout
+      # persists, and git sends both — GitHub rejects duplicate Authorization
+      # headers with 400. Checkout's credential already covers the fetch.
       - name: Validate release tag
         env:
           CI_COMMIT_TAG: ${{ github.ref_name }}
           CI_COMMIT_SHA: ${{ github.sha }}
-          GITHUB_TOKEN: ${{ github.token }}
         run: bun run release:verify-tag
 
       - name: Cache cargo
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: src-tauri
+          # Tag refs cannot restore each other's caches and this workflow never
+          # runs on main, so a save here would never be read.
+          save-if: ${{ false }}
 
       - name: Build NSIS installer
         run: |
@@ -94,7 +99,7 @@ jobs:
           set -euo pipefail
           for attempt in $(seq 1 "$DRAFT_POLL_MAX_ATTEMPTS"); do
             found=$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate \
-              --jq ".[] | select(.tag_name == \"$GITHUB_REF_NAME\") | .tag_name")
+              --jq ".[] | select(.tag_name == \"$GITHUB_REF_NAME\") | .tag_name" || true)
             if [ -n "$found" ]; then
               echo "Draft release for $GITHUB_REF_NAME found on attempt $attempt."
               exit 0

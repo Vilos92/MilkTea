@@ -25,7 +25,6 @@ type CheckRun = {
 
 type CheckRunsResponse = {
   check_runs: CheckRun[];
-  total_count: number;
 };
 
 /*
@@ -52,18 +51,19 @@ const REQUIRED_ASSETS = [
 // The Windows assets come from GitHub Actions, which Woodpecker cannot `depends_on`. Everything
 // else is uploaded by Woodpecker legs that this pipeline *does* depend on, so their absence is a
 // real failure, not a race — only these two names get the poll-and-probe treatment below.
-const WINDOWS_ASSET_NAMES: readonly string[] = [
-  'MilkTea-windows-x86_64-setup.exe',
-  'MilkTea-windows-x86_64-setup.exe.sha256'
-];
+const WINDOWS_ASSET_NAMES: readonly string[] = REQUIRED_ASSETS.filter(name =>
+  name.startsWith('MilkTea-windows-')
+);
 // Same name as the `release-windows` job in .github/workflows/release-windows.yml. GitHub records
 // one check run per job, named after the job, so this is how we ask "did the Windows leg finish,
 // and how".
 const WINDOWS_CHECK_RUN_NAME = 'release-windows';
-const FAILURE_CONCLUSIONS: readonly string[] = ['failure', 'cancelled', 'timed_out'];
+const SUCCESS_CONCLUSION = 'success';
 const POLL_INTERVAL_SECONDS = 30;
 const POLL_INTERVAL_MS = POLL_INTERVAL_SECONDS * 1_000;
-const POLL_TIMEOUT_MINUTES = 15;
+// The Windows leg's budget is the Linux and macOS build window plus this, so it stays generous:
+// a genuine failure never waits it out because the check-run probe below fails fast.
+const POLL_TIMEOUT_MINUTES = 30;
 const POLL_TIMEOUT_MS = POLL_TIMEOUT_MINUTES * 60 * 1_000;
 
 const token = process.env.GITHUB_TOKEN;
@@ -81,7 +81,20 @@ if (!token || !tag || !commit) {
 const pollDeadline = Date.now() + POLL_TIMEOUT_MS;
 
 for (;;) {
-  const release = await fetchRelease(tag);
+  let release: GitHubRelease;
+  try {
+    release = await fetchRelease(tag);
+  } catch (error) {
+    // A transient API error is not a release failure; the deadline below still bounds the loop.
+    if (Date.now() >= pollDeadline) {
+      throw error;
+    }
+    const message = error instanceof Error ? error.message : String(error);
+    console.info(`Could not read release ${tag}: ${message}. Retrying in ${POLL_INTERVAL_SECONDS}s.`);
+    await Bun.sleep(POLL_INTERVAL_MS);
+    continue;
+  }
+
   const missingAssets = computeMissingAssets(release);
 
   if (missingAssets.length === 0) {
@@ -180,21 +193,23 @@ async function publishRelease(release: GitHubRelease, releaseTag: string): Promi
   console.info(`Published complete release ${releaseTag}.`);
 }
 
-// Returns a description of why the release-windows check run failed, or undefined if it has not
-// concluded, has not started, or does not exist yet (all of which just mean "keep waiting").
+// Returns why the release-windows check run can no longer produce the Windows assets, or
+// undefined while it has not started or has not concluded (both mean "keep waiting"). A concluded
+// run is always terminal: even `success` cannot be waited on, because a finished run will never
+// upload anything more.
 async function probeWindowsCheckRunFailure(headSha: string): Promise<string | undefined> {
   const response = await requestGitHub<CheckRunsResponse>(
-    `https://api.github.com/repos/${REPOSITORY}/commits/${headSha}/check-runs`
+    `https://api.github.com/repos/${REPOSITORY}/commits/${headSha}/check-runs?check_name=${WINDOWS_CHECK_RUN_NAME}`
   );
-  const failedRun = response.check_runs.find(isFailedWindowsRun);
-  if (!failedRun) {
+  const concludedRun = response.check_runs.find(checkRun => checkRun.conclusion !== null);
+  if (!concludedRun) {
     return undefined;
   }
 
-  const detailsUrl = failedRun.details_url ?? '(no details_url)';
-  return `${WINDOWS_CHECK_RUN_NAME} check run ${failedRun.conclusion} for ${headSha}: ${detailsUrl}`;
-}
+  const detailsUrl = concludedRun.details_url ?? '(no details_url)';
+  if (concludedRun.conclusion === SUCCESS_CONCLUSION) {
+    return `${WINDOWS_CHECK_RUN_NAME} succeeded for ${headSha} without uploading its assets: ${detailsUrl}`;
+  }
 
-function isFailedWindowsRun(checkRun: CheckRun): boolean {
-  return checkRun.name === WINDOWS_CHECK_RUN_NAME && FAILURE_CONCLUSIONS.includes(checkRun.conclusion ?? '');
+  return `${WINDOWS_CHECK_RUN_NAME} check run ${concludedRun.conclusion} for ${headSha}: ${detailsUrl}`;
 }

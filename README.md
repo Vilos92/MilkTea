@@ -104,23 +104,28 @@ Choose `patch`, `minor`, or `major` according to the compatibility change.
 
 The release command runs project checks, synchronizes `package.json`, `src-tauri/Cargo.toml`, and `src-tauri/Cargo.lock`, creates a `:bookmark:` release commit, and creates the matching `vX.Y.Z` tag. It does not push. Inspect the commit and tag before the explicit push.
 
-### Woodpecker release flow
+### Release flow
 
-Woodpecker handles tagged releases in four gated workflows:
+Tagged releases run through five gated legs — four in Woodpecker plus one in GitHub Actions:
 
 1. `release-create` validates that the tag version matches every package version and that the tagged commit belongs to `origin/main`. It creates a draft GitHub release.
 2. `release-linux` builds x86_64 AppImage and Debian bundles in the pinned Linux container.
 3. `release-macos` builds Apple Silicon and Intel DMGs on the Mac mini.
-4. `release-publish` checks every required asset and checksum, then publishes the draft.
+4. `release-windows` (GitHub Actions, `.github/workflows/release-windows.yml`) builds the x86_64 NSIS installer on `windows-latest` and uploads it to the same draft. Woodpecker cannot depend on it, so `release-publish` polls for its assets and fail-fast probes its `release-windows` check run.
+5. `release-publish` checks every required asset and checksum, then publishes the draft.
 
-Budget about 20 minutes for a cold release. The one-concurrency Mac mini runs the Linux and macOS workflows serially; the two macOS architectures take most of that time.
+Budget about 30 minutes for a cold release. The one-concurrency Mac mini runs the Linux and macOS workflows serially; the two macOS architectures take most of that time. The Windows leg runs in parallel on GitHub, and `release-publish` waits up to 30 minutes for its assets.
 
 A platform failure leaves the GitHub release as a draft. Woodpecker can restart only the whole pipeline, not one workflow or step. Restart the pipeline for a transient runner failure. Asset uploads use stable names and `--clobber`, so the retry replaces incomplete files.
 
-If both platform workflows uploaded every asset and only `release-publish` failed, replay only its idempotent publisher from a checked-out fix:
+Restarting the Woodpecker pipeline does not re-run `release-windows`. If only the Windows assets are missing, re-run that job from the repository's **Actions** tab, then restart `release-publish`. Never move a tag to force a re-run: GitHub Actions and Woodpecker would observe different pushes of the same tag name, and the check-run probe would look at the wrong commit.
+
+If the platform workflows uploaded every asset and only `release-publish` failed, replay only its idempotent publisher from a checked-out fix:
 
 ```sh
-GITHUB_TOKEN="$(gh auth token)" CI_COMMIT_TAG=vX.Y.Z bun run scripts/publish-release.ts
+GITHUB_TOKEN="$(gh auth token)" CI_COMMIT_TAG=vX.Y.Z \
+  CI_COMMIT_SHA="$(git rev-parse "vX.Y.Z^{commit}")" \
+  bun run scripts/publish-release.ts
 ```
 
 The script verifies every required asset and checksum before publishing. Never move a published tag. Issue a patch release instead.
