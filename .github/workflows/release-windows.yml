@@ -41,6 +41,12 @@ jobs:
       run:
         shell: bash
     steps:
+      # Git for Windows defaults to core.autocrlf=true, which rewrites the
+      # checkout with CRLF line endings and breaks LF-anchored tooling, such as
+      # the version regexes in validate-release-tag.ts. Check out as committed.
+      - name: Force LF checkout
+        run: git config --global core.autocrlf false
+
       - name: Checkout
         uses: actions/checkout@v7
         with:

@@ -18,8 +18,9 @@ type PackageMetadata = {
 
 const ORIGIN_MAIN = 'origin/main';
 const SEMANTIC_VERSION_PATTERN = /^\d+\.\d+\.\d+$/;
-const CARGO_PACKAGE_VERSION_PATTERN = /\[package\][\s\S]*?\nversion = "([^"]+)"\n/;
-const CARGO_LOCK_PACKAGE_PATTERN = /\[\[package\]\]\nname = "milktea"\nversion = "([^"]+)"\n/;
+// The `\r?` keeps both patterns matching when a Windows checkout carries CRLF line endings.
+const CARGO_PACKAGE_VERSION_PATTERN = /\[package\][\s\S]*?\nversion = "([^"]+)"\r?\n/;
+const CARGO_LOCK_PACKAGE_PATTERN = /\[\[package\]\]\r?\nname = "milktea"\r?\nversion = "([^"]+)"\r?\n/;
 const GIT_CONFIG_COUNT = '1';
 const GITHUB_AUTH_HEADER_CONFIG_KEY = 'http.https://github.com/.extraheader';
 const repoRoot = join(import.meta.dir, '..');
