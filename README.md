@@ -24,7 +24,7 @@ The installer detects the operating system and architecture, verifies the releas
 To install the desktop app on Windows, download `MilkTea-windows-x86_64-setup.exe` from the [latest release](https://github.com/Vilos92/MilkTea/releases/latest) and run it.
 
 > [!NOTE]
-> Windows SmartScreen shows a **"Windows protected your PC"** warning because the installer is unsigned; click **More info**, then **Run anyway** to continue.
+> Windows SmartScreen may show a **"Windows protected your PC"** warning because the installer is unsigned. Click **More info**, then **Run anyway** to continue.
 
 Available releases support macOS on Apple Silicon and Intel, plus Linux x86_64 as AppImage and Debian packages, plus Windows x86_64 as an NSIS installer. Linux ARM64, Homebrew, and automatic in-app updates are not available yet.
 
@@ -106,7 +106,7 @@ The release command runs project checks, synchronizes `package.json`, `src-tauri
 
 ### Release flow
 
-Tagged releases run through five gated legs — four in Woodpecker plus one in GitHub Actions:
+Tagged releases run through five gated legs, four in Woodpecker plus one in GitHub Actions:
 
 1. `release-create` validates that the tag version matches every package version and that the tagged commit belongs to `origin/main`. It creates a draft GitHub release.
 2. `release-linux` builds x86_64 AppImage and Debian bundles in the pinned Linux container.
@@ -114,7 +114,7 @@ Tagged releases run through five gated legs — four in Woodpecker plus one in G
 4. `release-windows` (GitHub Actions, `.github/workflows/release-windows.yml`) builds the x86_64 NSIS installer on `windows-latest` and uploads it to the same draft. Woodpecker cannot depend on it, so `release-publish` polls for its assets and fail-fast probes its `release-windows` check run.
 5. `release-publish` checks every required asset and checksum, then publishes the draft.
 
-Budget about 30 minutes for a cold release. The one-concurrency Mac mini runs the Linux and macOS workflows serially; the two macOS architectures take most of that time. The Windows leg runs in parallel on GitHub, and `release-publish` waits up to 30 minutes for its assets.
+Budget about 30 minutes for a cold release. The one-concurrency Mac mini runs the Linux and macOS workflows serially. The two macOS architectures take most of that time. The Windows leg runs in parallel on GitHub, and `release-publish` waits up to 30 minutes for its assets.
 
 A platform failure leaves the GitHub release as a draft. Woodpecker can restart only the whole pipeline, not one workflow or step. Restart the pipeline for a transient runner failure. Asset uploads use stable names and `--clobber`, so the retry replaces incomplete files.
 
