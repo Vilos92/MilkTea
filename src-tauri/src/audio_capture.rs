@@ -508,8 +508,8 @@ fn find_pcm(host: &Host, pcm: &str) -> Result<Option<Device>, String> {
 #[cfg(target_os = "windows")]
 fn find_system_audio_device(host: &Host) -> Result<Device, String> {
     // cpal's WASAPI host makes loopback capture transparent: opening an input stream on a render
-    // (output) device sets AUDCLNT_STREAMFLAGS_LOOPBACK instead of failing, so the default output
-    // device is exactly what capture wants. Unlike macOS, no duplex guard is needed here: WASAPI
+    // (output) device sets `AUDCLNT_STREAMFLAGS_LOOPBACK` instead of failing, so the default
+    // output device is exactly what capture wants. Unlike macOS, no duplex guard is needed here: WASAPI
     // render endpoints never report inputs, so `supports_input()` is always false and control
     // falls through to `default_output_config()` below, which loopback requires anyway since it
     // must open at the endpoint's shared-mode mix format. Microphones live on separate capture
