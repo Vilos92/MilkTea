@@ -505,13 +505,25 @@ fn find_pcm(host: &Host, pcm: &str) -> Result<Option<Device>, String> {
 }
 
 /// Picks the device that carries the audio the user is hearing.
-#[cfg(not(any(target_os = "macos", target_os = "linux")))]
+#[cfg(target_os = "windows")]
+fn find_system_audio_device(host: &Host) -> Result<Device, String> {
+    // cpal's WASAPI host makes loopback capture transparent: opening an input stream on a render
+    // (output) device sets AUDCLNT_STREAMFLAGS_LOOPBACK instead of failing, so the default output
+    // device is exactly what capture wants. Unlike macOS, no duplex guard is needed here: WASAPI
+    // render endpoints never report inputs, so `supports_input()` is always false and control
+    // falls through to `default_output_config()` below, which loopback requires anyway since it
+    // must open at the endpoint's shared-mode mix format. Microphones live on separate capture
+    // endpoints, so this can never end up recording its own mic. The one accepted limitation is
+    // that loopback delivers no packets while nothing is playing, so the stream idles during
+    // silence, the same behavior the app already has on macOS.
+    host.default_output_device()
+        .ok_or_else(|| "No default output device to capture".to_string())
+}
+
+/// Picks the device that carries the audio the user is hearing.
+#[cfg(not(any(target_os = "macos", target_os = "linux", target_os = "windows")))]
 fn find_system_audio_device(_host: &Host) -> Result<Device, String> {
-    Err(
-        "System-audio capture is not implemented on this platform yet. Windows would need WASAPI \
-         loopback support."
-            .to_string(),
-    )
+    Err("System-audio capture is not implemented on this platform yet.".to_string())
 }
 
 /// Reads the format cpal will actually capture in, matching how it picks the input scope.
