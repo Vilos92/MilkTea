@@ -21,7 +21,12 @@ The installer detects the operating system and architecture, verifies the releas
 - macOS: `~/Applications/MilkTea.app`
 - Linux: `~/Applications/MilkTea.AppImage`, `~/.local/bin/MilkTea`, and an XDG desktop entry
 
-Available releases support macOS on Apple Silicon and Intel, plus Linux x86_64 as AppImage and Debian packages. Linux ARM64, Windows, Homebrew, and automatic in-app updates are not available yet.
+To install the desktop app on Windows, download `MilkTea-windows-x86_64-setup.exe` from the [latest release](https://github.com/Vilos92/MilkTea/releases/latest) and run it.
+
+> [!NOTE]
+> Windows SmartScreen shows a **"Windows protected your PC"** warning because the installer is unsigned; click **More info**, then **Run anyway** to continue.
+
+Available releases support macOS on Apple Silicon and Intel, plus Linux x86_64 as AppImage and Debian packages, plus Windows x86_64 as an NSIS installer. Linux ARM64, Homebrew, and automatic in-app updates are not available yet.
 
 > [!NOTE]
 > macOS builds are ad-hoc signed, not Apple-notarized. If macOS blocks the first launch, try opening MilkTea once, then approve it under **System Settings → Privacy & Security → Open Anyway**.

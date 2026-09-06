@@ -17,6 +17,17 @@ type GitHubRelease = {
   tag_name: string;
 };
 
+type CheckRun = {
+  conclusion: string | null;
+  details_url: string | null;
+  name: string;
+};
+
+type CheckRunsResponse = {
+  check_runs: CheckRun[];
+  total_count: number;
+};
+
 /*
  * Constants.
  */
@@ -34,51 +45,74 @@ const REQUIRED_ASSETS = [
   'MilkTea-macos-aarch64.dmg',
   'MilkTea-macos-aarch64.dmg.sha256',
   'MilkTea-macos-x86_64.dmg',
-  'MilkTea-macos-x86_64.dmg.sha256'
+  'MilkTea-macos-x86_64.dmg.sha256',
+  'MilkTea-windows-x86_64-setup.exe',
+  'MilkTea-windows-x86_64-setup.exe.sha256'
 ] as const;
+// The Windows assets come from GitHub Actions, which Woodpecker cannot `depends_on`. Everything
+// else is uploaded by Woodpecker legs that this pipeline *does* depend on, so their absence is a
+// real failure, not a race — only these two names get the poll-and-probe treatment below.
+const WINDOWS_ASSET_NAMES: readonly string[] = [
+  'MilkTea-windows-x86_64-setup.exe',
+  'MilkTea-windows-x86_64-setup.exe.sha256'
+];
+// Same name as the `release-windows` job in .github/workflows/release-windows.yml. GitHub records
+// one check run per job, named after the job, so this is how we ask "did the Windows leg finish,
+// and how".
+const WINDOWS_CHECK_RUN_NAME = 'release-windows';
+const FAILURE_CONCLUSIONS: readonly string[] = ['failure', 'cancelled', 'timed_out'];
+const POLL_INTERVAL_SECONDS = 30;
+const POLL_INTERVAL_MS = POLL_INTERVAL_SECONDS * 1_000;
+const POLL_TIMEOUT_MINUTES = 15;
+const POLL_TIMEOUT_MS = POLL_TIMEOUT_MINUTES * 60 * 1_000;
+
 const token = process.env.GITHUB_TOKEN;
 const tag = process.env.CI_COMMIT_TAG;
+const commit = process.env.CI_COMMIT_SHA;
 
 /*
  * Script.
  */
 
-if (!token || !tag) {
-  throw new Error('GITHUB_TOKEN and CI_COMMIT_TAG are required to publish a release.');
+if (!token || !tag || !commit) {
+  throw new Error('GITHUB_TOKEN, CI_COMMIT_TAG, and CI_COMMIT_SHA are required to publish a release.');
 }
 
-const releases = await requestGitHub<readonly GitHubRelease[]>(
-  `https://api.github.com/repos/${REPOSITORY}/releases?per_page=100`
-);
-const release = releases.find(candidate => candidate.tag_name === tag);
-if (!release) {
-  throw new Error(`Could not find GitHub release ${tag}.`);
-}
+const pollDeadline = Date.now() + POLL_TIMEOUT_MS;
 
-const assetsByName = new Map(release.assets.map(asset => [asset.name, asset]));
-const missingAssets = REQUIRED_ASSETS.filter(name => {
-  const asset = assetsByName.get(name);
-  return !asset || asset.state !== 'uploaded' || asset.size === 0;
-});
-if (missingAssets.length > 0) {
-  throw new Error(`Release ${tag} is incomplete: ${missingAssets.join(', ')}`);
-}
+for (;;) {
+  const release = await fetchRelease(tag);
+  const missingAssets = computeMissingAssets(release);
 
-if (release.draft) {
-  const publishedRelease = await requestGitHub<GitHubRelease>(
-    `https://api.github.com/repos/${REPOSITORY}/releases/${release.id}`,
-    {
-      body: JSON.stringify({draft: false, make_latest: 'true'}),
-      method: 'PATCH'
-    }
-  );
-  if (publishedRelease.draft) {
-    throw new Error(`GitHub did not publish release ${tag}.`);
+  if (missingAssets.length === 0) {
+    await publishRelease(release, tag);
+    break;
   }
 
-  console.info(`Published complete release ${tag}.`);
-} else {
-  console.info(`Release ${tag} is already published with complete assets.`);
+  const nonWindowsMissingAssets = missingAssets.filter(name => !WINDOWS_ASSET_NAMES.includes(name));
+  if (nonWindowsMissingAssets.length > 0) {
+    throw new Error(`Release ${tag} is incomplete: ${missingAssets.join(', ')}`);
+  }
+
+  // Only the Windows assets are missing. Before waiting another interval, check whether the
+  // GitHub Actions run already failed, so a broken Windows build does not stall this pipeline
+  // for the full timeout.
+  const checkRunFailure = await probeWindowsCheckRunFailure(commit);
+  if (checkRunFailure) {
+    throw new Error(`Release ${tag} cannot complete: ${checkRunFailure}`);
+  }
+
+  if (Date.now() >= pollDeadline) {
+    throw new Error(
+      `Timed out after ${POLL_TIMEOUT_MINUTES} minutes waiting for: ${missingAssets.join(', ')}. ` +
+        'Check the release-windows run under the GitHub Actions tab.'
+    );
+  }
+
+  console.info(
+    `Waiting on Windows assets: ${missingAssets.join(', ')}. Retrying in ${POLL_INTERVAL_SECONDS}s.`
+  );
+  await Bun.sleep(POLL_INTERVAL_MS);
 }
 
 /*
@@ -103,4 +137,64 @@ async function requestGitHub<T>(url: string, init: RequestInit = {}): Promise<T>
   }
 
   return (await response.json()) as T;
+}
+
+async function fetchRelease(releaseTag: string): Promise<GitHubRelease> {
+  const releases = await requestGitHub<readonly GitHubRelease[]>(
+    `https://api.github.com/repos/${REPOSITORY}/releases?per_page=100`
+  );
+  const release = releases.find(candidate => candidate.tag_name === releaseTag);
+  if (!release) {
+    throw new Error(`Could not find GitHub release ${releaseTag}.`);
+  }
+
+  return release;
+}
+
+function computeMissingAssets(release: GitHubRelease): string[] {
+  const assetsByName = new Map(release.assets.map(asset => [asset.name, asset]));
+
+  return REQUIRED_ASSETS.filter(name => {
+    const asset = assetsByName.get(name);
+    return !asset || asset.state !== 'uploaded' || asset.size === 0;
+  });
+}
+
+async function publishRelease(release: GitHubRelease, releaseTag: string): Promise<void> {
+  if (!release.draft) {
+    console.info(`Release ${releaseTag} is already published with complete assets.`);
+    return;
+  }
+
+  const publishedRelease = await requestGitHub<GitHubRelease>(
+    `https://api.github.com/repos/${REPOSITORY}/releases/${release.id}`,
+    {
+      body: JSON.stringify({draft: false, make_latest: 'true'}),
+      method: 'PATCH'
+    }
+  );
+  if (publishedRelease.draft) {
+    throw new Error(`GitHub did not publish release ${releaseTag}.`);
+  }
+
+  console.info(`Published complete release ${releaseTag}.`);
+}
+
+// Returns a description of why the release-windows check run failed, or undefined if it has not
+// concluded, has not started, or does not exist yet (all of which just mean "keep waiting").
+async function probeWindowsCheckRunFailure(headSha: string): Promise<string | undefined> {
+  const response = await requestGitHub<CheckRunsResponse>(
+    `https://api.github.com/repos/${REPOSITORY}/commits/${headSha}/check-runs`
+  );
+  const failedRun = response.check_runs.find(isFailedWindowsRun);
+  if (!failedRun) {
+    return undefined;
+  }
+
+  const detailsUrl = failedRun.details_url ?? '(no details_url)';
+  return `${WINDOWS_CHECK_RUN_NAME} check run ${failedRun.conclusion} for ${headSha}: ${detailsUrl}`;
+}
+
+function isFailedWindowsRun(checkRun: CheckRun): boolean {
+  return checkRun.name === WINDOWS_CHECK_RUN_NAME && FAILURE_CONCLUSIONS.includes(checkRun.conclusion ?? '');
 }

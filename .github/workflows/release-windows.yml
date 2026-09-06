@@ -1,0 +1,115 @@
+# Builds the NSIS installer on windows-latest. This runs in GitHub Actions, not
+# Woodpecker, because the Woodpecker fleet has no Windows agent, and GitHub gives
+# public repos free windows-latest runners.
+#
+# Woodpecker cannot `depends_on` a GitHub Actions job, so the two systems are
+# only loosely coupled through the shared tag and the draft release it creates:
+#   1. Woodpecker's release-create pipeline creates the draft release for the tag.
+#   2. This job may start and finish before that happens, so it polls the
+#      releases list until the draft exists before uploading.
+#   3. Woodpecker's release-publish pipeline cannot `depends_on` this job either,
+#      so scripts/publish-release.ts polls the commit's check-runs API for a run
+#      named "release-windows" (see the job name below) instead.
+#
+# IMPORTANT: the job name `release-windows` is load-bearing. publish-release.ts
+# looks it up by exact name via GET /repos/{owner}/{repo}/commits/{sha}/check-runs.
+# Renaming this job breaks that lookup silently (the probe just never finds a
+# match and times out).
+name: Release (Windows)
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+# Polling constants, mirrored in the bash loop below and in publish-release.ts.
+env:
+  DRAFT_POLL_INTERVAL_SECONDS: 30
+  DRAFT_POLL_MAX_ATTEMPTS: 20 # 20 * 30s = 10 minutes
+
+jobs:
+  release-windows:
+    name: release-windows
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          # validate-release-tag.ts runs `git merge-base --is-ancestor` against
+          # origin/main. A shallow checkout (the default) can leave that ancestry
+          # unresolvable, so fetch full history to match the Woodpecker legs'
+          # `partial: false` clone.
+          fetch-depth: 0
+
+      - name: Set up bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          # Pin to the version pinned in package.json's packageManager field, so
+          # this leg resolves the lockfile identically to the other release legs.
+          bun-version: 1.4.0
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      # Same check the Woodpecker legs run via `bun run release:verify-tag`.
+      # Woodpecker supplies CI_COMMIT_TAG / CI_COMMIT_SHA itself; GitHub Actions
+      # has no equivalent, so map them from the tag-push context explicitly.
+      # GITHUB_TOKEN is optional in the script (only used to authenticate the
+      # `git fetch origin main` it runs) — actions/checkout already persists a
+      # working credential for that fetch, but passing it too costs nothing and
+      # keeps this step's env parallel to the Woodpecker legs.
+      - name: Validate release tag
+        env:
+          CI_COMMIT_TAG: ${{ github.ref_name }}
+          CI_COMMIT_SHA: ${{ github.sha }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: bun run release:verify-tag
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: Build NSIS installer
+        run: |
+          set -euo pipefail
+          bun run build:desktop -- --bundles nsis
+          mkdir -p release
+          cp src-tauri/target/release/bundle/nsis/*-setup.exe release/MilkTea-windows-x86_64-setup.exe
+          (cd release && sha256sum MilkTea-windows-x86_64-setup.exe > MilkTea-windows-x86_64-setup.exe.sha256)
+
+      # See the header comment: release-create (Woodpecker) and this job are an
+      # unordered race on the same tag push. Poll the release list — not
+      # `releases/tags/<tag>`, which 404s on drafts — until the draft appears.
+      - name: Wait for the draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 "$DRAFT_POLL_MAX_ATTEMPTS"); do
+            found=$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate \
+              --jq ".[] | select(.tag_name == \"$GITHUB_REF_NAME\") | .tag_name")
+            if [ -n "$found" ]; then
+              echo "Draft release for $GITHUB_REF_NAME found on attempt $attempt."
+              exit 0
+            fi
+            echo "Draft release for $GITHUB_REF_NAME not found yet (attempt $attempt/$DRAFT_POLL_MAX_ATTEMPTS); waiting ${DRAFT_POLL_INTERVAL_SECONDS}s."
+            sleep "$DRAFT_POLL_INTERVAL_SECONDS"
+          done
+          echo "::error::Timed out waiting for the release-create draft for $GITHUB_REF_NAME."
+          exit 1
+
+      - name: Upload installer
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload "$GITHUB_REF_NAME" \
+            release/MilkTea-windows-x86_64-setup.exe \
+            release/MilkTea-windows-x86_64-setup.exe.sha256 \
+            --clobber --repo "$GITHUB_REPOSITORY"
