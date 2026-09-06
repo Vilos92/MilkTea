@@ -8,10 +8,10 @@
 #   2. This job may start and finish before that happens, so it polls the
 #      releases list until the draft exists before uploading.
 #   3. Woodpecker's release-publish pipeline cannot `depends_on` this job either,
-#      so scripts/publish-release.ts polls the commit's check-runs API for a run
+#      so `scripts/publish-release.ts` polls the commit's check-runs API for a run
 #      named "release-windows" (see the job name below) instead.
 #
-# IMPORTANT: the job name `release-windows` is load-bearing. publish-release.ts
+# IMPORTANT: the job name `release-windows` is load-bearing. `publish-release.ts`
 # looks it up by exact name via GET /repos/{owner}/{repo}/commits/{sha}/check-runs.
 # Renaming this job breaks that lookup silently (the probe just never finds a
 # match and times out).
@@ -25,7 +25,7 @@ on:
 permissions:
   contents: write
 
-# Polling constants, mirrored in the bash loop below and in publish-release.ts.
+# Polling constants, mirrored in the bash loop below and in `publish-release.ts`.
 env:
   DRAFT_POLL_INTERVAL_SECONDS: 30
   DRAFT_POLL_MAX_ATTEMPTS: 20 # 20 * 30s = 10 minutes
@@ -35,7 +35,7 @@ jobs:
     name: release-windows
     runs-on: windows-latest
     # Bound a hung build well below the 6-hour Actions default so the check run
-    # concludes while publish-release.ts is still watching it.
+    # concludes while `publish-release.ts` is still watching it.
     timeout-minutes: 45
     defaults:
       run:
@@ -61,9 +61,9 @@ jobs:
         run: bun install --frozen-lockfile
 
       # Same check the Woodpecker legs run via `bun run release:verify-tag`.
-      # Woodpecker supplies CI_COMMIT_TAG / CI_COMMIT_SHA itself; GitHub Actions
+      # Woodpecker supplies `CI_COMMIT_TAG` / `CI_COMMIT_SHA` itself; GitHub Actions
       # has no equivalent, so map them from the tag-push context explicitly.
-      # Do NOT pass GITHUB_TOKEN here: the script would inject a second
+      # Do NOT pass `GITHUB_TOKEN` here: the script would inject a second
       # `http.https://github.com/.extraheader` on top of the one actions/checkout
       # persists, and git sends both — GitHub rejects duplicate Authorization
       # headers with 400. Checkout's credential already covers the fetch.

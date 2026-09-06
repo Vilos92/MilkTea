@@ -54,7 +54,7 @@ const REQUIRED_ASSETS = [
 const WINDOWS_ASSET_NAMES: readonly string[] = REQUIRED_ASSETS.filter(name =>
   name.startsWith('MilkTea-windows-')
 );
-// Same name as the `release-windows` job in .github/workflows/release-windows.yml. GitHub records
+// Same name as the `release-windows` job in `.github/workflows/release-windows.yml`. GitHub records
 // one check run per job, named after the job, so this is how we ask "did the Windows leg finish,
 // and how".
 const WINDOWS_CHECK_RUN_NAME = 'release-windows';
