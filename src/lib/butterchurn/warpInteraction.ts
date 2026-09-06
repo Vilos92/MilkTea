@@ -37,6 +37,13 @@ export type WarpInteraction = {
 };
 
 /*
+ * Constants.
+ */
+
+/** Renderer fields the patch reads every frame. Their presence gates attaching at all. */
+const REQUIRED_NUMERIC_FIELDS = ['mesh_width', 'mesh_height', 'texsizeX', 'texsizeY'] as const;
+
+/*
  * Helpers.
  */
 
@@ -111,8 +118,6 @@ export function createWarpInteraction(visualizer: Visualizer): WarpInteraction {
     }
   };
 }
-
-const REQUIRED_NUMERIC_FIELDS = ['mesh_width', 'mesh_height', 'texsizeX', 'texsizeY'] as const;
 
 function extractWarpRenderer(visualizer: Visualizer): WarpRenderer {
   const renderer = (visualizer as {renderer?: Partial<WarpRenderer>} | null)?.renderer;
