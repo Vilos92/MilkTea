@@ -56,6 +56,9 @@ jobs:
           # Pin to the version pinned in package.json's packageManager field, so
           # this leg resolves the lockfile identically to the other release legs.
           bun-version: 1.4.0
+          # Tag refs cannot restore each other's caches and this workflow never
+          # runs on main, so caching the bun download would never pay off.
+          no-cache: true
 
       - name: Install dependencies
         run: bun install --frozen-lockfile

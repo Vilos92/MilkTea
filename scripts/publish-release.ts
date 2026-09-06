@@ -110,7 +110,7 @@ for (;;) {
   // Only the Windows assets are missing. Before waiting another interval, check whether the
   // GitHub Actions run already failed, so a broken Windows build does not stall this pipeline
   // for the full timeout.
-  const checkRunFailure = await probeWindowsCheckRunFailure(commit);
+  const checkRunFailure = await probeWindowsCheckRunFailure(commit, tag);
   if (checkRunFailure) {
     throw new Error(`Release ${tag} cannot complete: ${checkRunFailure}`);
   }
@@ -194,22 +194,36 @@ async function publishRelease(release: GitHubRelease, releaseTag: string): Promi
 }
 
 // Returns why the release-windows check run can no longer produce the Windows assets, or
-// undefined while it has not started or has not concluded (both mean "keep waiting"). A concluded
-// run is always terminal: even `success` cannot be waited on, because a finished run will never
-// upload anything more.
-async function probeWindowsCheckRunFailure(headSha: string): Promise<string | undefined> {
-  const response = await requestGitHub<CheckRunsResponse>(
-    `https://api.github.com/repos/${REPOSITORY}/commits/${headSha}/check-runs?check_name=${WINDOWS_CHECK_RUN_NAME}`
-  );
-  const concludedRun = response.check_runs.find(checkRun => checkRun.conclusion !== null);
+// undefined when the caller should keep waiting: the run has not started, has not concluded, or
+// succeeded and a refreshed release read shows its assets present (the run uploads before it
+// concludes, so the caller's earlier read can predate the upload). Any other concluded run is
+// terminal, because a finished run will never upload anything more.
+async function probeWindowsCheckRunFailure(headSha: string, releaseTag: string): Promise<string | undefined> {
+  const concludedRun = await fetchConcludedWindowsRun(headSha);
   if (!concludedRun) {
     return undefined;
   }
 
-  const detailsUrl = concludedRun.details_url ?? '(no details_url)';
-  if (concludedRun.conclusion === SUCCESS_CONCLUSION) {
-    return `${WINDOWS_CHECK_RUN_NAME} succeeded for ${headSha} without uploading its assets: ${detailsUrl}`;
+  if (concludedRun.conclusion !== SUCCESS_CONCLUSION) {
+    return `${WINDOWS_CHECK_RUN_NAME} check run ${concludedRun.conclusion} for ${headSha}: ${describeDetails(concludedRun)}`;
   }
 
-  return `${WINDOWS_CHECK_RUN_NAME} check run ${concludedRun.conclusion} for ${headSha}: ${detailsUrl}`;
+  const missingAfterRefresh = computeMissingAssets(await fetchRelease(releaseTag));
+  if (missingAfterRefresh.length === 0) {
+    return undefined;
+  }
+
+  return `${WINDOWS_CHECK_RUN_NAME} succeeded for ${headSha} without uploading its assets: ${describeDetails(concludedRun)}`;
+}
+
+async function fetchConcludedWindowsRun(headSha: string): Promise<CheckRun | undefined> {
+  const response = await requestGitHub<CheckRunsResponse>(
+    `https://api.github.com/repos/${REPOSITORY}/commits/${headSha}/check-runs?check_name=${WINDOWS_CHECK_RUN_NAME}`
+  );
+
+  return response.check_runs.find(checkRun => checkRun.conclusion !== null);
+}
+
+function describeDetails(checkRun: CheckRun): string {
+  return checkRun.details_url ?? '(no details_url)';
 }
