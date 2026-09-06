@@ -36,10 +36,15 @@ steps:
     image: bash
     depends_on: [validate]
     commands:
+      # Docker Desktop on the Mac mini gives this emulated amd64 container about 12 GB, so cargo's
+      # default of one rustc per core (12) can exhaust memory and the OOM killer aborts the build
+      # with SIGKILL. Capping the job count keeps peak memory well under that ceiling. The build
+      # stays parallel, just less so.
       - >-
         docker run --rm --platform linux/amd64
         --volume "$CI_WORKSPACE:/workspace"
         --workdir /workspace
+        --env CARGO_BUILD_JOBS=4
         greg-zone/milktea-tauri-linux:1.95.0-bun1.4.0
         bash -lc 'install -Dm755 /usr/local/bin/linuxdeploy-wrapper /root/.cache/tauri/linuxdeploy-x86_64.AppImage &&
         ln -sf /opt/linuxdeploy/plugins/linuxdeploy-plugin-appimage/AppRun /root/.cache/tauri/linuxdeploy-plugin-appimage.AppImage &&
