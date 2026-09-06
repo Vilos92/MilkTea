@@ -1,7 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/preact-vite';
 import type {ComponentProps} from 'preact';
 import {useEffect, useState} from 'preact/hooks';
-import {useRef} from 'preact/hooks';
 
 import {getPresetKeys} from '../../lib/butterchurn/butterchurnPresets';
 import {Controls} from './controls';
@@ -41,7 +40,6 @@ const ControlsWrapper = ({
   showStage,
   hasStagedPreset: initialHasStagedPreset
 }: WrapperProps) => {
-  const swipeRef = useRef<HTMLDivElement>(null);
   const [presetNames, setPresetNames] = useState<string[]>([]);
   const [isPlaying, setIsPlaying] = useState(initialIsPlaying);
   const [isRecording, setIsRecording] = useState(initialIsRecording);
@@ -62,7 +60,6 @@ const ControlsWrapper = ({
 
   return (
     <div
-      ref={swipeRef}
       style={{
         width: '100vw',
         height: '100vh',
@@ -76,7 +73,6 @@ const ControlsWrapper = ({
       }}
     >
       <Controls
-        swipeRef={swipeRef}
         class={controlsStatic}
         isFullscreen={isFullscreen}
         toggleFullscreen={() => setIsFullscreen(v => !v)}

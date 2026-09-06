@@ -137,13 +137,13 @@ export function Help({visualizerActive, presetName, trackName, onClose}: HelpPro
 
 function renderMobileHotkeys(t: Translate): preact.VNode[] {
   return [
-    <li key="swipePrev" class={hotkeyRow}>
-      <span class={keyCell}>{t('help.swipePrevKeys')}</span>
-      <span class={actionCell}>{t('help.swipePrevAction')}</span>
+    <li key="tap" class={hotkeyRow}>
+      <span class={keyCell}>{t('help.tapKeys')}</span>
+      <span class={actionCell}>{t('help.tapAction')}</span>
     </li>,
-    <li key="swipeNext" class={hotkeyRow}>
-      <span class={keyCell}>{t('help.swipeNextKeys')}</span>
-      <span class={actionCell}>{t('help.swipeNextAction')}</span>
+    <li key="drag" class={hotkeyRow}>
+      <span class={keyCell}>{t('help.dragKeys')}</span>
+      <span class={actionCell}>{t('help.dragAction')}</span>
     </li>
   ];
 }

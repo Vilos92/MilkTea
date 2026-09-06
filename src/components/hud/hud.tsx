@@ -23,7 +23,6 @@ import {
 
 type HudProps = {
   // Layout and controls.
-  swipeRef: RefObject<HTMLElement>;
   started: boolean;
   isCanvasFullscreen: boolean;
   toggleFullscreen: () => void;
@@ -60,7 +59,6 @@ type HudProps = {
  */
 
 export function Hud({
-  swipeRef,
   started,
   isCanvasFullscreen,
   toggleFullscreen,
@@ -121,7 +119,6 @@ export function Hud({
       />
       {started && (
         <Controls
-          swipeRef={swipeRef}
           isFullscreen={isCanvasFullscreen}
           toggleFullscreen={toggleFullscreen}
           changePreset={changePreset}

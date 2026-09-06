@@ -64,10 +64,10 @@ export type TranslationKey =
   | 'help.keySpaceAction'
   | 'help.keySemicolonKeys'
   | 'help.keySemicolonAction'
-  | 'help.swipePrevKeys'
-  | 'help.swipePrevAction'
-  | 'help.swipeNextKeys'
-  | 'help.swipeNextAction'
+  | 'help.tapKeys'
+  | 'help.tapAction'
+  | 'help.dragKeys'
+  | 'help.dragAction'
   | 'help.trackName'
   | 'help.presetName'
   | 'settings.showPresetNameInControls'
@@ -151,10 +151,10 @@ export const ENGLISH_TRANSLATIONS: Translations = {
   'help.keySpaceAction': 'Pause / Play',
   'help.keySemicolonKeys': ';',
   'help.keySemicolonAction': 'Stage preset and launch preset',
-  'help.swipePrevKeys': 'Swipe left',
-  'help.swipePrevAction': 'Previous preset',
-  'help.swipeNextKeys': 'Swipe right',
-  'help.swipeNextAction': 'Next preset',
+  'help.tapKeys': 'Tap',
+  'help.tapAction': 'Ripple the visuals',
+  'help.dragKeys': 'Drag',
+  'help.dragAction': 'Swirl the visuals',
   'help.trackName': 'Now playing',
   'help.presetName': 'Preset',
   'settings.showPresetNameInControls': 'Show preset name',

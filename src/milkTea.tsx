@@ -225,7 +225,6 @@ export function MilkTea() {
         />
         <SplashLayer started={started} start={start} />
         <Hud
-          swipeRef={containerRef}
           started={started}
           isCanvasFullscreen={isCanvasFullscreen}
           toggleFullscreen={toggleFullscreen}

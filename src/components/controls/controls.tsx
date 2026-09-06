@@ -1,8 +1,5 @@
-import type {RefObject} from 'preact';
 import {useState} from 'preact/hooks';
 
-import {Axis, useSwipe} from '../../hooks/useSwipe';
-import {vibrateMedium} from '../../lib/vibrate';
 import {MilkTeaPanel, usePanelContext} from '../../providers/panel';
 import type {AudioFilePlayback} from '../../types/audio';
 import {PlaybackControls, PresetControls} from './controlRows';
@@ -15,7 +12,6 @@ import {controls, trackInfo, trackPresetLabel, trackTitle} from './controls.css'
  */
 
 type ControlsProps = {
-  swipeRef: RefObject<HTMLElement>;
   class?: string;
   isFullscreen: boolean;
   toggleFullscreen: () => void;
@@ -42,7 +38,6 @@ type ControlsProps = {
  */
 
 export const Controls = ({
-  swipeRef,
   class: className,
   isFullscreen,
   toggleFullscreen,
@@ -66,18 +61,6 @@ export const Controls = ({
   const {openPanel} = usePanelContext();
   const pickerOpen = openPanel === MilkTeaPanel.PRESET_PICKER;
   const [isDragging, setIsDragging] = useState(false);
-
-  useSwipe(swipeRef, {
-    axis: Axis.HORIZONTAL,
-    onSwipeLeft: () => {
-      vibrateMedium();
-      changePreset(1);
-    },
-    onSwipeRight: () => {
-      vibrateMedium();
-      changePreset(-1);
-    }
-  });
 
   const isVisible = controlsVisible || isDragging || pickerOpen;
   return (
