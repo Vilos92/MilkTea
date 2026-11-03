@@ -26,8 +26,8 @@ export const row = style({
   }
 });
 
-/** Fixed-width container so root transform can use exact (globe + gap) for centering. */
-export const globeWrapper = style({
+/** Fixed-width container so root transform can use exact (icon + gap) for centering. */
+export const iconWrapper = style({
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -40,12 +40,13 @@ export const globeWrapper = style({
   }
 });
 
-export const globe = style({
-  fontSize: '1.5rem',
-  lineHeight: 1,
+export const icon = style({
+  width: '1.5rem',
+  height: '1.5rem',
   '@media': {
     '(pointer: fine)': {
-      fontSize: '1.25rem'
+      width: '1.25rem',
+      height: '1.25rem'
     }
   }
 });

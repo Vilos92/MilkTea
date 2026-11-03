@@ -11,6 +11,7 @@ import {CircleQuestion} from './paths/circleQuestion';
 import {ComputerSpeaker} from './paths/computerSpeaker';
 import {FileMusic} from './paths/fileMusic';
 import {Gear} from './paths/gear';
+import {Language} from './paths/language';
 import {MediaNextFilled} from './paths/mediaNextFilled';
 import {MediaPauseFilled} from './paths/mediaPauseFilled';
 import {MediaPlayFilled} from './paths/mediaPlayFilled';
@@ -49,7 +50,8 @@ export type IconType =
   | 'command-palette'
   | 'settings'
   | 'theme-light'
-  | 'theme-dark';
+  | 'theme-dark'
+  | 'language';
 
 type IconSize = 'sm' | 'md' | 'lg';
 
@@ -147,6 +149,8 @@ function renderPaths(type: IconType) {
       return <BrightnessIncrease />;
     case 'theme-dark':
       return <NightShift />;
+    case 'language':
+      return <Language />;
     default:
       throw new Error(`Unknown icon type: ${String(type)}`);
   }
