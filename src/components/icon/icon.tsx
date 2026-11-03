@@ -1,24 +1,26 @@
 import {Bluesky} from './paths/bluesky';
-import {Bookmark} from './paths/bookmark';
 import {BookmarkCheck} from './paths/bookmarkCheck';
+import {BookmarkPlus} from './paths/bookmarkPlus';
+import {BrightnessIncrease} from './paths/brightnessIncrease';
+import {ChartActivity2} from './paths/chartActivity2';
 import {ChevronLeft} from './paths/chevronLeft';
+import {ChevronMaximizeDiagonal} from './paths/chevronMaximizeDiagonal';
+import {ChevronMinimizeDiagonal} from './paths/chevronMinimizeDiagonal';
 import {ChevronRight} from './paths/chevronRight';
-import {Close} from './paths/close';
-import {CommandPalette as CommandPalettePath} from './paths/commandPalette';
-import {EnterFullscreen} from './paths/enterFullscreen';
-import {ExitFullscreen} from './paths/exitFullscreen';
-import {FileAudio} from './paths/fileAudio';
-import {HelpCircle} from './paths/helpCircle';
+import {CircleQuestion} from './paths/circleQuestion';
+import {ComputerSpeaker} from './paths/computerSpeaker';
+import {FileMusic} from './paths/fileMusic';
+import {Gear} from './paths/gear';
+import {MediaNextFilled} from './paths/mediaNextFilled';
+import {MediaPauseFilled} from './paths/mediaPauseFilled';
+import {MediaPlayFilled} from './paths/mediaPlayFilled';
+import {MediaPreviousFilled} from './paths/mediaPreviousFilled';
+import {MediaRecordFilled} from './paths/mediaRecordFilled';
 import {Microphone} from './paths/microphone';
-import {NextTrack} from './paths/nextTrack';
-import {Oscillator} from './paths/oscillator';
-import {Pause} from './paths/pause';
-import {Play} from './paths/play';
-import {PrevTrack} from './paths/prevTrack';
-import {Record} from './paths/record';
-import {ScreenCapture} from './paths/screenCapture';
-import {Settings} from './paths/settings';
-import {SystemAudio} from './paths/systemAudio';
+import {NightShift} from './paths/nightShift';
+import {ScreenSharing} from './paths/screenSharing';
+import {Terminal} from './paths/terminal';
+import {Xmark} from './paths/xmark';
 
 /*
  * Types.
@@ -45,18 +47,24 @@ export type IconType =
   | 'help'
   | 'bluesky'
   | 'command-palette'
-  | 'settings';
+  | 'settings'
+  | 'theme-light'
+  | 'theme-dark';
 
 type IconSize = 'sm' | 'md' | 'lg';
 
 type IconProps = {
   type: IconType;
   size: IconSize;
+  class?: string;
 };
 
 /*
  * Constants.
  */
+
+/** Nucleo Micro draws on a 20px grid, so the viewBox matches it one to one. */
+const GRID_PX = 20;
 
 const SIZE_PX_MAP: Record<IconSize, number> = {
   sm: 16,
@@ -68,10 +76,20 @@ const SIZE_PX_MAP: Record<IconSize, number> = {
  * Component.
  */
 
-export function Icon({type, size}: IconProps) {
+/**
+ * Renders a licensed Nucleo icon by its MilkTea role. Each path module is
+ * named after its Nucleo label so a swap maps straight back to the library.
+ */
+export function Icon({type, size, class: className}: IconProps) {
   const sizePx = SIZE_PX_MAP[size];
   return (
-    <svg width={sizePx} height={sizePx} viewBox="0 0 20 20" fill="none" aria-hidden="true">
+    <svg
+      class={className}
+      width={sizePx}
+      height={sizePx}
+      viewBox={`0 0 ${GRID_PX} ${GRID_PX}`}
+      aria-hidden="true"
+    >
       {renderPaths(type)}
     </svg>
   );
@@ -84,47 +102,51 @@ export function Icon({type, size}: IconProps) {
 function renderPaths(type: IconType) {
   switch (type) {
     case 'play':
-      return <Play />;
+      return <MediaPlayFilled />;
     case 'pause':
-      return <Pause />;
+      return <MediaPauseFilled />;
     case 'prev-track':
-      return <PrevTrack />;
+      return <MediaPreviousFilled />;
     case 'next-track':
-      return <NextTrack />;
+      return <MediaNextFilled />;
     case 'record':
-      return <Record />;
+      return <MediaRecordFilled />;
     case 'chevron-left':
       return <ChevronLeft />;
     case 'chevron-right':
       return <ChevronRight />;
     case 'bookmark':
-      return <Bookmark />;
+      return <BookmarkPlus />;
     case 'bookmark-check':
       return <BookmarkCheck />;
     case 'close':
-      return <Close />;
+      return <Xmark />;
     case 'enter-fullscreen':
-      return <EnterFullscreen />;
+      return <ChevronMaximizeDiagonal />;
     case 'exit-fullscreen':
-      return <ExitFullscreen />;
+      return <ChevronMinimizeDiagonal />;
     case 'oscillator':
-      return <Oscillator />;
+      return <ChartActivity2 />;
     case 'file-audio':
-      return <FileAudio />;
+      return <FileMusic />;
     case 'microphone':
       return <Microphone />;
     case 'screen-capture':
-      return <ScreenCapture />;
+      return <ScreenSharing />;
     case 'system-audio':
-      return <SystemAudio />;
+      return <ComputerSpeaker />;
     case 'help':
-      return <HelpCircle />;
+      return <CircleQuestion />;
     case 'bluesky':
       return <Bluesky />;
     case 'command-palette':
-      return <CommandPalettePath />;
+      return <Terminal />;
     case 'settings':
-      return <Settings />;
+      return <Gear />;
+    case 'theme-light':
+      return <BrightnessIncrease />;
+    case 'theme-dark':
+      return <NightShift />;
     default:
       throw new Error(`Unknown icon type: ${String(type)}`);
   }

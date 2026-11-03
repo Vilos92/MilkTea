@@ -1,0 +1,36 @@
+export const BookmarkPlus = () => (
+  <>
+    <line
+      x1="14"
+      y1="9"
+      x2="14"
+      y2="3"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      data-color="color-2"
+    ></line>
+    <path
+      d="m9.239,3h-2.239c-1.657,0-3,1.343-3,3v11l6-4,6,4v-5.149"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+    ></path>
+    <line
+      x1="11"
+      y1="6"
+      x2="17"
+      y2="6"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      data-color="color-2"
+    ></line>
+  </>
+);

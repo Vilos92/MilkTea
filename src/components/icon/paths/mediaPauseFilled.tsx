@@ -1,0 +1,31 @@
+export const MediaPauseFilled = () => (
+  <>
+    <rect
+      x="4"
+      y="4"
+      width={3.5}
+      height={12}
+      rx="1"
+      ry="1"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      fill="currentColor"
+    ></rect>
+    <rect
+      x="12.5"
+      y="4"
+      width={3.5}
+      height={12}
+      rx="1"
+      ry="1"
+      fill="currentColor"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      data-color="color-2"
+    ></rect>
+  </>
+);

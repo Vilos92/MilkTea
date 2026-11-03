@@ -1,0 +1,39 @@
+export const FileMusic = () => (
+  <>
+    <path
+      d="m4,7h3c.552,0,1-.448,1-1v-3"
+      stroke="currentColor"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      fill="currentColor"
+    ></path>
+    <circle
+      cx="13"
+      cy="15"
+      r="2"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      data-color="color-2"
+    ></circle>
+    <path
+      d="m15.963,5.636c-.182-1.483-1.431-2.636-2.963-2.636h-4.586c-.265,0-.52.105-.707.293l-3.414,3.414c-.188.188-.293.442-.293.707v6.586c0,1.657,1.343,3,3,3h.882"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+    ></path>
+    <polyline
+      points="17.5 10.5 15 9 15 15"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      data-color="color-2"
+    ></polyline>
+  </>
+);

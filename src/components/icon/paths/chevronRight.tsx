@@ -1,9 +1,12 @@
 export const ChevronRight = () => (
-  <path
-    d="M7 4L13 10L7 16"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  />
+  <>
+    <polyline
+      points="7.5 16.5 14 10 7.5 3.5"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+    ></polyline>
+  </>
 );

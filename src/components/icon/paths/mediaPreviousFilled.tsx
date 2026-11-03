@@ -1,0 +1,24 @@
+export const MediaPreviousFilled = () => (
+  <>
+    <line
+      x1="4"
+      y1="4"
+      x2="4"
+      y2="16"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      data-color="color-2"
+    ></line>
+    <path
+      d="m7.8375,9.3719l6.9062-5.1797c.5176-.3882,1.2563-.0189,1.2563.6281v10.3594c0,.647-.7386,1.0163-1.2563.6281l-6.9062-5.1797c-.4187-.3141-.4187-.9422,0-1.2562Z"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      fill="currentColor"
+    ></path>
+  </>
+);

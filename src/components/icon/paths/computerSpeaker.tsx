@@ -1,0 +1,27 @@
+export const ComputerSpeaker = () => (
+  <>
+    <path
+      d="m6,12h-1c-1.1046,0-2-.8954-2-2v-3c0-1.1046.8954-2,2-2h1"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      data-color="color-2"
+    ></path>
+    <path
+      d="m4,16c.6667-.4444,1.3333-.7407,2-.8889"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      data-color="color-2"
+    ></path>
+    <path
+      d="m15,2h-4c-1.6543,0-3,1.3457-3,3v10c0,1.6543,1.3457,3,3,3h4c1.6543,0,3-1.3457,3-3V5c0-1.6543-1.3457-3-3-3Zm-2,3.5c.6904,0,1.25.5596,1.25,1.25s-.5596,1.25-1.25,1.25-1.25-.5596-1.25-1.25.5596-1.25,1.25-1.25Zm0,8.5c-1.1046,0-2-.8954-2-2s.8954-2,2-2,2,.8954,2,2-.8954,2-2,2Z"
+      strokeWidth={0}
+      fill="currentColor"
+    ></path>
+  </>
+);
