@@ -61,6 +61,14 @@ Living conventions for this repo. Ask whether new habits belong here vs `README.
 - Use stable, honest states for long-running work. Preserve the overlay's layout while it progresses through `Preparing`, `Rendering`, `Cancelling`, `Finishing`, `Complete`, or `Failed`; never imply that incomplete work is ready.
 - Preact owns discrete interaction state. For visualizer, recording, or encoding loops, batch progress updates and prefer refs or CSS variables for tight-path values rather than re-rendering once per frame.
 
+## Icons
+
+- **Nucleo Micro** (20px glyph grid) for every icon. Do not mix in other Nucleo families or hand-drawn SVGs. The one exception is a brand mark Micro lacks, which comes from Nucleo **Social Media** (for example `bluesky`).
+- **Prefer the `-filled` Micro variant for transport controls** (play, pause, previous, next, record). Use the outline variant everywhere else.
+- **Render through `src/components/icon/icon.tsx`** (`<Icon type="close" size="sm" />`). `IconType` names the role in MilkTea. Each module in `icon/paths/` holds one Nucleo icon's inner markup and is named after its Nucleo label (`xmark.tsx` exports `Xmark`).
+- **Add an icon** by copying the inner markup of its Nucleo React component into a new `paths/` module, then mapping a new `IconType` to it. Import nothing from the local Nucleo install.
+- Use a non-Nucleo icon only when Nucleo truly has no fit. Note the reason in the path module.
+
 ## Vanilla Extract
 
 - **`*.css.ts`** colocated with UI; shared globals in **`src/global.css.ts`** and **`src/app.css.ts`**.

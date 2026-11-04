@@ -43,10 +43,6 @@ export const button = style({
 export const icon = style({
   width: '20px',
   height: '20px',
-  stroke: 'currentColor',
-  strokeWidth: 1.5,
-  strokeLinecap: 'square',
-  strokeLinejoin: 'miter',
   '@media': {
     '(pointer: fine)': {
       width: '16px',

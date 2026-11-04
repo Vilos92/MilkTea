@@ -1,17 +1,21 @@
 export const BookmarkCheck = () => (
   <>
-    <path
-      d="M5 2h10a1 1 0 011 1v14l-6-3.5L4 17V3a1 1 0 011-1z"
+    <polyline
+      points="10 6.5 12.25 9 17 3"
+      fill="none"
       stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M7.5 9.5l2 2 3.5-3.5"
-      stroke="currentColor"
-      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
-    />
+      strokeWidth={2}
+      data-color="color-2"
+    ></polyline>
+    <path
+      d="m12.536,3h-5.536c-1.657,0-3,1.343-3,3v11l6-4,6,4v-7.098"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+    ></path>
   </>
 );

@@ -2,8 +2,9 @@ import type {Locale} from '../../lib/locale';
 import {LOCALE_OPTIONS} from '../../lib/locale';
 import {useLocaleContext} from '../../providers/locale';
 import {useTranslate} from '../../providers/translation';
+import {Icon} from '../icon/icon';
 
-import {globe, globeWrapper, label, root, row, select, srOnly} from './localeSwitcher.css';
+import {icon, iconWrapper, label, root, row, select, srOnly} from './localeSwitcher.css';
 
 /*
  * Types.
@@ -31,8 +32,8 @@ export function LocaleSwitcher({class: className}: LocaleSwitcherProps) {
     <div class={rootClass}>
       <div class={label}>
         <span class={row}>
-          <span class={globeWrapper} aria-hidden="true">
-            <span class={globe}>🌐</span>
+          <span class={iconWrapper}>
+            <Icon type="language" size="lg" class={icon} />
           </span>
           <label htmlFor="locale-select" class={srOnly}>
             {t('locale.ariaSelectLanguage')}
